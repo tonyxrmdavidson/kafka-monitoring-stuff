@@ -1,8 +1,18 @@
-export STRIMZI_OPERATOR_NAMESPACE ?= kafka-operator
-export KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
-export KAFKA_PVC_SIZE ?= 10Gi
-PER_CLUSTER_MONITORING_NAMESPACE ?= managed-services-monitoring
-GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
+KAFKA_PVC_SIZE ?= 10Gi
+
+export STRIMZI_OPERATOR_NAMESPACE ?= kafka
+
+# export KAFKA_CLUSTER_NAMESPACE ?= openshift-kafka-cluster
+export KAFKA_CLUSTER_NAMESPACE ?= kafka
+
+export PER_CLUSTER_PROMETHEUS_NAMESPACE ?= managed-services-monitoring-prometheus
+export PER_CLUSTER_GRAFANA_NAMESPACE ?= managed-services-monitoring-grafana
+export PER_CLUSTER_PROMETHEUS ?= kafka-prometheus
+
+export GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
+export GLOBAL_THANOS_RECEIVER ?= kafka-thanos-receiver
+export GLOBAL_THANOS_QUERIER ?= kafka-thanos-querier
+export GLOBAL_GRAFANA ?= kafka-grafana-global
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 

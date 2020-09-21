@@ -1,0 +1,84 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <name>
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: <name>
+    spec:
+      volumes:
+        - name: tsdb
+          emptyDir: {}
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: thanos-receiver
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: tsdb
+              mountPath: /opt/tsdb
+          terminationMessagePolicy: File
+          image: 'quay.io/thanos/thanos:v0.15.0'
+          args:
+            - receive
+            - '--tsdb.path=/opt/tsdb'
+            - '--remote-write.address=0.0.0.0:9005'
+            - '--grpc-address=0.0.0.0:9006'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: <name>-service
+  namespace: <namespace>
+spec:
+  ports:
+    - name: web
+      protocol: TCP
+      port: 9005
+      targetPort: 9005
+    - name: grpc
+      protocol: TCP
+      port: 9006
+      targetPort: 9006
+  selector:
+    app: <name>
+  type: ClusterIP
+  sessionAffinity: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: <name>-route
+  namespace: <namespace>
+spec:
+  to:
+    kind: Service
+    name: <name>-service
+    weight: 100
+  port:
+    targetPort: 9005
+  wildcardPolicy: None

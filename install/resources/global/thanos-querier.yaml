@@ -1,0 +1,73 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <name>
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: <name>
+    spec:
+      containers:
+        - name: thanos-receiver
+          image: 'quay.io/thanos/thanos:v0.15.0'
+          args:
+            - query
+            - '--store=<store>.<namespace>.svc.cluster.local:9006'
+            - '--http-address=0.0.0.0:9008'
+            - '--grpc-address=0.0.0.0:9007'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: <name>-service
+  namespace: <namespace>
+spec:
+  ports:
+    - protocol: TCP
+      port: 9008
+      targetPort: 9008
+  selector:
+    app: <name>
+  type: ClusterIP
+  sessionAffinity: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: <name>-route
+  namespace: <namespace>
+spec:
+  to:
+    kind: Service
+    name: <name>-service
+    weight: 100
+  port:
+    targetPort: 9008
+  wildcardPolicy: None
