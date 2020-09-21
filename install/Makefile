@@ -8,6 +8,25 @@ BUILD_DIR := build
 
 .PHONY: install/global/monitoring
 install/global/monitoring:
+  # create yaml files
+	@ rm -rf ./$(BUILD_DIR)/grafana
+	@ mkdir -p ./$(BUILD_DIR)/grafana
+	@ cp $(RESOURCE_FILES_DIR)/grafana/operatorgroup.yaml ./$(BUILD_DIR)/grafana/
+	@ cp $(RESOURCE_FILES_DIR)/grafana/sub.yaml ./$(BUILD_DIR)/grafana/
+	@ cp $(RESOURCE_FILES_DIR)/grafana/grafana.yaml ./$(BUILD_DIR)/grafana/
+	@ sed -i 's/<PER_CLUSTER_MONITORING_NAMESPACE>/$(PER_CLUSTER_MONITORING_NAMESPACE)/' ./$(BUILD_DIR)/grafana/*.yaml
+	
+	# create namepsace
+	@ oc new-project $(PER_CLUSTER_MONITORING_NAMESPACE)
+
+	# create operatorgroup
+	@ oc apply -f ./$(BUILD_DIR)/grafana/operatorgroup.yaml
+
+	# # create subscription
+	@ oc apply -f ./$(BUILD_DIR)/grafana/sub.yaml
+
+	# # create grafana CR
+	@ oc apply -f ./$(BUILD_DIR)/grafana/grafana.yaml
 
 .PHONY: install/strimzi/operator
 install/strimzi/operator:
