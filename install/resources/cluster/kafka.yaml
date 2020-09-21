@@ -2,6 +2,7 @@ apiVersion: kafka.strimzi.io/v1beta1
 kind: Kafka
 metadata:
   name: my-cluster
+  namespace: <KAFKA_CLUSTER_NAMESPACE>
 spec:
   kafka:
     replicas: 1
@@ -16,7 +17,7 @@ spec:
       volumes:
       - id: 0
         type: persistent-claim
-        size: 10Gi
+        size: <PVC_SIZE>
         deleteClaim: false
     config:
       offsets.topic.replication.factor: 1
@@ -123,7 +124,7 @@ spec:
     replicas: 1
     storage:
       type: persistent-claim
-      size: 10Gi
+      size: <PVC_SIZE>
       deleteClaim: false
     metrics:
       # Inspired by Zookeeper rules
