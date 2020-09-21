@@ -17,5 +17,13 @@ create/thanos/querier:
 		sed -e 's/<store>/$(GLOBAL_THANOS_RECEIVER)-service/g' | \
 		cat | oc apply -f -
 
-all: create/namespace create/thanos/receiver create/thanos/querier
+.PHONY: create/grafana
+create/grafana:
+	@echo "create grafana: $(GLOBAL_GRAFANA)"
+	@cat ./grafana.yaml | sed -e 's/<namespace>/$(GLOBAL_MONITORING_NAMESPACE)/g' | \
+		sed -e 's/<name>/$(GLOBAL_GRAFANA)/g' | \
+		sed -e 's/<querier>/$(GLOBAL_THANOS_QUERIER)-service/g' | \
+		cat | oc apply -f -
+
+all: create/namespace create/thanos/receiver create/thanos/querier create/grafana
 	@echo "Done installing fleet wide monitoring stack"
