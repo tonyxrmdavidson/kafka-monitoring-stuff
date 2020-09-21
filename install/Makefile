@@ -1,7 +1,7 @@
 STRIMZI_OPERATOR_NAMESPACE ?= openshift-operators
 KAFKA_CLUSTER_NAMESPACE ?= openshift-kafka-cluster
-PER_CLUSTER_MONITORING_NAMESPACE ?= kafka-monitoring-cluster
-GLOBAL_MONITORING_NAMESPACE ?= kafka-monitoring-global
+PER_CLUSTER_MONITORING_NAMESPACE ?= managed-services-monitoring
+GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
 KAFKA_PVC_SIZE ?= 10Gi
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
@@ -9,24 +9,26 @@ BUILD_DIR := build
 .PHONY: install/global/monitoring
 install/global/monitoring:
   # create yaml files
-	@ rm -rf ./$(BUILD_DIR)/grafana
-	@ mkdir -p ./$(BUILD_DIR)/grafana
-	@ cp $(RESOURCE_FILES_DIR)/grafana/operatorgroup.yaml ./$(BUILD_DIR)/grafana/
-	@ cp $(RESOURCE_FILES_DIR)/grafana/sub.yaml ./$(BUILD_DIR)/grafana/
-	@ cp $(RESOURCE_FILES_DIR)/grafana/grafana.yaml ./$(BUILD_DIR)/grafana/
-	@ sed -i 's/<PER_CLUSTER_MONITORING_NAMESPACE>/$(PER_CLUSTER_MONITORING_NAMESPACE)/' ./$(BUILD_DIR)/grafana/*.yaml
+	@ mkdir -p ./$(BUILD_DIR)/monitoring-cluster
+	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/operatorgroup.yaml ./$(BUILD_DIR)/monitoring-cluster/
+	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/sub.yaml ./$(BUILD_DIR)/monitoring-cluster/
+	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/grafana.yaml ./$(BUILD_DIR)/monitoring-cluster/
+	@ sed -i 's/<PER_CLUSTER_MONITORING_NAMESPACE>/$(PER_CLUSTER_MONITORING_NAMESPACE)/' ./$(BUILD_DIR)/monitoring-cluster/*.yaml
 	
 	# create namepsace
 	@ oc new-project $(PER_CLUSTER_MONITORING_NAMESPACE)
 
 	# create operatorgroup
-	@ oc apply -f ./$(BUILD_DIR)/grafana/operatorgroup.yaml
+	@ oc apply -f ./$(BUILD_DIR)/monitoring-cluster/operatorgroup.yaml
 
-	# # create subscription
-	@ oc apply -f ./$(BUILD_DIR)/grafana/sub.yaml
+	# create subscription
+	@ oc apply -f ./$(BUILD_DIR)/monitoring-cluster/sub.yaml
 
-	# # create grafana CR
-	@ oc apply -f ./$(BUILD_DIR)/grafana/grafana.yaml
+	# create grafana CR
+	@ oc apply -f ./$(BUILD_DIR)/monitoring-cluster/grafana.yaml
+
+  # cleanup
+	@ rm -rf ./$(BUILD_DIR)
 
 .PHONY: install/strimzi/operator
 install/strimzi/operator:
