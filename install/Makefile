@@ -50,6 +50,7 @@ install/strimzi/operator:
 
 .PHONY: install/strimzi/monitoring
 install/strimzi/monitoring:
+	make -C resources/operator-monitoring all
 
 .PHONY: install/kafka/cr
 install/kafka/cr:
