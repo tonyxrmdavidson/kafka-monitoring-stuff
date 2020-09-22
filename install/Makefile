@@ -16,7 +16,7 @@ install/cluster/monitoring:
 	@ sed -i.bak 's/<PER_CLUSTER_MONITORING_NAMESPACE>/$(PER_CLUSTER_MONITORING_NAMESPACE)/' ./$(BUILD_DIR)/monitoring-cluster/*.yaml
 	
 	# create namepsace
-	@ oc new-project $(PER_CLUSTER_MONITORING_NAMESPACE)
+	@ -oc new-project $(PER_CLUSTER_MONITORING_NAMESPACE)
 
 	# create operatorgroup
 	@ oc apply -f ./$(BUILD_DIR)/monitoring-cluster/operatorgroup.yaml
