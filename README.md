@@ -14,8 +14,8 @@ The `install` folder contains resource files and a Makefile to provision a strim
 Available `make` targets:
 
 ```sh
-# install the global monitoring base stack
-install/global/monitoring
+# install the cluster monitoring base stack
+install/cluster/monitoring
 
 # install the strimzi operator
 install/strimzi/operator
