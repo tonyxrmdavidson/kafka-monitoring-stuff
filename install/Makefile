@@ -58,6 +58,7 @@ install/kafka/cr:
 
 .PHONY: install/kafka/monitoring
 install/kafka/monitoring:
+	make -C resources/kafka-monitoring all
 
 .PHONY: install/kafka/global
 install/kafka/global:
