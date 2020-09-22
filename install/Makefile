@@ -1,4 +1,4 @@
-STRIMZI_OPERATOR_NAMESPACE ?= openshift-operators
+export STRIMZI_OPERATOR_NAMESPACE ?= openshift-kafka-operator
 KAFKA_CLUSTER_NAMESPACE ?= openshift-kafka-cluster
 PER_CLUSTER_MONITORING_NAMESPACE ?= managed-services-monitoring
 GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
@@ -46,18 +46,7 @@ uninstall/cluster/monitoring:
 
 .PHONY: install/strimzi/operator
 install/strimzi/operator:
-	@ echo "creating deploy files..."
-	@ wget https://operatorhub.io/install/strimzi-kafka-operator.yaml -P ./$(BUILD_DIR)
-	@ sed -i.bak 's/namespace: .*/namespace: $(STRIMZI_OPERATOR_NAMESPACE)/' ./$(BUILD_DIR)/strimzi-kafka-operator.yaml
-	@ sed -i.bak 's/source: .*/source: community-operators/' ./$(BUILD_DIR)/strimzi-kafka-operator.yaml
-	@ sed -i.bak 's/sourceNamespace: .*/sourceNamespace: openshift-marketplace/' ./$(BUILD_DIR)/strimzi-kafka-operator.yaml
-
-	@ echo "deploying strimzi operator to $(STRIMZI_OPERATOR_NAMESPACE) namespace..."
-	#@ kubectl create ns $(STRIMZI_OPERATOR_NAMESPACE)
-	@ oc apply -f ./$(BUILD_DIR)/ 
-
-	@ echo "cleaning up deployment files..."
-	@ rm -rf ./$(BUILD_DIR)
+	make -C resources/operator all
 
 .PHONY: install/strimzi/monitoring
 install/strimzi/monitoring:
