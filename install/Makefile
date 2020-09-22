@@ -6,8 +6,8 @@ KAFKA_PVC_SIZE ?= 10Gi
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 
-.PHONY: install/global/monitoring
-install/global/monitoring:
+.PHONY: install/cluster/monitoring
+install/cluster/monitoring:
   # create yaml files
 	@ mkdir -p ./$(BUILD_DIR)/monitoring-cluster
 	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/operatorgroup.yaml ./$(BUILD_DIR)/monitoring-cluster/
@@ -37,8 +37,8 @@ install/global/monitoring:
   # cleanup
 	@ rm -rf ./$(BUILD_DIR)
 
-.PHONY: uninstall/global/monitoring
-uninstall/global/monitoring:
+.PHONY: uninstall/cluster/monitoring
+uninstall/cluster/monitoring:
 	@ -oc delete project $(PER_CLUSTER_MONITORING_NAMESPACE)
 	@ -oc delete crd grafanas.integreatly.org
 	@ -oc delete crd grafanadatasources.integreatly.org
