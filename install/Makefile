@@ -1,8 +1,8 @@
-export STRIMZI_OPERATOR_NAMESPACE ?= openshift-kafka-operator
-KAFKA_CLUSTER_NAMESPACE ?= openshift-kafka-cluster
+export STRIMZI_OPERATOR_NAMESPACE ?= kafka-operator
+export KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
+export KAFKA_PVC_SIZE ?= 10Gi
 PER_CLUSTER_MONITORING_NAMESPACE ?= managed-services-monitoring
 GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
-KAFKA_PVC_SIZE ?= 10Gi
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 
@@ -53,19 +53,7 @@ install/strimzi/monitoring:
 
 .PHONY: install/kafka/cr
 install/kafka/cr:
-	@ echo "creating deploy files..."
-	@ mkdir ./$(BUILD_DIR)
-	@ cp $(RESOURCE_FILES_DIR)/cluster/kafka.yaml ./$(BUILD_DIR)
-	@ sed -i.bak 's/<KAFKA_CLUSTER_NAMESPACE>/$(KAFKA_CLUSTER_NAMESPACE)/' ./$(BUILD_DIR)/kafka.yaml
-	@ sed -i.bak 's/<PVC_SIZE>/$(KAFKA_PVC_SIZE)/' ./$(BUILD_DIR)/kafka.yaml
-
-	@ echo "deploying kafka cluster to $(KAFKA_CLUSTER_NAMESPACE) namespace..."
-	@ kubectl create ns $(KAFKA_CLUSTER_NAMESPACE)
-	@ oc apply -f ./$(BUILD_DIR)/kafka.yaml
-	@ echo "kafka cluster deployed to $(KAFKA_CLUSTER_NAMESPACE) namespace..."
-
-	@ echo "cleaning up deployment files..."
-	@ rm -rf ./$(BUILD_DIR)
+	make -C resources/kafka all
 
 .PHONY: install/kafka/monitoring
 install/kafka/monitoring:
