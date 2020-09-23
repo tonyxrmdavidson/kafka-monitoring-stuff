@@ -1,0 +1,18 @@
+- job_name: openshift-monitoring-federation
+  honor_labels: true
+  kubernetes_sd_configs:
+    - role: service
+      namespaces:
+        names:
+          - openshift-monitoring
+  scrape_interval: 30s
+  metrics_path: /federate
+  params:
+    match[]:
+      - 'console_url'
+  scheme: https
+  tls_config:
+    insecure_skip_verify: true
+  basic_auth:
+    username: <user>
+    password: <pass>

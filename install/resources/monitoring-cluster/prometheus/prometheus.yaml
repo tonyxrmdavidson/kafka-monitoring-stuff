@@ -1,0 +1,205 @@
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  channel: beta
+  name: prometheus
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  targetNamespaces:
+    - <namespace>
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: <name>
+  namespace: <namespace>
+secrets:
+  - name: default-dockercfg-bxblm
+  - name: default-token-8s8h8
+imagePullSecrets:
+  - name: default-dockercfg-bxblm
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: <name>
+  namespace: <namespace>
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: <name>
+  namespace: <namespace>
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: <name>
+subjects:
+  - kind: ServiceAccount
+    name: <name>
+    namespace: <namespace>
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  serviceAccountName: <name>
+  additionalScrapeConfigs:
+    key: additional-scrape-config.yaml
+    name: additional-scrape-configs
+  podMonitorNamespaceSelector: { }
+  podMonitorSelector: { }
+  remoteWrite:
+    - url: 'http://<receiver>/api/v1/receive'
+      writeRelabelConfigs:
+        - action: keep
+          regex: (kafka_controller.*$|console_url$)
+          sourceLabels:
+            - __name__
+  serviceMonitorNamespaceSelector: { }
+  serviceMonitorSelector: { }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: cluster-operator-metrics
+  namespace: <namespace>
+  labels:
+    app: strimzi
+spec:
+  selector:
+    matchLabels:
+      strimzi.io/kind: cluster-operator
+  namespaceSelector:
+    matchNames:
+      - <cluster>
+      - <operator>
+  podMetricsEndpoints:
+    - path: /metrics
+      port: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: entity-operator-metrics
+  namespace: <namespace>
+  labels:
+    app: strimzi
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: entity-operator
+  namespaceSelector:
+    matchNames:
+      - <cluster>
+      - <operator>
+  podMetricsEndpoints:
+    - path: /metrics
+      port: healthcheck
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: bridge-metrics
+  namespace: <namespace>
+  labels:
+    app: strimzi
+spec:
+  selector:
+    matchLabels:
+      strimzi.io/kind: KafkaBridge
+  namespaceSelector:
+    matchNames:
+      - <cluster>
+      - <operator>
+  podMetricsEndpoints:
+    - path: /metrics
+      port: rest-api
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: kafka-metrics
+  namespace: <namespace>
+  labels:
+    app: strimzi
+spec:
+  selector:
+    matchExpressions:
+      - key: "strimzi.io/kind"
+        operator: In
+        values: [ "Kafka", "KafkaConnect" ]
+  namespaceSelector:
+    matchNames:
+      - <cluster>
+      - <operator>
+  podMetricsEndpoints:
+    - path: /metrics
+      port: tcp-prometheus
+      relabelings:
+        - separator: ;
+          regex: __meta_kubernetes_pod_label_(.+)
+          replacement: $1
+          action: labelmap
+        - sourceLabels: [ __meta_kubernetes_namespace ]
+          separator: ;
+          regex: (.*)
+          targetLabel: namespace
+          replacement: $1
+          action: replace
+        - sourceLabels: [ __meta_kubernetes_pod_name ]
+          separator: ;
+          regex: (.*)
+          targetLabel: kubernetes_pod_name
+          replacement: $1
+          action: replace
+        - sourceLabels: [ __meta_kubernetes_pod_node_name ]
+          separator: ;
+          regex: (.*)
+          targetLabel: node_name
+          replacement: $1
+          action: replace
+        - sourceLabels: [ __meta_kubernetes_pod_host_ip ]
+          separator: ;
+          regex: (.*)
+          targetLabel: node_ip
+          replacement: $1
+          action: replace
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  to:
+    kind: Service
+    name: prometheus-operated
+    weight: 100
+  port:
+    targetPort: web
+  wildcardPolicy: None
