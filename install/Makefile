@@ -60,10 +60,6 @@ uninstall/cluster/monitoring:
 install/strimzi/operator:
 	make -C resources/operator all
 
-.PHONY: install/strimzi/monitoring
-install/strimzi/monitoring:
-	make -C resources/operator-monitoring all
-
 .PHONY: install/kafka/cr
 install/kafka/cr:
 	make -C resources/kafka all

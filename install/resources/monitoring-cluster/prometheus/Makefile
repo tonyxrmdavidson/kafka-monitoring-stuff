@@ -27,5 +27,10 @@ configure/federation:
 	@oc create secret generic additional-scrape-configs --from-file=additional-scrape-config.yaml --dry-run=client -oyaml | oc apply -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) -f -
 	@rm -f ./additional-scrape-config.yaml
 
-all: create/namespace create/prometheus configure/federation
+.PHONY: configure/grafana
+configure/grafana:
+	@echo "creating grafana data souroce"
+	@cat ./datasource.yaml | sed -e 's/<url>/'"$(PER_CLUSTER_PROMETHEUS_NAMESPACE)"'/g' | cat | oc apply -n $(PER_CLUSTER_GRAFANA_NAMESPACE) -f -
+
+all: create/namespace create/prometheus configure/federation configure/grafana
 	@echo "finished setup of cluster metrics collection"
