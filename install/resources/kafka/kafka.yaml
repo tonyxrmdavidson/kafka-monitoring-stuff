@@ -165,6 +165,3 @@ spec:
       - pattern: "org.apache.ZooKeeperService<name0=StandaloneServer_port(\\d+), name1=InMemoryDataTree><>(\\w+)"
         type: GAUGE
         name: "zookeeper_$2"
-  entityOperator:
-    topicOperator: {}
-    userOperator: {}
