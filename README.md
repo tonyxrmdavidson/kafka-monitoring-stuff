@@ -29,6 +29,16 @@ $ make clean
 
 __NOTE__: uninstalling the cluster prometheus namespace can take a few minutes
 
+## Where's what?
+
+The following namespaces are created:
+
+* *kafka-operator*: contains the Strimzi operator
+* *kafka-cluster*: contains the Kafka cluster
+* *managed-services-monitoring-global*: contains the global monitoring stack including Grafana, Thanos Receiver and Thanos Querier
+* *managed-services-monitoring-prometheus*: contains the on cluster Prometheus that scrapes Kafka metrics
+* *managed-services-monitoring-grafana*: contains the on cluster Grafana instance
+
 ## Installation individual components
 
 Run the targets in the following order:
