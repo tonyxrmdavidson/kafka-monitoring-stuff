@@ -5,9 +5,12 @@ metadata:
     app: strimzi
     monitoring-key: middleware
   name: strimzi-kafka-mirror-maker-2
-  namespace: openshift-kafka
+  namespace: <namespace>
 spec:
   name: strimzi-kafka-mirror-maker-2.json
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
   json: |
     {
       "__inputs": [

@@ -1,9 +1,7 @@
-KAFKA_PVC_SIZE ?= 10Gi
+export KAFKA_PVC_SIZE ?= 10Gi
 
-export STRIMZI_OPERATOR_NAMESPACE ?= kafka
-
-# export KAFKA_CLUSTER_NAMESPACE ?= openshift-kafka-cluster
-export KAFKA_CLUSTER_NAMESPACE ?= kafka
+export STRIMZI_OPERATOR_NAMESPACE ?= kafka-operator
+export KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
 
 export PER_CLUSTER_PROMETHEUS_NAMESPACE ?= managed-services-monitoring-prometheus
 export PER_CLUSTER_GRAFANA_NAMESPACE ?= managed-services-monitoring-grafana
@@ -17,8 +15,8 @@ export GLOBAL_GRAFANA ?= kafka-grafana-global
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 
-.PHONY: install/cluster/monitoring
-install/cluster/monitoring:
+.PHONY: install/monitoring/cluster
+install/monitoring/cluster:
   # create yaml files
 	@ mkdir -p ./$(BUILD_DIR)/monitoring-cluster
 	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/operatorgroup.yaml ./$(BUILD_DIR)/monitoring-cluster/
@@ -45,16 +43,16 @@ install/cluster/monitoring:
 	@ for i in {1..12}; do oc -n $(PER_CLUSTER_GRAFANA_NAMESPACE) get pod -l app=grafana -o name | grep "pod/grafana-deployment" && break || sleep 5; done
 
 	@make -C resources/monitoring-cluster/prometheus all
+	@make -C resources/monitoring-cluster/dashboards all
 
-  # cleanup
+  	# cleanup
 	@ rm -rf ./$(BUILD_DIR)
 
-.PHONY: uninstall/cluster/monitoring
-uninstall/cluster/monitoring:
-	@ -oc delete project $(PER_CLUSTER_MONITORING_NAMESPACE)
-	@ -oc delete crd grafanas.integreatly.org
-	@ -oc delete crd grafanadatasources.integreatly.org
-	@ -oc delete crd grafanadashboards.integreatly.org
+.PHONY: uninstall/monitoring/cluster
+uninstall/monitoring/cluster:
+	@oc delete namespace $(PER_CLUSTER_PROMETHEUS_NAMESPACE)
+	@oc delete namespace $(PER_CLUSTER_GRAFANA_NAMESPACE)
+	@echo "completed uninstallation of cluster monitoring stack"
 
 .PHONY: install/strimzi/operator
 install/strimzi/operator:
@@ -64,6 +62,10 @@ install/strimzi/operator:
 install/kafka/cr:
 	make -C resources/kafka all
 
-.PHONY: install/global/monitoring
-install/global/monitoring:
+.PHONY: install/monitoring/global
+install/monitoring/global:
 	make -C resources/monitoring-global all
+
+.PHONY: uninstall/monitoring/global
+uninstall/monitoring/global:
+	make -C resources/monitoring-global uninstall

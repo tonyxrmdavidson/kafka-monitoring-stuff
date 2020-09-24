@@ -5,9 +5,12 @@ metadata:
     app: strimzi
     monitoring-key: middleware
   name: strimzi-zookeeper
-  namespace: openshift-kafka
+  namespace: <namespace>
 spec:
   name: strimzi-zookeeper.json
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
   json: |
     {
       "__inputs": [

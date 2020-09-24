@@ -5,9 +5,12 @@ metadata:
     app: strimzi
     monitoring-key: middleware
   name: strimzi-kafka-connect
-  namespace: openshift-kafka
+  namespace: <namespace>
 spec:
   name: strimzi-kafka-connect.json
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
   json: |
     {
       "__inputs": [
@@ -762,7 +765,6 @@ spec:
         ]
       },
       "timezone": "",
-
       "title": "Strimzi Kafka Connect",
       "uid": "rpITwc0mz",
       "version": 6

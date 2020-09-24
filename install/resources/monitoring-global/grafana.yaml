@@ -1,24 +1,4 @@
 ---
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: <name>
-  namespace: <namespace>
-spec:
-  channel: alpha
-  name: grafana-operator
-  source: community-operators
-  sourceNamespace: openshift-marketplace
----
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: <name>
-  namespace: <namespace>
-spec:
-  targetNamespaces:
-    - <namespace>
----
 apiVersion: integreatly.org/v1alpha1
 kind: Grafana
 metadata:
@@ -56,8 +36,8 @@ spec:
       jsonData:
         timeInterval: 5s
         tlsSkipVerify: true
-      name: Prometheus
+      name: Thanos
       type: prometheus
       url: 'http://<querier>.<namespace>.svc.cluster.local:9008'
       version: 1
-  name: middleware.yaml
+  name: kafka.yaml
