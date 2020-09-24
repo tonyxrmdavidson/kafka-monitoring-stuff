@@ -24,7 +24,7 @@ configure/federation:
 	@echo "enabling federation of openshift metrics"
 	@cat ./federation.yaml | sed -e 's/<user>/'"$(OS_PROMETHEUS_USER)"'/g' | \
 		sed -e 's@<pass>@'"$(OS_PROMETHEUS_PASS)"'@g' > additional-scrape-config.yaml
-	@oc create secret generic additional-scrape-configs --from-file=additional-scrape-config.yaml --dry-run=client -oyaml | oc apply -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) -f -
+	@oc create secret generic additional-scrape-configs --from-file=additional-scrape-config.yaml --dry-run -oyaml | oc apply -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) -f -
 	@rm -f ./additional-scrape-config.yaml
 
 .PHONY: configure/grafana
