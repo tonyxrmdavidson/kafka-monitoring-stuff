@@ -58,9 +58,19 @@ uninstall/monitoring/cluster:
 install/strimzi/operator:
 	make -C resources/operator all
 
+.PHONY: uninstall/strimzi/operator
+uninstall/strimzi/operator:
+	@oc delete namespace $(STRIMZI_OPERATOR_NAMESPACE)
+	@echo "completed uninstallation of strimzi operator"
+
 .PHONY: install/kafka/cr
 install/kafka/cr:
 	make -C resources/kafka all
+
+.PHONY: uninstall/kafka/cr
+uninstall/kafka/cr:
+	@oc delete namespace $(KAFKA_CLUSTER_NAMESPACE)
+	@echo "completed uninstallation of kafka cluster"
 
 .PHONY: install/monitoring/global
 install/monitoring/global:
@@ -69,3 +79,9 @@ install/monitoring/global:
 .PHONY: uninstall/monitoring/global
 uninstall/monitoring/global:
 	make -C resources/monitoring-global uninstall
+
+all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
+	@echo "done installing kafka monitoring demo"
+
+clean: uninstall/kafka/cr uninstall/strimzi/operator uninstall/monitoring/global uninstall/monitoring/cluster
+	@echo "done uninstalling kafka monitoring demo"
