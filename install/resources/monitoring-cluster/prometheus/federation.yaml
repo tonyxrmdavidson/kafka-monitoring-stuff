@@ -21,6 +21,7 @@
       - '{__name__=~"node:.*"}'
       - '{__name__=~"instance:.*"}'
       - '{__name__=~"container_memory_.*"}'
+      - '{__name__=~"container_cpu_.*"}'
       - '{__name__=~":node_memory_.*"}'
       - '{__name__=~"csv_.*"}'
   scheme: https
