@@ -1,6 +1,6 @@
 export OS_PROMETHEUS_USER := $(shell oc get secrets -n openshift-monitoring grafana-datasources -o 'go-template={{index .data "prometheus.yaml"}}' | base64 --decode | jq -r '.datasources[0].basicAuthUser')
 export OS_PROMETHEUS_PASS := $(shell oc get secrets -n openshift-monitoring grafana-datasources -o 'go-template={{index .data "prometheus.yaml"}}' | base64 --decode | jq -r '.datasources[0].basicAuthPassword')
-export P_REMOTE_WRITE_URL := $(shell oc get routes -n managed-services-monitoring-global kafka-thanos-receiver-route -ojsonpath='{.spec.host}')
+export PROMETHEUS_REMOTE_WRITE_URL := $(shell oc get routes -n managed-services-monitoring-global kafka-thanos-receiver-route -ojsonpath='{.spec.host}')
 
 .PHONY: create/namespace
 create/namespace:
@@ -14,7 +14,7 @@ create/prometheus:
 		sed -e 's/<name>/$(PER_CLUSTER_PROMETHEUS)/g' | \
 		sed -e 's/<cluster>/$(KAFKA_CLUSTER_NAMESPACE)/g' | \
         sed -e 's/<operator>/$(STRIMZI_OPERATOR_NAMESPACE)/g' | \
-        sed -e 's/<receiver>/'"$(P_REMOTE_WRITE_URL)"'/g' | \
+        sed -e 's/<receiver>/'"$(PROMETHEUS_REMOTE_WRITE_URL)"'/g' | \
 		cat | oc apply -f -
 	@echo "Waiting for the prometheus operator to be ready"
 	@for i in {1..12}; do oc -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) get pod -l k8s-app=prometheus-operator -o name | grep "pod/prometheus-operator" && break || sleep 5; done

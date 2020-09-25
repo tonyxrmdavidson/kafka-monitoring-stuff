@@ -1,4 +1,4 @@
-export KAFKA_PVC_SIZE ?= 10Gi
+export KAFKA_PVC_SIZE ?= 5Gi
 
 export STRIMZI_OPERATOR_NAMESPACE ?= kafka-operator
 export KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster

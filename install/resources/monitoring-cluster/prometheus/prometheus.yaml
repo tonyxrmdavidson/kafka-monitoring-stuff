@@ -105,44 +105,6 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: entity-operator-metrics
-  namespace: <namespace>
-  labels:
-    app: strimzi
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: entity-operator
-  namespaceSelector:
-    matchNames:
-      - <cluster>
-      - <operator>
-  podMetricsEndpoints:
-    - path: /metrics
-      port: healthcheck
----
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: bridge-metrics
-  namespace: <namespace>
-  labels:
-    app: strimzi
-spec:
-  selector:
-    matchLabels:
-      strimzi.io/kind: KafkaBridge
-  namespaceSelector:
-    matchNames:
-      - <cluster>
-      - <operator>
-  podMetricsEndpoints:
-    - path: /metrics
-      port: rest-api
----
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
   name: kafka-metrics
   namespace: <namespace>
   labels:

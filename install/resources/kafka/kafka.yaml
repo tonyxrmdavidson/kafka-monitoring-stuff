@@ -5,7 +5,7 @@ metadata:
   namespace: <NAMESPACE>
 spec:
   kafka:
-    replicas: 1
+    replicas: 3
     listeners:
       plain: {}
       tls: {}
@@ -121,7 +121,7 @@ spec:
         labels:
           quantile: "0.$4"
   zookeeper:
-    replicas: 1
+    replicas: 3
     storage:
       type: persistent-claim
       size: <PVC_SIZE>
