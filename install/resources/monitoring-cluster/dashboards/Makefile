@@ -6,5 +6,6 @@ all:
 	@cat ./strimzi-kafka-mirror-maker-2.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | cat | oc apply -f -
 	@cat ./strimzi-operators.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | cat | oc apply -f -
 	@cat ./strimzi-zookeeper.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | cat | oc apply -f -
+	@cat ./slis.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | cat | oc apply -f -
 
 
