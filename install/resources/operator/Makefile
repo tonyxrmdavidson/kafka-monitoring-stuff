@@ -16,4 +16,6 @@ create/subscription:
 		cat | oc apply -f -
 
 all: create/namespace create/operatorgroup create/subscription
+	@echo "Waiting for Kafka CRD to be created"
+	@for i in {1..12}; do oc get crd kafkas.kafka.strimzi.io && break || sleep 5; done
 	@echo "Done installing strimzi-kafka-operator"

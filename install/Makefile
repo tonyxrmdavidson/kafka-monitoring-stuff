@@ -1,22 +1,31 @@
+export KAFKA_PVC_SIZE ?= 5Gi
+
 export STRIMZI_OPERATOR_NAMESPACE ?= kafka-operator
 export KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
-export KAFKA_PVC_SIZE ?= 10Gi
-PER_CLUSTER_MONITORING_NAMESPACE ?= managed-services-monitoring
-GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
+
+export PER_CLUSTER_PROMETHEUS_NAMESPACE ?= managed-services-monitoring-prometheus
+export PER_CLUSTER_GRAFANA_NAMESPACE ?= managed-services-monitoring-grafana
+export PER_CLUSTER_PROMETHEUS ?= kafka-prometheus
+
+export GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
+export GLOBAL_THANOS_RECEIVER ?= kafka-thanos-receiver
+export GLOBAL_THANOS_QUERIER ?= kafka-thanos-querier
+export GLOBAL_GRAFANA ?= kafka-grafana-global
+
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 
-.PHONY: install/cluster/monitoring
-install/cluster/monitoring:
+.PHONY: install/monitoring/cluster
+install/monitoring/cluster:
   # create yaml files
 	@ mkdir -p ./$(BUILD_DIR)/monitoring-cluster
 	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/operatorgroup.yaml ./$(BUILD_DIR)/monitoring-cluster/
 	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/sub.yaml ./$(BUILD_DIR)/monitoring-cluster/
 	@ cp $(RESOURCE_FILES_DIR)/monitoring-cluster/grafana.yaml ./$(BUILD_DIR)/monitoring-cluster/
-	@ sed -i.bak 's/<PER_CLUSTER_MONITORING_NAMESPACE>/$(PER_CLUSTER_MONITORING_NAMESPACE)/' ./$(BUILD_DIR)/monitoring-cluster/*.yaml
+	@ sed -i.bak 's/<PER_CLUSTER_GRAFANA_NAMESPACE>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/' ./$(BUILD_DIR)/monitoring-cluster/*.yaml
 	
 	# create namepsace
-	@ -oc new-project $(PER_CLUSTER_MONITORING_NAMESPACE)
+	@ -oc new-project $(PER_CLUSTER_GRAFANA_NAMESPACE)
 
 	# create operatorgroup
 	@ oc apply -f ./$(BUILD_DIR)/monitoring-cluster/operatorgroup.yaml
@@ -31,35 +40,48 @@ install/cluster/monitoring:
 	@ oc apply -f ./$(BUILD_DIR)/monitoring-cluster/grafana.yaml
 
 	@ echo "Waiting for grafana pod to be ready"
-	@ for i in {1..12}; do oc -n $(PER_CLUSTER_MONITORING_NAMESPACE) get pod -l app=grafana -o name | grep "pod/grafana-deployment" && break || sleep 5; done
-	@ oc -n $(PER_CLUSTER_MONITORING_NAMESPACE) wait --for=condition=ready pod -l app=grafana
+	@ for i in {1..12}; do oc -n $(PER_CLUSTER_GRAFANA_NAMESPACE) get pod -l app=grafana -o name | grep "pod/grafana-deployment" && break || sleep 5; done
 
-  # cleanup
+	@make -C resources/monitoring-cluster/prometheus all
+	@make -C resources/monitoring-cluster/dashboards all
+
+  	# cleanup
 	@ rm -rf ./$(BUILD_DIR)
 
-.PHONY: uninstall/cluster/monitoring
-uninstall/cluster/monitoring:
-	@ -oc delete project $(PER_CLUSTER_MONITORING_NAMESPACE)
-	@ -oc delete crd grafanas.integreatly.org
-	@ -oc delete crd grafanadatasources.integreatly.org
-	@ -oc delete crd grafanadashboards.integreatly.org
+.PHONY: uninstall/monitoring/cluster
+uninstall/monitoring/cluster:
+	@oc delete namespace $(PER_CLUSTER_PROMETHEUS_NAMESPACE)
+	@oc delete namespace $(PER_CLUSTER_GRAFANA_NAMESPACE)
+	@echo "completed uninstallation of cluster monitoring stack"
 
 .PHONY: install/strimzi/operator
 install/strimzi/operator:
 	make -C resources/operator all
 
-.PHONY: install/strimzi/monitoring
-install/strimzi/monitoring:
-	make -C resources/operator-monitoring all
+.PHONY: uninstall/strimzi/operator
+uninstall/strimzi/operator:
+	@oc delete namespace $(STRIMZI_OPERATOR_NAMESPACE)
+	@echo "completed uninstallation of strimzi operator"
 
 .PHONY: install/kafka/cr
 install/kafka/cr:
 	make -C resources/kafka all
 
-.PHONY: install/kafka/monitoring
-install/kafka/monitoring:
-	make -C resources/kafka-monitoring all
+.PHONY: uninstall/kafka/cr
+uninstall/kafka/cr:
+	@oc delete namespace $(KAFKA_CLUSTER_NAMESPACE)
+	@echo "completed uninstallation of kafka cluster"
 
-.PHONY: install/kafka/global
-install/kafka/global:
-	make -C resources/global all
+.PHONY: install/monitoring/global
+install/monitoring/global:
+	make -C resources/monitoring-global all
+
+.PHONY: uninstall/monitoring/global
+uninstall/monitoring/global:
+	make -C resources/monitoring-global uninstall
+
+all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
+	@echo "done installing kafka monitoring demo"
+
+clean: uninstall/kafka/cr uninstall/strimzi/operator uninstall/monitoring/global uninstall/monitoring/cluster
+	@echo "done uninstalling kafka monitoring demo"

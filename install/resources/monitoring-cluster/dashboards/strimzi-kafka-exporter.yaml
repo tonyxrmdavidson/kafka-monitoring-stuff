@@ -5,9 +5,12 @@ metadata:
     app: strimzi
     monitoring-key: middleware
   name: strimzi-kafka-exporter
-  namespace: openshift-kafka
+  namespace: <namespace>
 spec:
   name: strimzi-kafka-exporter.json
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
   json: |
     {
       "_comment": "Based on https://grafana.com/grafana/dashboards/7589",

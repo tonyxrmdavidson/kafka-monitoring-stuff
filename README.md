@@ -4,33 +4,64 @@
 
 The `install` folder contains resource files and a Makefile to provision a strimzi operator, kafka cluster and our monitoring stack on an openshift cluster.
 
-### Prerequisites
+## Prerequisites
 
-- running openshift 4 cluster and kubeadmin credentials
+- running OpenShift 4 cluster and kubeadmin credentials
 - oc and kubectl binaries
+- oc and kubectl logged in to target cluster
+- jq installed
 
-### Installation via Makefile
+## Installing the kafka monitoring demo
 
-Available `make` targets:
+Run the `all` target:
 
 ```sh
-# install the cluster monitoring base stack
-install/cluster/monitoring
+$ make all
+```
 
-# install the strimzi operator
-install/strimzi/operator
+__NOTE__: the grafana instances are protected via the OpenShift OAuth proxy
+__NOTE__: to gain admin access to grafana, login using the credentials from the `grafana-admin-credentials` secret
 
-# install monitoring resources for strimzi operator
-install/strimzi/monitoring
+to uninstall run the `clean` target:
 
-# install kafka cr
-install/kafka/cr
+```sh
+$ make clean
+```
 
-# install monitoring resources for kafka cr
-install/kafka/monitoring
+__NOTE__: uninstalling the cluster prometheus namespace can take a few minutes
+
+## Where's what?
+
+The following namespaces are created:
+
+* *kafka-operator*: contains the Strimzi operator
+* *kafka-cluster*: contains the Kafka cluster
+* *managed-services-monitoring-global*: contains the global monitoring stack including Grafana, Thanos Receiver and Thanos Querier
+* *managed-services-monitoring-prometheus*: contains the on cluster Prometheus that scrapes Kafka metrics
+* *managed-services-monitoring-grafana*: contains the on cluster Grafana instance
+
+## Installation individual components
+
+Run the targets in the following order:
+
+### Install the strimzi operator
+
+```sh
+$ make install/strimzi/operator
+```
+
+### Create Kafka Cluster
+```sh
+$ make install/kafka/cr
+```
+
+# Install the global monitoring stack
+```sh
+$ make install/monitoring/global
 ```
 
 
-### Manual installation
-
-If a manual installation is preferred follow the manual steps in `install/installation-guide.md`.
+# Install the cluster monitoring stack
+```sh
+$ make install/monitoring/cluster
+```

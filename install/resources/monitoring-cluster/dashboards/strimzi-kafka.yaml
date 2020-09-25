@@ -5,7 +5,7 @@ metadata:
     app: strimzi
     monitoring-key: middleware
   name: strimzi-kafka
-  namespace: openshift-kafka
+  namespace: <namespace>
 spec:
   name: strimzi-kafka.json
   json: |
