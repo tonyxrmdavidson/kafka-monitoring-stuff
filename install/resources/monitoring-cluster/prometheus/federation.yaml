@@ -10,6 +10,10 @@
   params:
     match[]:
       - 'console_url'
+      - 'csv_succeeded'
+      - 'csv_abnormal'
+      - 'cluster_version'
+      - 'ALERTS'
   scheme: https
   tls_config:
     insecure_skip_verify: true
