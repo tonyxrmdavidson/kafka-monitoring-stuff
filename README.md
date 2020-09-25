@@ -9,6 +9,7 @@ The `install` folder contains resource files and a Makefile to provision a strim
 - running OpenShift 4 cluster and kubeadmin credentials
 - oc and kubectl binaries
 - oc and kubectl logged in to target cluster
+- jq installed
 
 ## Installing the kafka monitoring demo
 
