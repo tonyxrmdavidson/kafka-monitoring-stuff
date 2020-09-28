@@ -111,4 +111,4 @@ The following namespaces are created:
 ## Notes
 
 * The Grafana instances are protected by the OpenShift OAuth proxy. Sign in using an OpenShift account with permission to `get` `namespaces`.
-* To sign in to Grafana itself (once passed the proxy), use the credentials from the `grafana-admin-credentials` secret. This is only required if you want to modify dashboards (temporary as dashboards are persisted in GrafanaDashboard CRs & cannot be saved from the Grafana UI)
+* To sign in to Grafana itself (once passed the proxy), use the credentials from the `grafana-admin-credentials` secret in `managed-services-monitoring-grafana` namespace. This is only required if you want to modify dashboards (temporary as dashboards are persisted in GrafanaDashboard CRs & cannot be saved from the Grafana UI)
