@@ -33,7 +33,7 @@ The following things will be installed:
 make all
 ```
 
-### 2) Install *global* components *only*
+<h3>2) Install *global* components *only*</h3>
 
 The following things will be installed:
 
