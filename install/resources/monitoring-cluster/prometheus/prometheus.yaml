@@ -77,7 +77,7 @@ spec:
     - url: 'http://<receiver>/api/v1/receive'
       writeRelabelConfigs:
         - action: keep
-          regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$)
+          regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total)
           sourceLabels:
             - __name__
   serviceMonitorNamespaceSelector: { }
