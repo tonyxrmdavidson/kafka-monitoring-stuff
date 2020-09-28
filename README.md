@@ -1,31 +1,106 @@
 # kafka-monitoring-stuff
 
-## Installation
-
-The `install` folder contains resource files and a Makefile to provision a strimzi operator, kafka cluster and our monitoring stack on an openshift cluster.
+This repo has a set of Make targets for the installation and configuration of Kafka in OSD (using Strimzi), and various components to monitor Kafka.
 
 ## Prerequisites
 
-- running OpenShift 4 cluster and kubeadmin credentials
-- oc and kubectl binaries
-- oc and kubectl logged in to target cluster
+- A running OpenShift 4 cluster with kubeadmin access
+- oc and kubectl binaries, logged in to the OpenShift 4 cluster
 - jq installed
+- (optional) The strimzi-operator is running in the cluster. Make targets exist to do this as well.
+- (optional) A Kafka CR exists & has been reconciled into a running Kafka cluster. Make targets exist to do this as well.
 
-## Installing the kafka monitoring demo
+## Terminology
 
-Run the `all` target:
+- `in-cluster`, `on-cluster`, `cluster-wide` Refer to things in the same cluster as the Strimzi operator & all the Kafka CRs it's managing
+- `global`, `central`, `centralised` Refer to things that are *not* in the same cluster as the Strimzi operator. Typically only 1 instance of these things.
+
+## Installation Options
+
+There are a number of installation options depending on how much of the stack is *already* running in your cluster, and how much you want to *get* running.
+The options are available as separate `make` targets from the `install` folder.
 
 ```sh
-$ make all
+cd install
 ```
 
-__NOTE__: the grafana instances are protected via the OpenShift OAuth proxy
-__NOTE__: to gain admin access to grafana, login using the credentials from the `grafana-admin-credentials` secret
+### 1) Install *everything*
 
-to uninstall run the `clean` target:
+**Caution:** You probably don't want to do this. Consider installing just the in-cluster components or just the global components in a single cluster.
+
+The following things will be installed:
+
+* global monitoring components for centralised metrics
+* cluster-wide monitoring components, configured to send metrics centrally
+* strimzi operator
+* strimzi monitoring components to hook into cluster-wide monitoring components
+* a kafka cluster
 
 ```sh
-$ make clean
+make all
+```
+
+<h3>2) Install <em>global</em> components <em>only</em></h3>
+
+The following things will be installed:
+
+* global monitoring components for centralised metrics
+
+```sh
+make install/monitoring/global
+```
+
+### 3) Install *in-cluster* components *only*
+
+The following things will be installed:
+
+* cluster-wide monitoring components, configured to send metrics centrally
+* strimzi operator
+* strimzi monitoring components to hook into cluster-wide monitoring components
+* a kafka cluster
+
+```sh
+make install/strimzi/operator
+make install/monitoring/cluster
+make install/kafka/cr
+```
+
+### 4) Install *in-cluster* strimzi & kafka components *only* (no monitoring)
+
+The following things will be installed:
+
+* strimzi operator
+* a kafka cluster
+
+```sh
+make install/strimzi/operator
+make install/kafka/cr
+```
+
+### 5) Install *in-cluster* monitoring components *only*
+
+This option is useful if you already have a cluster with the strimzi operator running & a Kafka CR.
+
+The following things will be installed:
+
+* cluster-wide monitoring components, configured to send metrics centrally
+* strimzi monitoring components to hook into cluster-wide monitoring components
+
+
+```sh
+make install/monitoring/cluster
+```
+
+To specify which namespace strimzi & kafka are in, run the cmd with the following vars:
+
+```sh
+STRIMZI_OPERATOR_NAMESPACE=my-strimzi-ns KAFKA_CLUSTER_NAMESPACE=my-kafka-ns make install/monitoring/cluster
+```
+
+## Uninstallation
+
+```sh
+make clean
 ```
 
 __NOTE__: uninstalling the cluster prometheus namespace can take a few minutes
@@ -40,28 +115,7 @@ The following namespaces are created:
 * *managed-services-monitoring-prometheus*: contains the on cluster Prometheus that scrapes Kafka metrics
 * *managed-services-monitoring-grafana*: contains the on cluster Grafana instance
 
-## Installation individual components
+## Notes
 
-Run the targets in the following order:
-
-### Install the strimzi operator
-
-```sh
-$ make install/strimzi/operator
-```
-
-### Create Kafka Cluster
-```sh
-$ make install/kafka/cr
-```
-
-# Install the global monitoring stack
-```sh
-$ make install/monitoring/global
-```
-
-
-# Install the cluster monitoring stack
-```sh
-$ make install/monitoring/cluster
-```
+* The Grafana instances are protected by the OpenShift OAuth proxy. Sign in using an OpenShift account with permission to `get` `namespaces`.
+* To sign in to Grafana itself (once passed the proxy), use the credentials from the `grafana-admin-credentials` secret in `managed-services-monitoring-grafana` namespace. This is only required if you want to modify dashboards (temporary as dashboards are persisted in GrafanaDashboard CRs & cannot be saved from the Grafana UI)
