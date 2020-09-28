@@ -12,6 +12,7 @@
       - 'console_url'
       - 'cluster_version'
       - 'ALERTS'
+      - 'subscription_sync_total'
       - 'kubelet_volume_stats_used_bytes{endpoint="https-metrics",namespace=~"kafka.*"}'
       - 'kubelet_volume_stats_available_bytes{endpoint="https-metrics",namespace=~"kafka.*"}'
       - 'kubelet_volume_stats_capacity_bytes{endpoint="https-metrics",namespace=~"kafka.*"}'
