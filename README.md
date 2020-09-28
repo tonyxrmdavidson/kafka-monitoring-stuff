@@ -17,6 +17,13 @@ This repo has a set of Make targets for the installation and configuration of Ka
 
 ## Installation Options
 
+There are a number of installation options depending on how much of the stack is *already* running in your cluster, and how much you want to *get* running.
+The options are available as separate `make` targets from the `install` folder.
+
+```sh
+cd install
+```
+
 ### 1) Install *everything*
 
 **Caution:** You probably don't want to do this. Consider installing just the in-cluster components or just the global components in a single cluster.
@@ -33,7 +40,7 @@ The following things will be installed:
 make all
 ```
 
-<h3>2) Install *global* components *only*</h3>
+<h3>2) Install <em>global</em> components <em>only</em></h3>
 
 The following things will be installed:
 
