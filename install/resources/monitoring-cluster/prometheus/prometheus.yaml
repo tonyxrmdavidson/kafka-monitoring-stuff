@@ -64,6 +64,8 @@ subjects:
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
+  labels:
+    app: strimzi
   name: <name>
   namespace: <namespace>
 spec:
@@ -80,6 +82,8 @@ spec:
           regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total)
           sourceLabels:
             - __name__
+  ruleSelector: {}
+  ruleNamespaceSelector: {}
   serviceMonitorNamespaceSelector: { }
   serviceMonitorSelector: { }
 ---
