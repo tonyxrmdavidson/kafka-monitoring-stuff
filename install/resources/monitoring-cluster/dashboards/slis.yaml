@@ -132,7 +132,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*kafka.*\"}",
+              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*kafka.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -195,7 +195,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*kafka.*\"}",
+              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*kafka.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -307,7 +307,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*zookeeper.*\"}",
+              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*zookeeper.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -370,7 +370,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*zookeeper.*\"}",
+              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*zookeeper.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -1834,6 +1834,6 @@ spec:
       },
       "timezone": "",
       "title": "SLIs",
-      "uid": "nYeS07KMz",
-      "version": 6
+      "uid": "5a1dddcb1b71d1bb329f57b885221d42",
+      "version": 2
     }
