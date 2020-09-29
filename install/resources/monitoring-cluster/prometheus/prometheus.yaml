@@ -64,6 +64,8 @@ subjects:
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
+  labels:
+    app: strimzi
   name: <name>
   namespace: <namespace>
 spec:
