@@ -10,35 +10,57 @@ spec:
     type: "elasticsearch"
     retentionPolicy:
       application:
-        maxAge: <age>
+        maxAge: 1d
       infra:
-        maxAge: <age>
+        maxAge: 1d
       audit:
-        maxAge: <age>
+        maxAge: 1d
     elasticsearch:
       nodeCount: 1
+      nodeSelector:
+        openshift-logging/storage: 'true'
+      tolerations:
+        - effect: NoSchedule
+          key: openshift-logging/storage
+          operator: Equal
+          value: 'true'
       resources:
         limits:
-          memory: 2Gi
+          memory: 6Gi
         requests:
           cpu: 100m
-          memory: 1Gi
+          memory: 2Gi
       storage:
-        size: <size>
+        storageClassName: "gp2"
+        size: "60G"
       redundancyPolicy: "ZeroRedundancy"
   visualization:
     type: "kibana"
     kibana:
-      replicas: 1
+      nodeSelector:
+        openshift-logging/storage: 'true'
+      tolerations:
+        - effect: NoSchedule
+          key: openshift-logging/storage
+          operator: Equal
+          value: 'true'
       resources:
         limits:
           memory: 2Gi
         requests:
           cpu: 100m
           memory: 1Gi
+      replicas: 1
   curation:
     type: "curator"
     curator:
+      nodeSelector:
+        openshift-logging/storage: 'true'
+      tolerations:
+        - effect: NoSchedule
+          key: openshift-logging/storage
+          operator: Equal
+          value: 'true'
       schedule: "* */3 * * *"
   collection:
     logs:
