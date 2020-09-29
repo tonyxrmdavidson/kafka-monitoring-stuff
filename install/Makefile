@@ -12,6 +12,9 @@ export GLOBAL_THANOS_RECEIVER ?= kafka-thanos-receiver
 export GLOBAL_THANOS_QUERIER ?= kafka-thanos-querier
 export GLOBAL_GRAFANA ?= kafka-grafana-global
 
+export LOGS_MAX_AGE ?= 1d
+export LOGS_STORAGE ?= 60G
+
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 
@@ -75,6 +78,14 @@ uninstall/kafka/cr:
 .PHONY: install/monitoring/global
 install/monitoring/global:
 	make -C resources/monitoring-global all
+
+.PHONY: install/logging
+install/logging:
+	make -C resources/logging all
+
+.PHONY: uninstall/logging
+uninstall/logging:
+	make -C resources/logging clean
 
 .PHONY: uninstall/monitoring/global
 uninstall/monitoring/global:
