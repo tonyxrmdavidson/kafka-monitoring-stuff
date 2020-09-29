@@ -66,6 +66,7 @@ spec:
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
+      "iteration": 1601381390204,
       "links": [],
       "panels": [
         {
@@ -132,7 +133,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*kafka.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -195,7 +196,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*kafka.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -307,7 +308,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*zookeeper.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -370,7 +371,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"kafka-cluster\", condition=\"true\", pod=~\".*zookeeper.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -1812,7 +1813,30 @@ spec:
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "allValue": null,
+            "current": {},
+            "datasource": "${DS_PROMETHEUS}",
+            "definition": "query_result(kafka_server_replicamanager_leadercount)",
+            "hide": 0,
+            "includeAll": false,
+            "label": "Namespace",
+            "multi": false,
+            "name": "kubernetes_namespace",
+            "options": [],
+            "query": "query_result(kafka_server_replicamanager_leadercount)",
+            "refresh": 1,
+            "regex": "/.*namespace=\"([^\"]*).*/",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          }
+        ]
       },
       "time": {
         "from": "now-3h",
@@ -1835,5 +1859,5 @@ spec:
       "timezone": "",
       "title": "SLIs",
       "uid": "5a1dddcb1b71d1bb329f57b885221d42",
-      "version": 2
+      "version": 4
     }
