@@ -32,5 +32,10 @@ configure/grafana:
 	@echo "creating grafana data souroce"
 	@cat ./datasource.yaml | sed -e 's/<url>/'"$(PER_CLUSTER_PROMETHEUS_NAMESPACE)"'/g' | cat | oc apply -n $(PER_CLUSTER_GRAFANA_NAMESPACE) -f -
 
-all: create/namespace create/prometheus configure/federation configure/grafana
+.PHONY: create/prometheusrules
+create/prometheusrules:
+	@echo "creating prometheusrules"
+	@sed 's/<namespace>/$(PER_CLUSTER_PROMETHEUS_NAMESPACE)/g' ./prometheus-rules.yaml | cat | oc apply -f -
+
+all: create/namespace create/prometheus configure/federation configure/grafana create/prometheusrules
 	@echo "finished setup of cluster metrics collection"
