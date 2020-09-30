@@ -13,7 +13,7 @@ create/prometheus:
 	@cat ./prometheus.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_PROMETHEUS_NAMESPACE)/g' | \
 		sed -e 's/<name>/$(PER_CLUSTER_PROMETHEUS)/g' | \
 		sed -e 's/<cluster>/$(KAFKA_CLUSTER_NAMESPACE)/g' | \
-		sed -e 's/<cluster_id>/$(CLUSTER_ID)/g' | \
+		sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
         sed -e 's/<operator>/$(STRIMZI_OPERATOR_NAMESPACE)/g' | \
         sed -e 's/<receiver>/'"$(PROMETHEUS_REMOTE_WRITE_URL)"'/g' | \
 		cat | oc apply -f -
