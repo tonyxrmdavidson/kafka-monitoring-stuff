@@ -15,6 +15,8 @@ export GLOBAL_GRAFANA ?= kafka-grafana-global
 export LOGS_MAX_AGE ?= 1d
 export LOGS_STORAGE ?= 60G
 
+export CLUSTER_ID ?= xyz1
+
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
 

@@ -75,6 +75,8 @@ spec:
     name: additional-scrape-configs
   podMonitorNamespaceSelector: { }
   podMonitorSelector: { }
+  externalLabels:
+    cluster_id: <cluster__id>
   remoteWrite:
     - url: 'http://<receiver>/api/v1/receive'
       writeRelabelConfigs:

@@ -66,6 +66,8 @@ spec:
     logs:
       type: "fluentd"
       fluentd:
+        nodeSelector:
+          openshift-logging/storage: 'true'
         resources:
           limits:
             cpu: 250m
