@@ -66,7 +66,7 @@ spec:
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1601381390207,
+      "iteration": 1601619846051,
       "links": [],
       "panels": [
         {
@@ -133,7 +133,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -196,7 +196,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -308,7 +308,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -371,7 +371,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper.*\"})",
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
               "format": "time_series",
               "legendFormat": "",
               "refId": "A"
@@ -1859,5 +1859,5 @@ spec:
       "timezone": "",
       "title": "SLIs",
       "uid": "5a1dddcb1b71d1bb329f57b885221d42",
-      "version": 5
+      "version": 3
     }
