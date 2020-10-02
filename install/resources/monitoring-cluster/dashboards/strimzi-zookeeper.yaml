@@ -146,7 +146,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(zookeeper_quorumsize{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\"})",
+              "expr": "max(zookeeper_quorum_size{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
@@ -284,7 +284,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "zookeeper_outstandingrequests{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
+              "expr": "zookeeper_outstanding_requests{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -393,7 +393,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "avg(zookeeper_inmemorydatatree_nodecount{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\"})",
+              "expr": "avg(zookeeper_in_memory_data_tree_node_count{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
@@ -474,7 +474,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(zookeeper_inmemorydatatree_watchcount{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"})",
+              "expr": "sum(zookeeper_in_memory_data_tree_watch_count{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
@@ -1038,7 +1038,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "zookeeper_minrequestlatency{namespace=\"$kubernetes_namespace\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
+              "expr": "zookeeper_min_request_latency{namespace=\"$kubernetes_namespace\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{kubernetes_pod_name}}",
@@ -1123,7 +1123,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "zookeeper_avgrequestlatency{namespace=\"$kubernetes_namespace\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
+              "expr": "zookeeper_avg_request_latency{namespace=\"$kubernetes_namespace\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{kubernetes_pod_name}}",
@@ -1208,7 +1208,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "zookeeper_maxrequestlatency{namespace=\"$kubernetes_namespace\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
+              "expr": "zookeeper_max_request_latency{namespace=\"$kubernetes_namespace\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"}",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{kubernetes_pod_name}}",
@@ -1276,7 +1276,7 @@ spec:
             "multi": false,
             "name": "kubernetes_namespace",
             "options": [],
-            "query": "query_result(zookeeper_inmemorydatatree_nodecount)",
+            "query": "query_result(zookeeper_in_memory_data_tree_node_count)",
             "refresh": 1,
             "regex": "/.*namespace=\"([^\"]*).*/",
             "sort": 0,
@@ -1296,7 +1296,7 @@ spec:
             "multi": false,
             "name": "strimzi_cluster_name",
             "options": [],
-            "query": "query_result(zookeeper_inmemorydatatree_nodecount{namespace=\"$kubernetes_namespace\"})",
+            "query": "query_result(zookeeper_in_memory_data_tree_node_count{namespace=\"$kubernetes_namespace\"})",
             "refresh": 1,
             "regex": "/.*strimzi_io_cluster=\"([^\"]*).*/",
             "sort": 0,
@@ -1316,7 +1316,7 @@ spec:
             "multi": false,
             "name": "zk_node",
             "options": [],
-            "query": "query_result(zookeeper_inmemorydatatree_nodecount{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\"})",
+            "query": "query_result(zookeeper_in_memory_data_tree_node_count{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\"})",
             "refresh": 1,
             "regex": "/.*statefulset_kubernetes_io_pod_name=\"$strimzi_cluster_name-([^\"]*).*/",
             "sort": 0,

@@ -485,7 +485,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kafka_cluster_partition_atminisr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_cluster_partition_at_min_isr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -550,7 +550,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_cluster_partition_atminisr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_cluster_partition_at_min_isr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -661,7 +661,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kafka_cluster_partition_underminisr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_cluster_partition_under_min_isr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -723,7 +723,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_cluster_partition_underminisr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_cluster_partition_under_min_isr{partition=\"0\", namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -834,7 +834,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kafka_server_replicamanager_underreplicatedpartitions{namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_server_replicamanager_under_replicated_partitions{namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -896,7 +896,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_server_replicamanager_underreplicatedpartitions{namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_server_replicamanager_under_replicated_partitions{namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -1007,7 +1007,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kafka_controller_kafkacontroller_activecontrollercount{namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_controller_kafkacontroller_active_controller_count{namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -1069,7 +1069,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kafka_controller_kafkacontroller_activecontrollercount{namespace=\"$kubernetes_namespace\"})",
+              "expr": "sum(kafka_controller_kafkacontroller_active_controller_count{namespace=\"$kubernetes_namespace\"})",
               "legendFormat": "",
               "refId": "A"
             }
@@ -1181,7 +1181,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "1 - sum(sum_over_time(kafka_controller_kafkacontroller_offlinepartitionscount{namespace=\"$kubernetes_namespace\"}[7d])) / sum(sum_over_time(kafka_controller_kafkacontroller_globalpartitioncount{namespace=\"$kubernetes_namespace\"}[7d]))",
+              "expr": "1 - sum(sum_over_time(kafka_controller_kafkacontroller_offline_partitions_count{namespace=\"$kubernetes_namespace\"}[7d])) / sum(sum_over_time(kafka_controller_kafkacontroller_global_partition_count{namespace=\"$kubernetes_namespace\"}[7d]))",
               "refId": "A"
             }
           ],
@@ -1244,7 +1244,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "1 - sum(sum_over_time(kafka_controller_kafkacontroller_offlinepartitionscount{namespace=\"$kubernetes_namespace\"}[7d])) / sum(sum_over_time(kafka_controller_kafkacontroller_globalpartitioncount{namespace=\"$kubernetes_namespace\"}[7d]))",
+              "expr": "1 - sum(sum_over_time(kafka_controller_kafkacontroller_offline_partitions_count{namespace=\"$kubernetes_namespace\"}[7d])) / sum(sum_over_time(kafka_controller_kafkacontroller_global_partition_count{namespace=\"$kubernetes_namespace\"}[7d]))",
               "refId": "A"
             }
           ],
@@ -1354,7 +1354,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kafka_network_requestmetrics_totaltimems{quantile=\"0.95\", request=\"Produce\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"Produce\", namespace=\"$kubernetes_namespace\"})",
               "refId": "A"
             }
           ],
@@ -1417,7 +1417,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(kafka_network_requestmetrics_totaltimems{quantile=\"0.95\", request=\"Produce\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"Produce\", namespace=\"$kubernetes_namespace\"})",
               "refId": "A"
             }
           ],
@@ -1527,7 +1527,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kafka_network_requestmetrics_totaltimems{quantile=\"0.95\", request=\"FetchConsumer\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchConsumer\", namespace=\"$kubernetes_namespace\"})",
               "refId": "A"
             }
           ],
@@ -1590,7 +1590,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(kafka_network_requestmetrics_totaltimems{quantile=\"0.95\", request=\"FetchConsumer\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchConsumer\", namespace=\"$kubernetes_namespace\"})",
               "refId": "A"
             }
           ],
@@ -1700,7 +1700,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kafka_network_requestmetrics_totaltimems{quantile=\"0.95\", request=\"FetchFollower\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchFollower\", namespace=\"$kubernetes_namespace\"})",
               "refId": "A"
             }
           ],
@@ -1763,7 +1763,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(kafka_network_requestmetrics_totaltimems{quantile=\"0.95\", request=\"FetchFollower\", namespace=\"$kubernetes_namespace\"})",
+              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchFollower\", namespace=\"$kubernetes_namespace\"})",
               "refId": "A"
             }
           ],
@@ -1818,14 +1818,14 @@ spec:
             "allValue": null,
             "current": {},
             "datasource": "${DS_PROMETHEUS}",
-            "definition": "query_result(kafka_server_replicamanager_leadercount)",
+            "definition": "query_result(kafka_server_replicamanager_leader_count)",
             "hide": 0,
             "includeAll": false,
             "label": "Namespace",
             "multi": false,
             "name": "kubernetes_namespace",
             "options": [],
-            "query": "query_result(kafka_server_replicamanager_leadercount)",
+            "query": "query_result(kafka_server_replicamanager_leader_count)",
             "refresh": 1,
             "regex": "/.*namespace=\"([^\"]*).*/",
             "skipUrlSync": false,
