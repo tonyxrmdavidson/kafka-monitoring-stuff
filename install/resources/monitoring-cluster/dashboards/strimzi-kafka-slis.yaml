@@ -66,9 +66,95 @@ spec:
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1601619846051,
+      "iteration": 1601893586760,
       "links": [],
       "panels": [
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": "${DS_PROMETHEUS}",
+          "decimals": 3,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 0
+          },
+          "id": 35,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "options": {},
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false,
+            "ymax": null,
+            "ymin": null
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "avg_over_time((absent(kube_namespace_status_phase{namespace=\"$kubernetes_namespace\"}) or max by(namespace) (kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"}) or (0 * max by(namespace) (sum_over_time(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"}[7d]))))[7d:1m])",
+              "format": "time_series",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Kafka Availability",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
         {
           "cacheTimeout": null,
           "colorBackground": false,
@@ -89,8 +175,8 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
-            "x": 0,
+            "w": 3,
+            "x": 3,
             "y": 0
           },
           "id": 33,
@@ -164,8 +250,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 0
           },
           "hiddenSeries": false,
@@ -254,6 +340,92 @@ spec:
             "#d44a3a"
           ],
           "datasource": "${DS_PROMETHEUS}",
+          "decimals": 3,
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 0,
+            "y": 5
+          },
+          "id": 51,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "options": {},
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false,
+            "ymax": null,
+            "ymin": null
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "avg_over_time((absent(kube_namespace_status_phase{namespace=\"$kubernetes_namespace\"}) or max by(namespace) (kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"}) or (0 * max by(namespace) (sum_over_time(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"}[7d]))))[7d:1m])",
+              "format": "time_series",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Zookeeper Availability",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": "${DS_PROMETHEUS}",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -264,11 +436,11 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
-            "x": 0,
+            "w": 3,
+            "x": 3,
             "y": 5
           },
-          "id": 35,
+          "id": 50,
           "interval": null,
           "links": [],
           "mappingType": 1,
@@ -339,8 +511,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 5
           },
           "hiddenSeries": false,
@@ -440,7 +612,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 10
           },
@@ -517,8 +689,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 10
           },
           "hiddenSeries": false,
@@ -617,7 +789,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 15
           },
@@ -692,8 +864,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 15
           },
           "hiddenSeries": false,
@@ -790,7 +962,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 20
           },
@@ -865,8 +1037,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 20
           },
           "hiddenSeries": false,
@@ -963,7 +1135,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 25
           },
@@ -1038,8 +1210,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 25
           },
           "hiddenSeries": false,
@@ -1137,7 +1309,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 30
           },
@@ -1188,7 +1360,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka - Quality - Partitions Online",
+          "title": "Quality - Partitions Online",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1212,8 +1384,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 30
           },
           "hiddenSeries": false,
@@ -1252,7 +1424,7 @@ spec:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Kafka - Quality - Partitions Online",
+          "title": "Quality - Partitions Online",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1310,7 +1482,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 35
           },
@@ -1361,7 +1533,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka - Latency - 95% of producer requests < x ms",
+          "title": "Latency - 95% of producer requests < x ms",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1385,8 +1557,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 35
           },
           "hiddenSeries": false,
@@ -1425,7 +1597,7 @@ spec:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Kafka - Latency - 95% of producer requests < x ms",
+          "title": "Latency - 95% of producer requests < x ms",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1483,7 +1655,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 40
           },
@@ -1534,7 +1706,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka - Latency - 95% of fetch consumer requests < x ms",
+          "title": "Latency - 95% of fetch consumer requests < x ms",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1558,8 +1730,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 40
           },
           "hiddenSeries": false,
@@ -1598,7 +1770,7 @@ spec:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Kafka - Latency - 95% of fetch consumer requests < x ms",
+          "title": "Latency - 95% of fetch consumer requests < x ms",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1656,7 +1828,7 @@ spec:
           },
           "gridPos": {
             "h": 5,
-            "w": 5,
+            "w": 6,
             "x": 0,
             "y": 45
           },
@@ -1707,7 +1879,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka - Latency - 95% of fetch follower requests < x ms",
+          "title": "Latency - 95% of fetch follower requests < x ms",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1731,8 +1903,8 @@ spec:
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 19,
-            "x": 5,
+            "w": 18,
+            "x": 6,
             "y": 45
           },
           "hiddenSeries": false,
@@ -1771,7 +1943,7 @@ spec:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Kafka - Latency - 95% of fetch follower requests < x ms",
+          "title": "Latency - 95% of fetch follower requests < x ms",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1859,5 +2031,5 @@ spec:
       "timezone": "",
       "title": "SLIs",
       "uid": "5a1dddcb1b71d1bb329f57b885221d42",
-      "version": 3
+      "version": 4
     }
