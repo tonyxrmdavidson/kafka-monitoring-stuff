@@ -70,7 +70,7 @@ spec:
       },
       "editable": true,
       "gnetId": null,
-      "graphTooltip": 0,
+      "graphTooltip": 2,
       "id": null,
       "iteration": 1601988122045,
       "links": [],
