@@ -66,7 +66,7 @@ spec:
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1601893586760,
+      "iteration": 1601986204098,
       "links": [],
       "panels": [
         {
@@ -143,7 +143,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka Availability",
+          "title": "Kafka Availability (last 7 days)",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -404,7 +404,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Zookeeper Availability",
+          "title": "Zookeeper Availability (last 7 days)",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -2011,7 +2011,7 @@ spec:
         ]
       },
       "time": {
-        "from": "now-3h",
+        "from": "now-24h",
         "to": "now"
       },
       "timepicker": {
@@ -2031,5 +2031,5 @@ spec:
       "timezone": "",
       "title": "SLIs",
       "uid": "5a1dddcb1b71d1bb329f57b885221d42",
-      "version": 4
+      "version": 5
     }
