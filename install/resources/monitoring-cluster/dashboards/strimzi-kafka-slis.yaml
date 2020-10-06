@@ -47,6 +47,12 @@ spec:
           "id": "singlestat",
           "name": "Singlestat",
           "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "text",
+          "name": "Text",
+          "version": ""
         }
       ],
       "annotations": {
@@ -66,9 +72,27 @@ spec:
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1601986204098,
+      "iteration": 1601988122045,
       "links": [],
       "panels": [
+        {
+          "content": "\n# Availability (7 days)\n\n- Kafka Availability\n  - Based on at least 1 kafka borker pod being in a ready state\n- Zookeeper Availability\n  - Based on at least 1 zookeeper pod being in a ready state\n\n\n\n",
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 10,
+            "w": 4,
+            "x": 0,
+            "y": 0
+          },
+          "id": 53,
+          "mode": "markdown",
+          "options": {},
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
         {
           "cacheTimeout": null,
           "colorBackground": false,
@@ -89,9 +113,9 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 5,
+            "h": 3,
             "w": 3,
-            "x": 0,
+            "x": 4,
             "y": 0
           },
           "id": 35,
@@ -143,7 +167,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka Availability (last 7 days)",
+          "title": "Kafka Availability",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -154,6 +178,96 @@ spec:
             }
           ],
           "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 5,
+            "w": 17,
+            "x": 7,
+            "y": 0
+          },
+          "hiddenSeries": false,
+          "id": 44,
+          "interval": "",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
+              "format": "time_series",
+              "legendFormat": "Number of pods ready",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "7d",
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Kafka pods ready",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": 0,
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "cacheTimeout": null,
@@ -174,10 +288,10 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 5,
+            "h": 2,
             "w": 3,
-            "x": 3,
-            "y": 0
+            "x": 4,
+            "y": 3
           },
           "id": 33,
           "interval": null,
@@ -241,96 +355,6 @@ spec:
           "valueName": "current"
         },
         {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 5,
-            "w": 18,
-            "x": 6,
-            "y": 0
-          },
-          "hiddenSeries": false,
-          "id": 44,
-          "interval": "",
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
-              "format": "time_series",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Kafka pods ready",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "decimals": null,
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
           "cacheTimeout": null,
           "colorBackground": false,
           "colorValue": false,
@@ -350,9 +374,9 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 5,
+            "h": 3,
             "w": 3,
-            "x": 0,
+            "x": 4,
             "y": 5
           },
           "id": 51,
@@ -404,7 +428,7 @@ spec:
           "thresholds": "",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Zookeeper Availability (last 7 days)",
+          "title": "Zookeeper Availability",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -415,6 +439,96 @@ spec:
             }
           ],
           "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 5,
+            "w": 17,
+            "x": 7,
+            "y": 5
+          },
+          "hiddenSeries": false,
+          "id": 45,
+          "interval": "",
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
+              "format": "time_series",
+              "legendFormat": "Number of pods ready",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "7d",
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Zookeeper pods ready",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": 0,
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "cacheTimeout": null,
@@ -435,10 +549,10 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 5,
+            "h": 2,
             "w": 3,
-            "x": 3,
-            "y": 5
+            "x": 4,
+            "y": 8
           },
           "id": 50,
           "interval": null,
@@ -500,96 +614,6 @@ spec:
             }
           ],
           "valueName": "current"
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 5,
-            "w": 18,
-            "x": 6,
-            "y": 5
-          },
-          "hiddenSeries": false,
-          "id": 45,
-          "interval": "",
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
-              "format": "time_series",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Zookeeper pods ready",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "decimals": null,
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
         },
         {
           "cacheTimeout": null,
@@ -2011,7 +2035,7 @@ spec:
         ]
       },
       "time": {
-        "from": "now-24h",
+        "from": "now-2d",
         "to": "now"
       },
       "timepicker": {
@@ -2031,5 +2055,5 @@ spec:
       "timezone": "",
       "title": "SLIs",
       "uid": "5a1dddcb1b71d1bb329f57b885221d42",
-      "version": 5
+      "version": 6
     }
