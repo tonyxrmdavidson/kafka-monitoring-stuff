@@ -227,7 +227,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(zookeeper_numaliveconnections{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"})",
+              "expr": "sum(zookeeper_num_alive_connections{namespace=\"$kubernetes_namespace\",strimzi_io_cluster=\"$strimzi_cluster_name\",strimzi_io_kind=\"Kafka\",kubernetes_pod_name=~\"$strimzi_cluster_name-$zk_node\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
