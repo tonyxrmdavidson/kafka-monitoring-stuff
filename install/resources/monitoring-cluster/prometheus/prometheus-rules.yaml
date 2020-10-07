@@ -18,7 +18,7 @@ spec:
         summary: 'Kafka is running out of free disk space'
         description: 'There are only {{ $value }} bytes available at {{ $labels.persistentvolumeclaim }} PVC'
     - alert: UnderReplicatedPartitions
-      expr: kafka_server_replicamanager_underreplicatedpartitions > 0
+      expr: kafka_server_replicamanager_under_replicated_partitions > 0
       for: 10s
       labels:
         severity: warning
@@ -26,7 +26,7 @@ spec:
         summary: 'Kafka under replicated partitions'
         description: 'There are {{ $value }} under replicated partitions on {{ $labels.kubernetes_pod_name }}'
     - alert: AbnormalControllerState
-      expr: sum(kafka_controller_kafkacontroller_activecontrollercount) != 1
+      expr: sum(kafka_controller_kafkacontroller_active_controller_count) != 1
       for: 10s
       labels:
         severity: warning
@@ -34,7 +34,7 @@ spec:
         summary: 'Kafka abnormal controller state'
         description: 'There are {{ $value }} active controllers in the cluster'
     - alert: OfflinePartitions
-      expr: sum(kafka_controller_kafkacontroller_offlinepartitionscount) > 0
+      expr: sum(kafka_controller_kafkacontroller_offline_partitions_count) > 0
       for: 10s
       labels:
         severity: warning
@@ -42,7 +42,7 @@ spec:
         summary: 'Kafka offline partitions'
         description: 'One or more partitions have no leader'
     - alert: UnderMinIsrPartitionCount
-      expr: kafka_server_replicamanager_underminisrpartitioncount > 0
+      expr: kafka_server_replicamanager_under_min_isr_partition_count > 0
       for: 10s
       labels:
         severity: warning
@@ -50,7 +50,7 @@ spec:
         summary: 'Kafka under min ISR partitions'
         description: 'There are {{ $value }} partitions under the min ISR on {{ $labels.kubernetes_pod_name }}'
     - alert: OfflineLogDirectoryCount
-      expr: kafka_log_logmanager_offlinelogdirectorycount > 0
+      expr: kafka_log_logmanager_offline_log_directory_count > 0
       for: 10s
       labels:
         severity: warning
@@ -92,7 +92,7 @@ spec:
   - name: zookeeper
     rules:
     - alert: AvgRequestLatency
-      expr: zookeeper_avgrequestlatency > 10
+      expr: zookeeper_avg_request_latency > 10
       for: 10s
       labels:
         severity: warning
@@ -100,7 +100,7 @@ spec:
         summary: 'Zookeeper average request latency'
         description: 'The average request latency is {{ $value }} on {{ $labels.kubernetes_pod_name }}'
     - alert: OutstandingRequests
-      expr: zookeeper_outstandingrequests > 10
+      expr: zookeeper_outstanding_requests > 10
       for: 10s
       labels:
         severity: warning

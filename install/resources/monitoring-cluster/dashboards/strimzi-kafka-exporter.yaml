@@ -530,7 +530,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kafka_cluster_partition_atminisr{topic=~\"$topic\"})",
+              "expr": "sum(kafka_cluster_partition_at_min_isr{topic=~\"$topic\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
@@ -612,7 +612,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kafka_cluster_partition_underminisr{topic=~\"$topic\"})",
+              "expr": "sum(kafka_cluster_partition_under_min_isr{topic=~\"$topic\"})",
               "format": "time_series",
               "intervalFactor": 1,
               "refId": "A"
