@@ -11,6 +11,8 @@ export GLOBAL_MONITORING_NAMESPACE ?= managed-services-monitoring-global
 export GLOBAL_THANOS_RECEIVER ?= kafka-thanos-receiver
 export GLOBAL_THANOS_QUERIER ?= kafka-thanos-querier
 export GLOBAL_GRAFANA ?= kafka-grafana-global
+export GLOBAL_LOKI ?= kafka-loki-global
+
 
 export LOGS_MAX_AGE ?= 1d
 export LOGS_STORAGE ?= 60G
