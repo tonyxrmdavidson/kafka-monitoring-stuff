@@ -335,6 +335,7 @@ spec:
             {
               "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
               "format": "time_series",
+              "instant": true,
               "legendFormat": "",
               "refId": "A"
             }
@@ -596,6 +597,7 @@ spec:
             {
               "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
               "format": "time_series",
+              "instant": true,
               "legendFormat": "",
               "refId": "A"
             }
