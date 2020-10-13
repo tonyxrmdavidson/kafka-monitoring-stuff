@@ -41,6 +41,7 @@ create/loki:
 create/dashboards:
 	@echo "creating global kafka dashboards"
 	@cat ./dashboards/fleet.yaml | sed -e 's/<namespace>/$(GLOBAL_MONITORING_NAMESPACE)/g' | cat | oc apply -f -
+	@cat ./dashboards/logs.yaml | sed -e 's/<namespace>/$(GLOBAL_MONITORING_NAMESPACE)/g' | cat | oc apply -f -
 
 all: create/namespace create/thanos/receiver create/thanos/querier create/grafana create/dashboards create/loki
 	@echo "Done installing fleet wide monitoring stack"

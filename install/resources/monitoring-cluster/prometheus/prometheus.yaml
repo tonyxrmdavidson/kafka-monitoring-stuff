@@ -24,11 +24,6 @@ apiVersion: v1
 metadata:
   name: <name>
   namespace: <namespace>
-secrets:
-  - name: default-dockercfg-bxblm
-  - name: default-token-8s8h8
-imagePullSecrets:
-  - name: default-dockercfg-bxblm
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

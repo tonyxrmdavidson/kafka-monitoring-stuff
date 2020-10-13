@@ -1,0 +1,174 @@
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: <name>
+  namespace: <namespace>
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: <name>
+  namespace: <namespace>
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - nodes/proxy
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - privileged
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: <name>
+  namespace: <namespace>
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: <name>
+subjects:
+  - kind: ServiceAccount
+    name: <name>
+    namespace: <namespace>
+---
+apiVersion: v1
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      http_listen_address: 0.0.0.0
+    clients:
+      - url: http://<loki>/loki/api/v1/push
+    scrape_configs:
+      - job_name: "strimzi"
+        pipeline_stages:
+        - template:
+            source: cluster_id
+            template: '{{ "<cluster__id>" }}'
+        - labels:
+            cluster_id:
+        relabel_configs:
+        - source_labels:
+          - __meta_kubernetes_pod_label_name
+          target_label: __service__
+        - source_labels:
+          - __meta_kubernetes_pod_node_name
+          target_label: __host__
+        - action: drop
+          regex: ^$
+          source_labels:
+          - __service__
+        - action: replace
+          replacement: $1
+          separator: /
+          source_labels:
+          - __meta_kubernetes_namespace
+          - __service__
+          target_label: job
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_namespace
+          target_label: namespace
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_pod_name
+          target_label: instance
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_pod_container_name
+          target_label: container_name
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - replacement: /var/log/pods/*$1/*.log
+          separator: /
+          source_labels:
+          - __meta_kubernetes_pod_uid
+          - __meta_kubernetes_pod_container_name
+          target_label: __path__
+        kubernetes_sd_configs:
+          - role: "pod"
+            namespaces:
+              names:
+                - <kafka>
+                - <strimzi>
+kind: ConfigMap
+metadata:
+  name: <name>
+  namespace: <namespace>
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: <name>
+  namespace: <namespace>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <name>
+  template:
+    metadata:
+      labels:
+        app: <name>
+    spec:
+      serviceAccountName: <name>
+      volumes:
+        - name: config
+          configMap:
+            name: <name>
+        - name: logs
+          hostPath:
+            path: "/var/log/pods"
+            type: Directory
+      containers:
+        - name: loki
+          image: 'docker.io/grafana/promtail:latest'
+          securityContext:
+            privileged: true
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          args:
+            - '-config.file=/opt/config/promtail.yaml'
+            - '-print-config-stderr'
+          volumeMounts:
+            - name: config
+              mountPath: /opt/config
+            - mountPath: /var/log/pods
+              name: logs
+          ports:
+            - containerPort: 3100
+              protocol: TCP
+          resources: { }
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+---
