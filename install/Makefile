@@ -96,6 +96,10 @@ uninstall/logging:
 uninstall/monitoring/global:
 	make -C resources/monitoring-global uninstall
 
+.PHONY: test/chaos
+test/chaos:
+	make -C resources/testing-chaos all
+
 all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
 	@echo "done installing kafka monitoring demo"
 
