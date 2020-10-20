@@ -30,12 +30,20 @@ create/grafana:
 		sed -e 's/<querier>/$(GLOBAL_THANOS_QUERIER)-service/g' | \
 		cat | oc apply -f -
 
+.PHONY: create/loki
+create/loki:
+	@echo "create loki: $(GLOBAL_LOKI)"
+	@cat ./loki.yaml | sed -e 's/<namespace>/$(GLOBAL_MONITORING_NAMESPACE)/g' | \
+		sed -e 's/<name>/$(GLOBAL_LOKI)/g' | \
+		cat | oc apply -f -
+
 .PHONY: create/dashboards
 create/dashboards:
 	@echo "creating global kafka dashboards"
 	@cat ./dashboards/fleet.yaml | sed -e 's/<namespace>/$(GLOBAL_MONITORING_NAMESPACE)/g' | cat | oc apply -f -
+	@cat ./dashboards/logs.yaml | sed -e 's/<namespace>/$(GLOBAL_MONITORING_NAMESPACE)/g' | cat | oc apply -f -
 
-all: create/namespace create/thanos/receiver create/thanos/querier create/grafana create/dashboards
+all: create/namespace create/thanos/receiver create/thanos/querier create/grafana create/dashboards create/loki
 	@echo "Done installing fleet wide monitoring stack"
 
 uninstall:
