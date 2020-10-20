@@ -1,6 +1,9 @@
 # kafka-monitoring-stuff
 
 This repo has a set of Make targets for the installation and configuration of Kafka in OSD (using Strimzi), and various components to monitor Kafka.
+It is intended as a place for hacking things together and dumping any useful stuff until it’s found a more permanent home.
+
+**Not for production use**
 
 ## Prerequisites
 
