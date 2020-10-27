@@ -64,6 +64,8 @@ metadata:
   name: <name>
   namespace: <namespace>
 spec:
+  configMaps:
+    - observatorium-xyz-tls
   serviceAccountName: <name>
   additionalScrapeConfigs:
     key: additional-scrape-config.yaml
@@ -73,14 +75,18 @@ spec:
   externalLabels:
     cluster_id: <cluster__id>
   remoteWrite:
-    - url: 'http://<receiver>/api/v1/receive'
+    - url: 'https://observatorium-xyz-observatorium-api.observatorium.svc.cluster.local:8080/api/metrics/v1/test/api/v1/receive'
+      bearerToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUwOTJlMTEwZmViMmJiNDBkN2E2MTE1ZDg4NTk5MmI5YTg0NmNkNTUifQ.eyJpc3MiOiJodHRwOi8vZGV4LmRleC5zdmMuY2x1c3Rlci5sb2NhbDo1NTU2L2RleCIsInN1YiI6IkNpUXdPR0U0TmpnMFlpMWtZamc0TFRSaU56TXRPVEJoT1MwelkyUXhOall4WmpVME5qWVNCV3h2WTJGcyIsImF1ZCI6InRlc3QiLCJleHAiOjE2MDM4NzUwNTcsImlhdCI6MTYwMzc4ODY1NywiYXRfaGFzaCI6Ik9GcW5DX2p4S1RBU1pYZ2FVWFN4Z0EiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9.XkFe1a1N12gp6UOgOQ3-aO4dvOhd5zwxM9Qt7wjUkdrATvc-Yf_BBzdbAV51sxVHHPPJBV67l4erLoOuUcT7Ew7qkGTJhm5Lkrkekyy8VX7fm1CIZiKkejHbGAX7Zk04BlGIQ5tACXvOU1sTVOVXoCYO0kEH92_eFe1D00MyzD2PIoLnPVHE5bL9ALJV7ITGhF5nEmDXIcnvQ07AlxSbosR-LY8JsvCOVsECj8rA4LfcduvVdXzA_k9Do7bZ9-eu7rJ6kJHR7J-oeaxBDGOLvqbATQHh75slYhIXzU2yxvAvd3_VMSEsCGBnBKJ85euUPkXmYEddR_VZr7RJeZfuMw"
+      tlsConfig:
+        caFile: /etc/prometheus/configmaps/observatorium-xyz-tls/ca.pem
+        insecureSkipVerify: true
       writeRelabelConfigs:
         - action: keep
           regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total)
           sourceLabels:
             - __name__
-  ruleSelector: {}
-  ruleNamespaceSelector: {}
+  ruleSelector: { }
+  ruleNamespaceSelector: { }
   serviceMonitorNamespaceSelector: { }
   serviceMonitorSelector: { }
 ---

@@ -1,3 +1,4 @@
+---
 apiVersion: integreatly.org/v1alpha1
 kind: GrafanaDataSource
 metadata:
@@ -15,3 +16,45 @@ spec:
       jsonData:
         tlsSkipVerify: true
         timeInterval: "5s"
+---
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDataSource
+metadata:
+  name: observatorium-metrics
+spec:
+  name: observatorium-metrics.yaml
+  datasources:
+    - name: "Observatorium-Metrics"
+      type: prometheus
+      access: proxy
+      url: https://observatorium-observatorium.apps-crc.testing/api/metrics/v1/test/
+      isDefault: false
+      version: 1
+      editable: true
+      jsonData:
+        tlsSkipVerify: true
+        timeInterval: "5s"
+        httpHeaderName1: "Authorization"
+      secureJsonData:
+        httpHeaderValue1: "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjUwOTJlMTEwZmViMmJiNDBkN2E2MTE1ZDg4NTk5MmI5YTg0NmNkNTUifQ.eyJpc3MiOiJodHRwOi8vZGV4LmRleC5zdmMuY2x1c3Rlci5sb2NhbDo1NTU2L2RleCIsInN1YiI6IkNpUXdPR0U0TmpnMFlpMWtZamc0TFRSaU56TXRPVEJoT1MwelkyUXhOall4WmpVME5qWVNCV3h2WTJGcyIsImF1ZCI6InRlc3QiLCJleHAiOjE2MDM4NzUwNTcsImlhdCI6MTYwMzc4ODY1NywiYXRfaGFzaCI6Ik9GcW5DX2p4S1RBU1pYZ2FVWFN4Z0EiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9.XkFe1a1N12gp6UOgOQ3-aO4dvOhd5zwxM9Qt7wjUkdrATvc-Yf_BBzdbAV51sxVHHPPJBV67l4erLoOuUcT7Ew7qkGTJhm5Lkrkekyy8VX7fm1CIZiKkejHbGAX7Zk04BlGIQ5tACXvOU1sTVOVXoCYO0kEH92_eFe1D00MyzD2PIoLnPVHE5bL9ALJV7ITGhF5nEmDXIcnvQ07AlxSbosR-LY8JsvCOVsECj8rA4LfcduvVdXzA_k9Do7bZ9-eu7rJ6kJHR7J-oeaxBDGOLvqbATQHh75slYhIXzU2yxvAvd3_VMSEsCGBnBKJ85euUPkXmYEddR_VZr7RJeZfuMw"
+---
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDataSource
+metadata:
+  name: observatorium-logs
+spec:
+  name: observatorium-logs.yaml
+  datasources:
+    - name: "Observatorium-Logs"
+      type: loki
+      access: proxy
+      url: https://observatorium-observatorium.apps-crc.testing/api/logs/v1/test/
+      isDefault: false
+      version: 1
+      editable: true
+      jsonData:
+        tlsSkipVerify: true
+        timeInterval: "5s"
+        httpHeaderName1: "Authorization"
+      secureJsonData:
+        httpHeaderValue1: "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjUwOTJlMTEwZmViMmJiNDBkN2E2MTE1ZDg4NTk5MmI5YTg0NmNkNTUifQ.eyJpc3MiOiJodHRwOi8vZGV4LmRleC5zdmMuY2x1c3Rlci5sb2NhbDo1NTU2L2RleCIsInN1YiI6IkNpUXdPR0U0TmpnMFlpMWtZamc0TFRSaU56TXRPVEJoT1MwelkyUXhOall4WmpVME5qWVNCV3h2WTJGcyIsImF1ZCI6InRlc3QiLCJleHAiOjE2MDM4NzUwNTcsImlhdCI6MTYwMzc4ODY1NywiYXRfaGFzaCI6Ik9GcW5DX2p4S1RBU1pYZ2FVWFN4Z0EiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9.XkFe1a1N12gp6UOgOQ3-aO4dvOhd5zwxM9Qt7wjUkdrATvc-Yf_BBzdbAV51sxVHHPPJBV67l4erLoOuUcT7Ew7qkGTJhm5Lkrkekyy8VX7fm1CIZiKkejHbGAX7Zk04BlGIQ5tACXvOU1sTVOVXoCYO0kEH92_eFe1D00MyzD2PIoLnPVHE5bL9ALJV7ITGhF5nEmDXIcnvQ07AlxSbosR-LY8JsvCOVsECj8rA4LfcduvVdXzA_k9Do7bZ9-eu7rJ6kJHR7J-oeaxBDGOLvqbATQHh75slYhIXzU2yxvAvd3_VMSEsCGBnBKJ85euUPkXmYEddR_VZr7RJeZfuMw"
