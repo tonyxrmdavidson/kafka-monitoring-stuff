@@ -10,7 +10,7 @@ create/chaosexperiments:
 	@kubectl apply -f ./chaosexperiments/chaosexperiments-kafka.yaml -n kafka-cluster
 
 .PHONY: create/chaosengine/pod-delete
-create/chaosengine/kafka-broker-pod-failure: 
+create/chaosengine/pod-delete: 
 	@echo "create pod-delete: $(KAFKA_CLUSTER_NAMESPACE)"
 	@kubectl apply -f ./chaosengines/pod-delete/serviceaccount.yaml
 	@kubectl apply -f ./chaosengines/pod-delete/chaosengine.yaml
