@@ -2,12 +2,12 @@ apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
   name: pod-delete
-  namespace: kafka-cluster
+  namespace: <namespace>
 spec:
   appinfo:
-    appns: 'kafka-cluster'
-    applabel: 'app.kubernetes.io/name=kafka'
-    appkind: 'statefulset'
+    appns: '<namespace>'
+    applabel: '<pod-label>'
+    appkind: '<deployment-type>'
   # It can be true/false
   annotationCheck: 'false'
   # It can be active/stop
@@ -17,7 +17,7 @@ spec:
   chaosServiceAccount: pod-delete-sa
   monitoring: false
   # It can be delete/retain
-  jobCleanUpPolicy: 'retain'
+  jobCleanUpPolicy: '<cleanup>'
   experiments:
     - name: pod-delete
       spec:
@@ -25,12 +25,12 @@ spec:
           env:
             # set chaos duration (in sec) as desired
             - name: TOTAL_CHAOS_DURATION
-              value: '60'
+              value: '<chaos-duration>'
 
             # set chaos interval (in sec) as desired
             - name: CHAOS_INTERVAL
-              value: '10'
+              value: '<chaos-interval>'
               
             # pod failures without '--force' & default terminationGracePeriodSeconds
             - name: FORCE
-              value: 'false'
+              value: '<force-delete>'
