@@ -7,6 +7,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-network-duplication
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -92,6 +93,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: node-drain
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -162,6 +164,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: node-io-stress
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -248,6 +251,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: disk-fill
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -328,6 +332,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: node-taint
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -403,6 +408,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-autoscaler
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -472,6 +478,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-cpu-hog
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -546,6 +553,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-memory-hog
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -617,6 +625,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-network-corruption
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -704,6 +713,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-delete
+  namespace: litmus
   version: 0.1.19
 spec:
   definition:
@@ -781,6 +791,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-network-loss
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -868,6 +879,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: disk-loss
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -953,6 +965,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-io-stress
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -1028,6 +1041,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: k8-service-kill
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -1106,6 +1120,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: pod-network-latency
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -1194,6 +1209,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: node-cpu-hog
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -1271,6 +1287,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: docker-service-kill
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -1335,6 +1352,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: kubelet-service-kill
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -1405,6 +1423,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: node-memory-hog
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -1482,6 +1501,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: k8-pod-delete
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced
@@ -1559,6 +1579,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: container-kill
+  namespace: litmus
 spec:
   definition:
     scope: Namespaced

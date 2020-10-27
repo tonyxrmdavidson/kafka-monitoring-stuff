@@ -7,6 +7,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: kafka-broker-pod-failure
+  namespace: litmus
 spec:
   definition:
     scope: Cluster
@@ -136,6 +137,7 @@ description:
 kind: ChaosExperiment
 metadata:
   name: kafka-broker-disk-failure
+  namespace: litmus
 spec:
   definition:
     scope: Cluster

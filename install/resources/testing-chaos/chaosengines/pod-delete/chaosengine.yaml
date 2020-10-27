@@ -2,7 +2,7 @@ apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
   name: pod-delete
-  namespace: <namespace>
+  namespace: litmus
 spec:
   appinfo:
     appns: '<namespace>'
@@ -14,7 +14,7 @@ spec:
   engineState: 'active'
   #ex. values: ns1:name=percona,ns2:run=nginx
   auxiliaryAppInfo: ''
-  chaosServiceAccount: pod-delete-sa
+  chaosServiceAccount: litmus-admin
   monitoring: false
   # It can be delete/retain
   jobCleanUpPolicy: '<cleanup>'

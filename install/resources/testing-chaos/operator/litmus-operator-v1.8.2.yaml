@@ -6,38 +6,46 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: litmus
+  name: litmus-admin
   namespace: litmus
   labels:
-    name: litmus
+    name: litmus-admin
 ---
+# Source: openebs/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: litmus
+  name: litmus-admin
   labels:
-    name: litmus
+    name: litmus-admin
 rules:
-- apiGroups: ["","apps","batch","litmuschaos.io","apps.openshift.io"]
-  resources: ["pods","jobs","deployments","replicationcontrollers","daemonsets","replicasets","statefulsets","deploymentconfigs","events","configmaps","services","secrets","chaosengines","chaosexperiments","chaosresults"]
-  verbs: ["get","create","update","patch","delete","list","watch","deletecollection"]
-- apiGroups: ["admissionregistration.k8s.io"]
-  resources: ["validatingwebhookconfigurations"]
-  verbs: ["get","create","list","delete","update"]
+- apiGroups: ["","apps","batch","extensions","litmuschaos.io"]
+  resources: ["pods","pods/exec","pods/eviction","jobs","daemonsets","events","chaosresults","chaosengines"]
+  verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+- apiGroups: ["","apps","litmuschaos.io"]
+  resources: ["configmaps","secrets","services","chaosexperiments","pods/log","replicasets","deployments","statefulsets","services"]
+  verbs: ["create","get","list","patch","update"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get","list","patch","update"]
+# additional perms required to deploy chaosexperiment into litmus operator ns
+- apiGroups: ["","litmuschaos.io","batch","apps"]
+  resources: [deployments","pods/log",chaosexperiments"]
+  verbs: ["create","list","get","patch","update","delete","deletecollection"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: litmus
+  name: litmus-admin
   labels:
-    name: litmus
+    name: litmus-admin
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: litmus
+  name: litmus-admin
 subjects:
 - kind: ServiceAccount
-  name: litmus
+  name: litmus-admin
   namespace: litmus
 ---
 apiVersion: apps/v1
@@ -55,7 +63,7 @@ spec:
       labels:
         name: chaos-operator
     spec:
-      serviceAccountName: litmus
+      serviceAccountName: litmus-admin
       containers:
         - name: chaos-operator
           image: litmuschaos/chaos-operator:1.8.2
