@@ -1,0 +1,145 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <namespace>
+---
+apiVersion: v1
+data:
+  config.yaml: ImVuYWJsZVBhc3N3b3JkREIiOiB0cnVlCiJpc3N1ZXIiOiAiaHR0cDovL2RleC5kZXguc3ZjLmNsdXN0ZXIubG9jYWw6NTU1Ni9kZXgiCiJsb2dnZXIiOgogICJsZXZlbCI6ICJkZWJ1ZyIKIm9hdXRoMiI6CiAgInBhc3N3b3JkQ29ubmVjdG9yIjogImxvY2FsIgoic3RhdGljQ2xpZW50cyI6Ci0gImlkIjogInRlc3QiCiAgIm5hbWUiOiAidGVzdCIKICAic2VjcmV0IjogIlpYaGhiWEJzWlMxaGNIQXRjMlZqY21WMCIKInN0YXRpY1Bhc3N3b3JkcyI6Ci0gImVtYWlsIjogImFkbWluQGV4YW1wbGUuY29tIgogICJoYXNoIjogIiQyYSQxMCQyYjJjVThDUGhPVGFHcnMxSFJRdUF1ZVM3SlRUNVpIc0hTellpRlBtMWxlWmNrN01jOFQ0VyIKICAidXNlcklEIjogIjA4YTg2ODRiLWRiODgtNGI3My05MGE5LTNjZDE2NjFmNTQ2NiIKICAidXNlcm5hbWUiOiAiYWRtaW4iCiJzdG9yYWdlIjoKICAiY29uZmlnIjoKICAgICJmaWxlIjogIi9zdG9yYWdlL2RleC5kYiIKICAidHlwZSI6ICJzcWxpdGUzIgoid2ViIjoKICAiaHR0cCI6ICIwLjAuMC4wOjU1NTYiCiJleHBpcnkiOgogICJkZXZpY2VSZXF1ZXN0cyI6ICI4NzYwaCIKICAic2lnbmluZ0tleXMiOiAiODc2MGgiCiAgImlkVG9rZW5zIjogIjg3NjBoIgo=
+kind: Secret
+metadata:
+  name: dex
+  namespace: <namespace>
+type: Opaque
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/component: identity-provider
+    app.kubernetes.io/instance: e2e-test
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/version: v2.24.0
+  name: dex
+  namespace: <namespace>
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex
+  namespace: <namespace>
+  labels:
+    app.kubernetes.io/component: identity-provider
+    app.kubernetes.io/instance: e2e-test
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/version: v2.24.0
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: identity-provider
+      app.kubernetes.io/instance: e2e-test
+      app.kubernetes.io/name: dex
+      app.kubernetes.io/version: v2.24.0
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/component: identity-provider
+        app.kubernetes.io/instance: e2e-test
+        app.kubernetes.io/name: dex
+        app.kubernetes.io/version: v2.24.0
+    spec:
+      containers:
+        - command:
+            - /usr/local/bin/dex
+            - serve
+            - /etc/dex/cfg/config.yaml
+          image: quay.io/dexidp/dex:v2.24.0
+          imagePullPolicy: IfNotPresent
+          name: dex
+          ports:
+            - containerPort: 5556
+              name: http
+              protocol: TCP
+          resources: { }
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/dex/cfg
+              name: config
+            - mountPath: /storage
+              name: storage
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: { }
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config
+          secret:
+            defaultMode: 420
+            items:
+              - key: config.yaml
+                path: config.yaml
+            secretName: dex
+        - name: storage
+          persistentVolumeClaim:
+            claimName: dex
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: identity-provider
+    app.kubernetes.io/instance: e2e-test
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/version: v2.24.0
+  name: dex
+  namespace: <namespace>
+spec:
+  ports:
+    - port: 5556
+      protocol: TCP
+      targetPort: 5556
+  selector:
+    app.kubernetes.io/component: identity-provider
+    app.kubernetes.io/instance: e2e-test
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/version: v2.24.0
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app.kubernetes.io/component: identity-provider
+    app.kubernetes.io/instance: e2e-test
+    app.kubernetes.io/name: dex
+    app.kubernetes.io/version: v2.24.0
+  name: dex
+  namespace: <namespace>
+spec:
+  port:
+    targetPort: 5556
+  to:
+    kind: Service
+    name: dex
+    weight: 100
+  wildcardPolicy: None

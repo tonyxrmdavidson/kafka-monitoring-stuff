@@ -100,6 +100,22 @@ To specify which namespace strimzi & kafka are in, run the cmd with the followin
 STRIMZI_OPERATOR_NAMESPACE=my-strimzi-ns KAFKA_CLUSTER_NAMESPACE=my-kafka-ns make install/monitoring/cluster
 ```
 
+### 6) Install *Observatorium*
+
+You can install observatorium and it's components with:
+
+```sh
+make install/observatorium
+```
+
+and uninstall it with:
+
+```sh
+make uninstall/observatorium
+```
+
+__NOTE__: Observatorium is currently not part of the `all` or `clean` targets.
+
 ## Uninstallation
 
 ```sh

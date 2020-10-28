@@ -2,7 +2,7 @@ apiVersion: core.observatorium.io/v1alpha1
 kind: Observatorium
 metadata:
   name: observatorium-xyz
-  namespace: observatorium
+  namespace: <namespace>
   labels:
     app.kubernetes.io/instance: observatorium-xyz
     app.kubernetes.io/name: observatorium-cr
