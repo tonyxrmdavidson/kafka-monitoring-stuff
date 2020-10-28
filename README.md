@@ -114,6 +114,30 @@ and uninstall it with:
 make uninstall/observatorium
 ```
 
+#### Tenant tokens
+
+A default tenant with the name `test` is created. To obtain a token for this tenant:
+
+1) Get the route to the OIDC server:
+
+```
+DEX_ROUTE=$(oc get routes dex -ndex -ojsonpath={.spec.host})
+```
+
+2) Request a token:
+
+```
+curl --request POST \
+              --url http://$(DEX_ROUTE)/dex/token \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --data grant_type=password \
+              --data username=admin@example.com \
+              --data password=password \
+              --data client_id=test \
+              --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 \
+              --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/'
+```
+
 __NOTE__: Observatorium is currently not part of the `all` or `clean` targets.
 
 ## Uninstallation
