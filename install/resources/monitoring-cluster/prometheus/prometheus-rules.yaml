@@ -9,14 +9,22 @@ spec:
   groups:
   - name: kafka
     rules:
-    - alert: KafkaRunningOutOfSpace
-      expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-([0-9]+)?-(.+)-kafka-[0-9]+"} < 5368709120
-      for: 10s
+    - alert: KafkaPersistentVolumeFillingUp
+      expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-([0-9]+)?-(.+)-kafka-[0-9]+"} / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data-([0-9]+)?-(.+)-kafka-[0-9]+"} < 0.03
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: 'Kafka Broker PersistentVolume is filling up.'
+        description: 'The Kafka Broker PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is only {{ $value | humanizePercentage }} free.'
+    - alert: KafkaPersistentVolumeFillingUp
+      expr: (kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-([0-9]+)?-(.+)-kafka-[0-9]+"} / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data-([0-9]+)?-(.+)-kafka-[0-9]+"} < 0.15) and predict_linear(kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-([0-9]+)?-(.+)-kafka-[0-9]+"}[6h], 4 * 24 * 3600) < 0
+      for: 1h
       labels:
         severity: warning
       annotations:
-        summary: 'Kafka is running out of free disk space'
-        description: 'There are only {{ $value }} bytes available at {{ $labels.persistentvolumeclaim }} PVC'
+        summary: 'Kafka Broker PersistentVolume is filling up.'
+        description: 'Based on recent sampling, the Kafka Broker PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to fill up within four days. Currently {{ $value | humanizePercentage }} is available.'
     - alert: UnderReplicatedPartitions
       expr: kafka_server_replicamanager_under_replicated_partitions > 0
       for: 10s
@@ -107,14 +115,22 @@ spec:
       annotations:
         summary: 'Zookeeper outstanding requests'
         description: 'There are {{ $value }} outstanding requests on {{ $labels.kubernetes_pod_name }}'
-    - alert: ZookeeperRunningOutOfSpace
-      expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-(.+)-zookeeper-[0-9]+"} < 5368709120
-      for: 10s
+    - alert: ZookeeperPersistentVolumeFillingUp
+      expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-(.+)-zookeeper-[0-9]+"} / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data-(.+)-zookeeper-[0-9]+"} < 0.03
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: 'Zookeeper PersistentVolume is filling up.'
+        description: 'The Zookeeper PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is only {{ $value | humanizePercentage }} free.'
+    - alert: ZookeeperPersistentVolumeFillingUp
+      expr: (kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-(.+)-zookeeper-[0-9]+"} / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data-(.+)-zookeeper-[0-9]+"} < 0.15) and predict_linear(kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data-(.+)-zookeeper-[0-9]+"}[6h], 4 * 24 * 3600) < 0
+      for: 1h
       labels:
         severity: warning
       annotations:
-        summary: 'Zookeeper is running out of free disk space'
-        description: 'There are only {{ $value }} bytes available at {{ $labels.persistentvolumeclaim }} PVC'
+        summary: 'Zookeeper PersistentVolume is filling up.'
+        description: 'Based on recent sampling, the Zookeeper PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to fill up within four days. Currently {{ $value | humanizePercentage }} is available.'
     - alert: ZookeeperContainerRestartedInTheLast5Minutes
       expr: count(count_over_time(container_last_seen{container="zookeeper"}[5m])) > 2 * count(container_last_seen{container="zookeeper",pod=~".+-zookeeper-[0-9]+"})
       for: 5m
