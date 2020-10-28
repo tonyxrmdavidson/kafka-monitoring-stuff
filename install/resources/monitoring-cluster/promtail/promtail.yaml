@@ -53,11 +53,11 @@ data:
       http_listen_port: 9080
       http_listen_address: 0.0.0.0
     clients:
-      - url: https://observatorium-xyz-observatorium-api.observatorium.svc.cluster.local:8080/api/logs/v1/test/api/v1/push
-        bearer_token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUwOTJlMTEwZmViMmJiNDBkN2E2MTE1ZDg4NTk5MmI5YTg0NmNkNTUifQ.eyJpc3MiOiJodHRwOi8vZGV4LmRleC5zdmMuY2x1c3Rlci5sb2NhbDo1NTU2L2RleCIsInN1YiI6IkNpUXdPR0U0TmpnMFlpMWtZamc0TFRSaU56TXRPVEJoT1MwelkyUXhOall4WmpVME5qWVNCV3h2WTJGcyIsImF1ZCI6InRlc3QiLCJleHAiOjE2MDM4OTAyMjUsImlhdCI6MTYwMzgwMzgyNSwiYXRfaGFzaCI6IjVuRHprSTh5RTB1QzZTMUNoQ29HMUEiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9.jAh8aQv5u9WOBcz9pg890hzROUrg_YrsIPREPj6W7OS100uHGwuIu2uPuq_pJcL1AMaOlZvG77jKu1JjX24xtjaNIgNtFRkZmYrRmeNL0siQLMSaJ-pMOzCyURkIzuLozdBH7Li52M5hAK_ELegJNbkLx8C9fHbW4ao9tpkTrNVW3eXWpx4w6qFzG0wGUF83u9hjT7U6V4fo6aDdLpflvzwm767Wkk9wtsZbcdtUPB4hxQb6Xc6SqG9d9ZSPl7G-TcJdpPoMtW3haCXpwyzfSvzursOJMbc0KrbJWAKmfXg1RO06ePMrf79LwJalU-kOBYnaHT0houtPMCQJBKd7Dg"
-        tls_config:
-          ca_file: "/opt/cert/ca.pem"
-          insecure_skip_verify: true
+      - url: http://<loki>/loki/api/v1/push
+        # bearer_token: "<token>"
+        # tls_config:
+        #  ca_file: "/opt/cert/ca.pem"
+        #  insecure_skip_verify: true
     scrape_configs:
       - job_name: "strimzi"
         pipeline_stages:
