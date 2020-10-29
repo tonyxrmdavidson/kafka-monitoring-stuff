@@ -1,6 +1,6 @@
 export OS_PROMETHEUS_USER := $(shell oc get secrets -n openshift-monitoring grafana-datasources -o 'go-template={{index .data "prometheus.yaml"}}' | base64 --decode | jq -r '.datasources[0].basicAuthUser')
 export OS_PROMETHEUS_PASS := $(shell oc get secrets -n openshift-monitoring grafana-datasources -o 'go-template={{index .data "prometheus.yaml"}}' | base64 --decode | jq -r '.datasources[0].basicAuthPassword')
-export PROMETHEUS_REMOTE_WRITE_URL := $(shell oc get routes -n managed-services-monitoring-global kafka-thanos-receiver-route -ojsonpath='{.spec.host}')
+export PROMETHEUS_REMOTE_WRITE_URL ?= $(shell oc get routes -n managed-services-monitoring-global kafka-thanos-receiver-route -ojsonpath='{.spec.host}')
 
 .PHONY: create/namespace
 create/namespace:
