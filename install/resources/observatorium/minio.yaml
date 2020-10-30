@@ -18,7 +18,6 @@ spec:
     requests:
       storage: 10Gi
   volumeMode: Filesystem
-  volumeName: pv0022
 ---
 apiVersion: apps/v1
 kind: Deployment
