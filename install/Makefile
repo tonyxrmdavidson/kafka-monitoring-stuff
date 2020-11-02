@@ -21,6 +21,7 @@ export LOGS_STORAGE ?= 60G
 export DEX_NAMESPACE = dex
 export MINIO_NAMESPACE = observatorium-minio
 export OBSERVATORIUM_NAMESPACE ?= observatorium
+export OBSERVATORIUM_APPS_URL ?= apps.example.io
 
 export CLUSTER_ID := $(shell oc get clusterversion -o jsonpath='{.items[].spec.clusterID}{"\n"}')
 
@@ -112,6 +113,10 @@ uninstall/observatorium:
 .PHONY: test/chaos
 test/chaos:
 	make -C resources/testing-chaos all
+
+.PHONY: setup/observatorium
+setup/observatorium:
+	make -C resources/observatorium setup
 
 all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
 	@echo "done installing kafka monitoring demo"

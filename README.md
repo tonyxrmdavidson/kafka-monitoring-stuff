@@ -114,6 +114,16 @@ and uninstall it with:
 make uninstall/observatorium
 ```
 
+#### Pointing the on cluster monitoring stack to observatorium
+
+You can point Prometheus remote write and Promtail to an existing Observatorium instance:
+
+```sh
+OBSERVATORIUM_APPS_URL=<e.g. apps-crc.testing> make setup/observatorium
+```
+
+This will automatically fetch tokens and update the Prometheus and Promtail configuration
+
 #### Tenant tokens
 
 A default tenant with the name `test` is created. To obtain a token for this tenant:

@@ -1,3 +1,6 @@
+export DEX_TOKEN_URL := http://dex-dex.$(OBSERVATORIUM_APPS_URL)
+export GATEWAY_URL := https://observatorium-observatorium.$(OBSERVATORIUM_APPS_URL)
+
 .PHONY: create/dex
 create/dex:
 	@echo "create dex in: $(DEX_NAMESPACE)"
@@ -25,6 +28,27 @@ create/operator:
 create/cr:
 	@echo "create observatorium in: $(OBSERVATORIUM_NAMESPACE)"
 	@sed 's/<namespace>/$(OBSERVATORIUM_NAMESPACE)/g' ./observatorium.yaml | cat | oc apply -f -
+
+setup:
+	@echo "updating promtail config to point to $(GATEWAY_URL)"
+	@cat ../monitoring-cluster/promtail/config.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | \
+		sed -e 's/<name>/$(PER_CLUSTER_PROMTAIL)/g' | \
+		sed -e 's/<strimzi>/$(STRIMZI_OPERATOR_NAMESPACE)/g' | \
+        sed -e 's/<kafka>/$(KAFKA_CLUSTER_NAMESPACE)/g' | \
+        sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
+        sed -e 's#<gateway>#$(GATEWAY_URL)/api/logs/v1/test/loki/api/v1/push#g' | \
+        sed -e 's/<token>/$(shell curl --request POST --url $(DEX_TOKEN_URL)/dex/token --header 'content-type: application/x-www-form-urlencoded' --data grant_type=password --data username=admin@example.com --data password=password --data client_id=test --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/')/g' | \
+		cat | oc apply -f -
+	@echo "updating prometheus"
+	@cat ../monitoring-cluster/prometheus/prometheus-observatorium.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_PROMETHEUS_NAMESPACE)/g' | \
+		sed -e 's/<name>/$(PER_CLUSTER_PROMETHEUS)/g' | \
+		sed -e 's/<cluster>/$(KAFKA_CLUSTER_NAMESPACE)/g' | \
+		sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
+        sed -e 's#<gateway>#$(GATEWAY_URL)/api/metrics/v1/test/api/v1/receive#g' | \
+        sed -e 's/<token>/$(shell curl --request POST --url $(DEX_TOKEN_URL)/dex/token --header 'content-type: application/x-www-form-urlencoded' --data grant_type=password --data username=admin@example.com --data password=password --data client_id=test --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/')/g' | \
+		cat | oc apply -f -
+	@echo "restarting promtail"
+	@oc get pods -n $(PER_CLUSTER_GRAFANA_NAMESPACE) --selector=app=kafka-promtail -oyaml | oc delete -f -
 
 clean:
 	@oc delete namespace $(DEX_NAMESPACE)

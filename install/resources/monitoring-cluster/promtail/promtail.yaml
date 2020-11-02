@@ -54,10 +54,6 @@ data:
       http_listen_address: 0.0.0.0
     clients:
       - url: http://<loki>/loki/api/v1/push
-        # bearer_token: "<token>"
-        # tls_config:
-        #  ca_file: "/opt/cert/ca.pem"
-        #  insecure_skip_verify: true
     scrape_configs:
       - job_name: "strimzi"
         pipeline_stages:
@@ -73,10 +69,6 @@ data:
         - source_labels:
           - __meta_kubernetes_pod_node_name
           target_label: __host__
-        - action: drop
-          regex: ^$
-          source_labels:
-          - __service__
         - action: replace
           replacement: $1
           separator: /
