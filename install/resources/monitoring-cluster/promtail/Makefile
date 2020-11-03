@@ -1,4 +1,4 @@
-export LOKI_PUSH_URL := $(shell oc get routes -n managed-services-monitoring-global kafka-loki-global -ojsonpath='{.spec.host}')
+export LOKI_PUSH_URL ?= $(shell oc get routes -n managed-services-monitoring-global kafka-loki-global -ojsonpath='{.spec.host}')
 
 .PHONY: create/promtail
 create/promtail:
