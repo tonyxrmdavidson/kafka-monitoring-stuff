@@ -138,7 +138,7 @@ DEX_ROUTE=$(oc get routes dex -ndex -ojsonpath={.spec.host})
 
 ```
 curl --request POST \
-              --url http://$(DEX_ROUTE)/dex/token \
+              --url http://${DEX_ROUTE}/dex/token \
               --header 'content-type: application/x-www-form-urlencoded' \
               --data grant_type=password \
               --data username=admin@example.com \
