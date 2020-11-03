@@ -15,7 +15,7 @@ create/prometheus:
 		sed -e 's/<cluster>/$(KAFKA_CLUSTER_NAMESPACE)/g' | \
 		sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
         sed -e 's/<operator>/$(STRIMZI_OPERATOR_NAMESPACE)/g' | \
-        sed -e 's/<receiver>/'"$(PROMETHEUS_REMOTE_WRITE_URL)"'/g' | \
+        sed -e 's@<receiver>@'"$(PROMETHEUS_REMOTE_WRITE_URL)"'@g' | \
 		cat | oc apply -f -
 	@echo "Waiting for the prometheus operator to be ready"
 	@for i in {1..12}; do oc -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) get pod -l k8s-app=prometheus-operator -o name | grep "pod/prometheus-operator" && break || sleep 5; done
@@ -25,7 +25,7 @@ configure/federation:
 	@echo "enabling federation of openshift metrics"
 	@cat ./federation.yaml | sed -e 's/<user>/'"$(OS_PROMETHEUS_USER)"'/g' | \
 		sed -e 's@<pass>@'"$(OS_PROMETHEUS_PASS)"'@g' > additional-scrape-config.yaml
-	@oc create secret generic additional-scrape-configs --from-file=additional-scrape-config.yaml --dry-run -oyaml | oc apply -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) -f -
+	@oc create secret generic additional-scrape-configs --from-file=additional-scrape-config.yaml --dry-run=client -o yaml | oc apply -n $(PER_CLUSTER_PROMETHEUS_NAMESPACE) -f -
 	@rm -f ./additional-scrape-config.yaml
 
 .PHONY: configure/grafana
