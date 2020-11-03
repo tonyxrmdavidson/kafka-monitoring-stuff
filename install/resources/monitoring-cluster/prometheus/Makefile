@@ -1,6 +1,7 @@
 export OS_PROMETHEUS_USER := $(shell oc get secrets -n openshift-monitoring grafana-datasources -o 'go-template={{index .data "prometheus.yaml"}}' | base64 --decode | jq -r '.datasources[0].basicAuthUser')
 export OS_PROMETHEUS_PASS := $(shell oc get secrets -n openshift-monitoring grafana-datasources -o 'go-template={{index .data "prometheus.yaml"}}' | base64 --decode | jq -r '.datasources[0].basicAuthPassword')
 export PROMETHEUS_REMOTE_WRITE_URL ?= http://$(shell oc get routes -n managed-services-monitoring-global kafka-thanos-receiver-route -ojsonpath='{.spec.host}')/api/v1/receive
+export METRICS_SCRAPE_NAMESPACES ?= '$(STRIMZI_OPERATOR_NAMESPACE)','$(KAFKA_CLUSTER_NAMESPACE)'
 
 .PHONY: create/namespace
 create/namespace:
@@ -12,9 +13,8 @@ create/prometheus:
 	@echo "installing prometheus: $(PER_CLUSTER_PROMETHEUS)"
 	@cat ./prometheus.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_PROMETHEUS_NAMESPACE)/g' | \
 		sed -e 's/<name>/$(PER_CLUSTER_PROMETHEUS)/g' | \
-		sed -e 's/<cluster>/$(KAFKA_CLUSTER_NAMESPACE)/g' | \
+		sed -e 's/<namespaces>/$(METRICS_SCRAPE_NAMESPACES)/g' | \
 		sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
-        sed -e 's/<operator>/$(STRIMZI_OPERATOR_NAMESPACE)/g' | \
         sed -e 's@<receiver>@$(PROMETHEUS_REMOTE_WRITE_URL)@g' | \
 		cat | oc apply -f -
 	@echo "Waiting for the prometheus operator to be ready"

@@ -121,9 +121,7 @@ spec:
         operator: In
         values: [ "Kafka", "KafkaConnect" ]
   namespaceSelector:
-    matchNames:
-      - <cluster>
-      - <operator>
+    matchNames: [<namespaces>]
   podMetricsEndpoints:
     - path: /metrics
       port: tcp-prometheus
