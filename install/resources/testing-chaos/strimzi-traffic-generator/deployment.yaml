@@ -1,0 +1,54 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: strimzi-traffic-generator
+  namespace: <namespace>
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: strimzi-traffic-generator
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: traffic-generator
+          image: quay.io/damurphy/go-stoker:bbb564e
+          volumeMounts:
+            - name: cluster-ca
+              mountPath: /etc/cluster-ca
+              readOnly: true
+            - name: client-ca
+              mountPath: /etc/client-ca
+              readOnly: true
+            - name: client-ca-cert
+              mountPath: /etc/client-ca-cert
+              readOnly: true
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: '<kafka-cluster-name>-kafka-bootstrap:9092'
+            - name: TOPIC
+              value: 'traffic-gen-topic'
+            - name: SEND_RATE
+              value: '1'
+            - name: PRODUCER_CLIENT_ID
+              value: 'traffic-gen-client'
+            - name: TLS_ENABLED
+              value: 'false'
+      volumes:
+        - name: cluster-ca
+          secret:
+            secretName: <kafka-cluster-name>-cluster-ca-cert
+            defaultMode: 288
+        - name: client-ca-cert
+          secret:
+            secretName: <kafka-cluster-name>-clients-ca-cert
+            defaultMode: 288
+        - name: client-ca
+          secret:
+            secretName: <kafka-cluster-name>-clients-ca
+            defaultMode: 288
+          imagePullPolicy: IfNotPresent
+      dnsPolicy: ClusterFirst
+  triggers:
+    - type: ConfigChange
