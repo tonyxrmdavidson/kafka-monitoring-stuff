@@ -100,6 +100,56 @@ To specify which namespace strimzi & kafka are in, run the cmd with the followin
 STRIMZI_OPERATOR_NAMESPACE=my-strimzi-ns KAFKA_CLUSTER_NAMESPACE=my-kafka-ns make install/monitoring/cluster
 ```
 
+### 6) Install *Observatorium*
+
+You can install observatorium and it's components with:
+
+```sh
+make install/observatorium
+```
+
+and uninstall it with:
+
+```sh
+make uninstall/observatorium
+```
+
+#### Pointing the on cluster monitoring stack to observatorium
+
+You can point Prometheus remote write and Promtail to an existing Observatorium instance:
+
+```sh
+OBSERVATORIUM_APPS_URL=<e.g. apps-crc.testing> make setup/observatorium
+```
+
+This will automatically fetch tokens and update the Prometheus and Promtail configuration
+
+#### Tenant tokens
+
+A default tenant with the name `test` is created. To obtain a token for this tenant:
+
+1) Get the route to the OIDC server:
+
+```
+DEX_ROUTE=$(oc get routes dex -ndex -ojsonpath={.spec.host})
+```
+
+2) Request a token:
+
+```
+curl --request POST \
+              --url http://${DEX_ROUTE}/dex/token \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --data grant_type=password \
+              --data username=admin@example.com \
+              --data password=password \
+              --data client_id=test \
+              --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 \
+              --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/'
+```
+
+__NOTE__: Observatorium is currently not part of the `all` or `clean` targets.
+
 ## Uninstallation
 
 ```sh

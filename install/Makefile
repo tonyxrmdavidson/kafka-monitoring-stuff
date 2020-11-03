@@ -17,6 +17,12 @@ export GLOBAL_LOKI ?= kafka-loki-global
 export LOGS_MAX_AGE ?= 1d
 export LOGS_STORAGE ?= 60G
 
+# Observatorium vars
+export DEX_NAMESPACE = dex
+export MINIO_NAMESPACE = observatorium-minio
+export OBSERVATORIUM_NAMESPACE ?= observatorium
+export OBSERVATORIUM_APPS_URL ?= apps.example.io
+
 export CLUSTER_ID := $(shell oc get clusterversion -o jsonpath='{.items[].spec.clusterID}{"\n"}')
 
 RESOURCE_FILES_DIR ?= ./resources
@@ -96,9 +102,21 @@ uninstall/logging:
 uninstall/monitoring/global:
 	make -C resources/monitoring-global uninstall
 
+.PHONY: install/observatorium
+install/observatorium:
+	make -C resources/observatorium all
+
+.PHONY: uninstall/observatorium
+uninstall/observatorium:
+	make -C resources/observatorium clean
+
 .PHONY: test/chaos
 test/chaos:
 	make -C resources/testing-chaos all
+
+.PHONY: setup/observatorium
+setup/observatorium:
+	make -C resources/observatorium setup
 
 all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
 	@echo "done installing kafka monitoring demo"

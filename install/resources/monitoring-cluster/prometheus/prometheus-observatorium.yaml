@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    app: strimzi
+  name: <name>
+  namespace: <namespace>
+spec:
+  configMaps:
+    - observatorium-xyz-tls
+  serviceAccountName: <name>
+  additionalScrapeConfigs:
+    key: additional-scrape-config.yaml
+    name: additional-scrape-configs
+  podMonitorNamespaceSelector: { }
+  podMonitorSelector: { }
+  externalLabels:
+    cluster_id: <cluster__id>
+  remoteWrite:
+    - url: '<gateway>'
+      bearerToken: "<token>"
+      tlsConfig:
+        insecureSkipVerify: true
+      writeRelabelConfigs:
+        - action: keep
+          regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total)
+          sourceLabels:
+            - __name__
+  ruleSelector: { }
+  ruleNamespaceSelector: { }
+  serviceMonitorNamespaceSelector: { }
+  serviceMonitorSelector: { }

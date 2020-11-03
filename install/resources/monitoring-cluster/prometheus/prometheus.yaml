@@ -64,6 +64,8 @@ metadata:
   name: <name>
   namespace: <namespace>
 spec:
+  configMaps:
+    - observatorium-xyz-tls
   serviceAccountName: <name>
   additionalScrapeConfigs:
     key: additional-scrape-config.yaml
@@ -74,13 +76,15 @@ spec:
     cluster_id: <cluster__id>
   remoteWrite:
     - url: 'http://<receiver>/api/v1/receive'
+      tlsConfig:
+        insecureSkipVerify: true
       writeRelabelConfigs:
         - action: keep
           regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total)
           sourceLabels:
             - __name__
-  ruleSelector: {}
-  ruleNamespaceSelector: {}
+  ruleSelector: { }
+  ruleNamespaceSelector: { }
   serviceMonitorNamespaceSelector: { }
   serviceMonitorSelector: { }
 ---
