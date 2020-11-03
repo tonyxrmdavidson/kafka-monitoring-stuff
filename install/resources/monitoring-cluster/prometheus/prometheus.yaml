@@ -100,9 +100,7 @@ spec:
     matchLabels:
       strimzi.io/kind: cluster-operator
   namespaceSelector:
-    matchNames:
-      - <cluster>
-      - <operator>
+    matchNames: [<namespaces>]
   podMetricsEndpoints:
     - path: /metrics
       port: http

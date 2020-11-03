@@ -54,9 +54,7 @@ data:
         kubernetes_sd_configs:
           - role: "pod"
             namespaces:
-              names:
-                - <kafka>
-                - <strimzi>
+              names: [<namespaces>]
 kind: ConfigMap
 metadata:
   name: <name>
