@@ -64,8 +64,6 @@ metadata:
   name: <name>
   namespace: <namespace>
 spec:
-  configMaps:
-    - observatorium-xyz-tls
   serviceAccountName: <name>
   additionalScrapeConfigs:
     key: additional-scrape-config.yaml

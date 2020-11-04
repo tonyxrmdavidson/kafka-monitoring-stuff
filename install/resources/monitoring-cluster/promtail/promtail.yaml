@@ -129,9 +129,6 @@ spec:
           hostPath:
             path: "/var/log/pods"
             type: Directory
-        - name: cert
-          configMap:
-            name: "observatorium-xyz-tls"
       containers:
         - name: loki
           image: 'docker.io/grafana/promtail:latest'
@@ -150,8 +147,6 @@ spec:
               mountPath: /opt/config
             - mountPath: /var/log/pods
               name: logs
-            - mountPath: /opt/cert
-              name: cert
           ports:
             - containerPort: 3100
               protocol: TCP

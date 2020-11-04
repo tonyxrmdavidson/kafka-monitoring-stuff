@@ -1,6 +1,7 @@
 export DEX_TOKEN_URL := http://dex-dex.$(OBSERVATORIUM_APPS_URL)
 export GATEWAY_URL := https://observatorium-observatorium.$(OBSERVATORIUM_APPS_URL)
 export LOG_SCRAPE_NAMESPACES ?= '$(STRIMZI_OPERATOR_NAMESPACE)','$(KAFKA_CLUSTER_NAMESPACE)'
+export METRICS_SCRAPE_NAMESPACES ?= '$(STRIMZI_OPERATOR_NAMESPACE)','$(KAFKA_CLUSTER_NAMESPACE)'
 
 .PHONY: create/dex
 create/dex:
@@ -42,6 +43,7 @@ setup:
 	@echo "updating prometheus"
 	@cat ../monitoring-cluster/prometheus/prometheus-observatorium.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_PROMETHEUS_NAMESPACE)/g' | \
 		sed -e 's/<name>/$(PER_CLUSTER_PROMETHEUS)/g' | \
+		sed -e 's/<namespaces>/$(METRICS_SCRAPE_NAMESPACES)/g' | \
 		sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
         sed -e 's#<gateway>#$(GATEWAY_URL)/api/metrics/v1/test/api/v1/receive#g' | \
         sed -e 's/<token>/$(shell curl --request POST --url $(DEX_TOKEN_URL)/dex/token --header 'content-type: application/x-www-form-urlencoded' --data grant_type=password --data username=admin@example.com --data password=password --data client_id=test --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/')/g' | \
