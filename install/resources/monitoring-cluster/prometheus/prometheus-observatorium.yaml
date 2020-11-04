@@ -6,8 +6,6 @@ metadata:
   name: <name>
   namespace: <namespace>
 spec:
-  configMaps:
-    - observatorium-xyz-tls
   serviceAccountName: <name>
   additionalScrapeConfigs:
     key: additional-scrape-config.yaml
@@ -30,3 +28,68 @@ spec:
   ruleNamespaceSelector: { }
   serviceMonitorNamespaceSelector: { }
   serviceMonitorSelector: { }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: cluster-operator-metrics
+  namespace: <namespace>
+  labels:
+    app: strimzi
+spec:
+  selector:
+    matchLabels:
+      strimzi.io/kind: cluster-operator
+  namespaceSelector:
+    matchNames: [<namespaces>]
+  podMetricsEndpoints:
+    - path: /metrics
+      port: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: kafka-metrics
+  namespace: <namespace>
+  labels:
+    app: strimzi
+spec:
+  selector:
+    matchExpressions:
+      - key: "strimzi.io/kind"
+        operator: In
+        values: [ "Kafka", "KafkaConnect" ]
+  namespaceSelector:
+    matchNames: [<namespaces>]
+  podMetricsEndpoints:
+    - path: /metrics
+      port: tcp-prometheus
+      relabelings:
+        - separator: ;
+          regex: __meta_kubernetes_pod_label_(.+)
+          replacement: $1
+          action: labelmap
+        - sourceLabels: [ __meta_kubernetes_namespace ]
+          separator: ;
+          regex: (.*)
+          targetLabel: namespace
+          replacement: $1
+          action: replace
+        - sourceLabels: [ __meta_kubernetes_pod_name ]
+          separator: ;
+          regex: (.*)
+          targetLabel: kubernetes_pod_name
+          replacement: $1
+          action: replace
+        - sourceLabels: [ __meta_kubernetes_pod_node_name ]
+          separator: ;
+          regex: (.*)
+          targetLabel: node_name
+          replacement: $1
+          action: replace
+        - sourceLabels: [ __meta_kubernetes_pod_host_ip ]
+          separator: ;
+          regex: (.*)
+          targetLabel: node_ip
+          replacement: $1
+          action: replace

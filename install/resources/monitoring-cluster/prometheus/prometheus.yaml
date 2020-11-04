@@ -64,8 +64,6 @@ metadata:
   name: <name>
   namespace: <namespace>
 spec:
-  configMaps:
-    - observatorium-xyz-tls
   serviceAccountName: <name>
   additionalScrapeConfigs:
     key: additional-scrape-config.yaml
@@ -75,7 +73,7 @@ spec:
   externalLabels:
     cluster_id: <cluster__id>
   remoteWrite:
-    - url: 'http://<receiver>/api/v1/receive'
+    - url: '<receiver>/api/v1/receive'
       tlsConfig:
         insecureSkipVerify: true
       writeRelabelConfigs:
@@ -100,9 +98,7 @@ spec:
     matchLabels:
       strimzi.io/kind: cluster-operator
   namespaceSelector:
-    matchNames:
-      - <cluster>
-      - <operator>
+    matchNames: [<namespaces>]
   podMetricsEndpoints:
     - path: /metrics
       port: http
@@ -121,9 +117,7 @@ spec:
         operator: In
         values: [ "Kafka", "KafkaConnect" ]
   namespaceSelector:
-    matchNames:
-      - <cluster>
-      - <operator>
+    matchNames: [<namespaces>]
   podMetricsEndpoints:
     - path: /metrics
       port: tcp-prometheus

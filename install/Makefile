@@ -23,7 +23,7 @@ export MINIO_NAMESPACE = observatorium-minio
 export OBSERVATORIUM_NAMESPACE ?= observatorium
 export OBSERVATORIUM_APPS_URL ?= apps.example.io
 
-export CLUSTER_ID := $(shell oc get clusterversion -o jsonpath='{.items[].spec.clusterID}{"\n"}')
+export CLUSTER_ID ?= $(shell oc get clusterversion -o jsonpath='{.items[].spec.clusterID}{"\n"}')
 
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
