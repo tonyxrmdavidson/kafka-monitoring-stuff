@@ -1,0 +1,37 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosSchedule
+metadata:
+  name: pod-delete-kafka-zookeepers
+  namespace: litmus
+spec:
+  schedule:
+    repeat:
+      properties:
+         #format should be like "10m" or "2h" accordingly for minutes or hours
+        minChaosInterval: "<chaos-schedule-interval>"  
+  engineTemplateSpec:
+    engineState: active
+    appinfo:
+      appns: '<namespace>'
+      applabel: '<pod-label>'
+      appkind: '<deployment-type>'
+    annotationCheck: 'false'
+    chaosServiceAccount: scheduler
+    monitoring: false
+    jobCleanUpPolicy: '<cleanup>'
+    experiments:
+      - name: pod-delete
+        spec:
+          components:
+            env:
+              # set chaos duration (in sec) as desired
+              - name: TOTAL_CHAOS_DURATION
+                value: '<chaos-duration>'
+
+              # set chaos interval (in sec) as desired
+              - name: CHAOS_INTERVAL
+                value: '<chaos-interval>'
+
+              # pod failures without '--force' & default terminationGracePeriodSeconds
+              - name: FORCE
+                value: '<force-delete>'
