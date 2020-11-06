@@ -130,6 +130,10 @@ spec:
       type: persistent-claim
       size: <PVC_SIZE>
       deleteClaim: false
+    logging:
+      loggers:
+        zookeeper.root.logger: WARN
+      type: inline
     metrics:
       lowercaseOutputName: true
       rules:
