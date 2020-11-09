@@ -8,7 +8,7 @@ It is intended as a place for hacking things together and dumping any useful stu
 ## Prerequisites
 
 - A running OpenShift 4 cluster with kubeadmin access
-- oc and kubectl binaries, logged in to the OpenShift 4 cluster
+- oc > 4.5 and kubectl > 1.18 binaries, logged in to the OpenShift 4 cluster
 - jq installed
 - (optional) The strimzi-operator is running in the cluster. Make targets exist to do this as well.
 - (optional) A Kafka CR exists & has been reconciled into a running Kafka cluster. Make targets exist to do this as well.
