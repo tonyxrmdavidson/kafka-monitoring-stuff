@@ -1,4 +1,5 @@
 KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
+KAFKA_CLUSTER_NAME ?= my-cluster
 BROKER_POD_LABEL ?= app.kubernetes.io/name=kafka
 BROKER_DEPLOYMENT_TYPE ?= statefulset
 ZOOKEEPER_POD_LABEL ?= app.kubernetes.io/name=zookeeper
@@ -33,6 +34,14 @@ create/chaosexperiments:
 	@echo "create chaosexperiment resources"
 	@kubectl apply -f ./chaosexperiments/chaosexperiments-generic.yaml
 	@kubectl apply -f ./chaosexperiments/chaosexperiments-kafka.yaml
+
+.PHONY: create/strimzi-traffic-generator
+create/strimzi-traffic-generator:
+	@echo "create strimzi-traffic-generator: $(KAFKA_CLUSTER_NAMESPACE)"
+	@cat ./strimzi-traffic-generator/deployment.yaml | \
+    sed -e 's|<namespace>|$(KAFKA_CLUSTER_NAMESPACE)|g' | \
+    sed -e 's|<kafka-cluster-name>|$(KAFKA_CLUSTER_NAME)|g' | \
+    cat | oc apply -f -
 
 .PHONY: create/chaosschedule/pod-delete-brokers
 create/chaosschedule/pod-delete-brokers: 
@@ -97,5 +106,5 @@ uninstall/operator/litmus:
 	@oc delete ns litmus
 	@echo "Done removing litmus resources"
 
-all: create/operator create/chaosexperiments create/operator/chaosscheduler create/chaosschedule/pod-delete-brokers create/chaosschedule/pod-delete-zookeepers
+all: create/operator create/chaosexperiments create/operator/chaosscheduler create/strimzi-traffic-generator create/chaosschedule/pod-delete-brokers create/chaosschedule/pod-delete-zookeepers
 	@echo "Done deploying chaos experiments"
