@@ -199,9 +199,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate5m{) > (14.40 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate5m) > (14.40 * (1-0.90000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate1h{) > (14.40 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate1h) > (14.40 * (1-0.90000))
       for: 2m
       labels:
         name: FailedConnectionsPerSec
@@ -210,9 +210,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate30m{) > (6.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate30m) > (6.00 * (1-0.90000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate6h{) > (6.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate6h) > (6.00 * (1-0.90000))
       for: 15m
       labels:
         name: FailedConnectionsPerSec
@@ -221,9 +221,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate2h{) > (3.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate2h) > (3.00 * (1-0.90000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate1d{) > (3.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate1d) > (3.00 * (1-0.90000))
       for: 1h
       labels:
         name: FailedConnectionsPerSec
@@ -232,9 +232,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate6h{) > (1.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate6h) > (1.00 * (1-0.90000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate3d{) > (1.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate3d) > (1.00 * (1-0.90000))
       for: 3h
       labels:
         name: FailedConnectionsPerSec
