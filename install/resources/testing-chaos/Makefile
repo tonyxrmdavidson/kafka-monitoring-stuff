@@ -106,5 +106,5 @@ uninstall/operator/litmus:
 	@oc delete ns litmus
 	@echo "Done removing litmus resources"
 
-all: create/operator create/chaosexperiments create/operator/chaosscheduler create/strimzi-traffic-generator create/chaosschedule/pod-delete-brokers create/chaosschedule/pod-delete-zookeepers
+all: create/operator/litmus create/chaosexperiments create/operator/chaosscheduler create/strimzi-traffic-generator create/chaosschedule/pod-delete-brokers create/chaosschedule/pod-delete-zookeepers
 	@echo "Done deploying chaos experiments"
