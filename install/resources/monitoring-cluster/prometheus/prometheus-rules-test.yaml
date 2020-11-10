@@ -1,0 +1,32 @@
+# This is a list of rule files to consider for testing. Globs are supported.
+rule_files:
+  - prometheus-rules-groups.yaml
+
+# optional, default = 1m
+evaluation_interval: 1m
+
+# The order in which group names are listed below will be the order of evaluation of
+# rule groups (at a given evaluation time). The order is guaranteed only for the groups mentioned below.
+# All the groups need not be mentioned below.
+# group_eval_order:
+#   [ - <group_name> ]
+
+# All the tests are listed here.
+tests:
+    # Test 1
+    - interval: 1m
+      input_series:
+          - series: 'kafka_server_brokertopicmetrics_failed_produce_requests_total'
+            values: '0+50x400'
+          - series: 'kafka_server_brokertopicmetrics_total_produce_requests_total'
+            values: '0+60x400'
+      alert_rule_test:
+          # Unit test 1.
+          - eval_time: 30m
+            alertname: ErrorBudgetBurn_ProduceRequests
+            exp_alerts:
+                # Alert 1.
+                - exp_labels:
+                      severity: critical
+                  exp_annotations:
+                      message: "High error budget burn for Failed Produce Requests (current value: 1)"
