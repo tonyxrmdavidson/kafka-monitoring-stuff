@@ -19,18 +19,12 @@ data:
             cluster_id:
         relabel_configs:
         - source_labels:
-          - __meta_kubernetes_pod_label_name
-          target_label: __service__
-        - source_labels:
           - __meta_kubernetes_pod_node_name
           target_label: __host__
         - action: replace
-          replacement: $1
-          separator: /
           source_labels:
-          - __meta_kubernetes_namespace
-          - __service__
-          target_label: job
+          - __meta_kubernetes_pod_node_name
+          target_label: nodename
         - action: replace
           source_labels:
           - __meta_kubernetes_namespace
@@ -44,7 +38,8 @@ data:
           - __meta_kubernetes_pod_container_name
           target_label: container_name
         - action: labelmap
-          regex: __meta_kubernetes_pod_label_(.+)
+          regex: __meta_kubernetes_pod_label_strimzi_io_(.+)
+          replacement: strimzi_io_$1
         - replacement: /var/log/pods/*$1/*.log
           separator: /
           source_labels:
