@@ -1,17 +1,26 @@
 apiVersion: kafka.strimzi.io/v1beta1
 kind: Kafka
 metadata:
-  name: my-cluster
+  name: <NAME>
   namespace: <NAMESPACE>
 spec:
   kafka:
     replicas: 3
     listeners:
+      external:
+        overrides:
+          bootstrap:
+            host: <NAME>-<UUID>.<CLUSTER_DOMAIN_NAME>
+          brokers:
+            - broker: 0
+              host: broker-0-<NAME>-<UUID>.<CLUSTER_DOMAIN_NAME>
+            - broker: 1
+              host: broker-1-<NAME>-<UUID>.<CLUSTER_DOMAIN_NAME>
+            - broker: 2
+              host: broker-2-<NAME>-<UUID>.<CLUSTER_DOMAIN_NAME>
+        type: route
       plain: {}
       tls: {}
-      external:
-        type: nodeport
-        tls: false
     storage:
       type: jbod
       volumes:
