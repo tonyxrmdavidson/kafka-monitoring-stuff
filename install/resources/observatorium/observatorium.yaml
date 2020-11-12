@@ -30,8 +30,8 @@ spec:
     image: 'docker.io/grafana/loki:1.6.1'
     replicas:
       distributor: 1
-      ingester: 1
-      querier: 1
+      ingester: 3
+      querier: 3
       query_frontend: 1
       table_manager: 1
     version: 1.6.1

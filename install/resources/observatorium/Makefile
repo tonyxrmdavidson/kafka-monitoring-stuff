@@ -31,6 +31,11 @@ create/cr:
 	@echo "create observatorium in: $(OBSERVATORIUM_NAMESPACE)"
 	@sed 's/<namespace>/$(OBSERVATORIUM_NAMESPACE)/g' ./observatorium.yaml | cat | oc apply -f -
 
+.PHONY: create/route
+create/route:
+	@echo "create route"
+	@sed 's/<namespace>/$(OBSERVATORIUM_NAMESPACE)/g' ./route.yaml | cat | oc apply -f -
+
 setup:
 	@echo "updating promtail config to point to $(GATEWAY_URL)"
 	@cat ../monitoring-cluster/promtail/config.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | \
@@ -48,6 +53,12 @@ setup:
         sed -e 's#<gateway>#$(GATEWAY_URL)/api/metrics/v1/test/api/v1/receive#g' | \
         sed -e 's/<token>/$(shell curl --request POST --url $(DEX_TOKEN_URL)/dex/token --header 'content-type: application/x-www-form-urlencoded' --data grant_type=password --data username=admin@example.com --data password=password --data client_id=test --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/')/g' | \
 		cat | oc apply -f -
+	@echo "updating data sources"
+	@cat ../monitoring-cluster/prometheus/datasource.yaml | sed -e 's/<url>/'"$(PER_CLUSTER_PROMETHEUS_NAMESPACE)"'/g' | \
+        sed -e 's#<gateway>#$(GATEWAY_URL)#g' | \
+        sed -e 's/<tenant>/test/g' | \
+        sed -e 's/<token>/$(shell curl --request POST --url $(DEX_TOKEN_URL)/dex/token --header 'content-type: application/x-www-form-urlencoded' --data grant_type=password --data username=admin@example.com --data password=password --data client_id=test --data client_secret=ZXhhbXBsZS1hcHAtc2VjcmV0 --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/')/g' | \
+		cat | oc apply -n $(PER_CLUSTER_GRAFANA_NAMESPACE) -f -
 	@echo "restarting promtail"
 	@oc get pods -n $(PER_CLUSTER_GRAFANA_NAMESPACE) --selector=app=kafka-promtail -oyaml | oc delete -f -
 
@@ -57,5 +68,5 @@ clean:
 	@oc delete namespace $(OBSERVATORIUM_NAMESPACE)
 	@echo "Done uninstalling observatorium"
 
-all: create/dex create/minio create/crds create/operator create/cr
+all: create/dex create/minio create/crds create/operator create/cr create/route
 	@echo "Done installing observatorium"

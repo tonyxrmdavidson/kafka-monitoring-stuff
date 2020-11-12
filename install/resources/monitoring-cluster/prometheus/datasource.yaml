@@ -27,7 +27,7 @@ spec:
     - name: "Observatorium-Metrics"
       type: prometheus
       access: proxy
-      url: <observatorium>
+      url: <gateway>/api/metrics/v1/<tenant>
       isDefault: false
       version: 1
       editable: true
@@ -48,7 +48,7 @@ spec:
     - name: "Observatorium-Logs"
       type: loki
       access: proxy
-      url: <observatorium>
+      url: <gateway>/api/logs/v1/<tenant>
       isDefault: false
       version: 1
       editable: true
