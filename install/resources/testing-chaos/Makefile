@@ -1,3 +1,6 @@
+LITMUS_NS ?= litmus
+CLUSTER_PROMETHEUS_NS ?= managed-services-monitoring-prometheus
+PROMETHEUS_SCRAPE_INTERVAL ?= 30
 KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
 KAFKA_CLUSTER_NAME ?= my-cluster
 BROKER_POD_LABEL ?= app.kubernetes.io/name=kafka
@@ -90,6 +93,10 @@ create/chaosengine/pod-delete:
     sed -e 's|<force-delete>|$(POD_DELETE_FORCE)|g' | \
     cat | oc apply -f -
 
+.PHONY: test/chaosschedule/critical-alerts
+test/chaosschedule/critical-alerts:
+	@python3 ./scripts/fault-test.py $(LITMUS_NS) $(CLUSTER_PROMETHEUS_NS) $(PROMETHEUS_SCRAPE_INTERVAL)
+
 .PHONY: uninstall/operator/chaosscheduler
 uninstall/operator/chaosscheduler:
 	@echo "removing chaosscheduler resources"
@@ -106,5 +113,5 @@ uninstall/operator/litmus:
 	@oc delete ns litmus
 	@echo "Done removing litmus resources"
 
-all: create/operator/litmus create/chaosexperiments create/operator/chaosscheduler create/strimzi-traffic-generator create/chaosschedule/pod-delete-brokers create/chaosschedule/pod-delete-zookeepers
+all: create/operator/litmus create/chaosexperiments create/operator/chaosscheduler create/strimzi-traffic-generator create/chaosschedule/pod-delete-brokers create/chaosschedule/pod-delete-zookeepers test/chaosschedule/critical-alerts
 	@echo "Done deploying chaos experiments"
