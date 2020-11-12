@@ -27,8 +27,8 @@ export OBSERVATORIUM_APPS_URL ?= apps.example.io
 export CLUSTER_ID ?= $(shell oc get clusterversion -o jsonpath='{.items[].spec.clusterID}{"\n"}')
 
 # kafka listener vars
-export KAFKA_CLUSTER_DOMAIN_NAME ?= $(oc get --namespace openshift-ingress-operator ingresscontrollers/default --output jsonpath='{.status.domain}{"\n"}')
-export KAFKA_UUID ?= $(uuidgen)
+export KAFKA_CLUSTER_DOMAIN_NAME ?= $(shell oc get --namespace openshift-ingress-operator ingresscontrollers/default --output jsonpath='{.status.domain}{"\n"}')
+export KAFKA_UUID ?= $(shell uuidgen)
 
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
