@@ -118,7 +118,7 @@ test/chaos:
 setup/observatorium:
 	make -C resources/observatorium setup
 
-all: install/strimzi/operator install/kafka/cr
+all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
 	@echo "done installing kafka monitoring demo"
 
 clean: uninstall/kafka/cr uninstall/strimzi/operator uninstall/monitoring/global uninstall/monitoring/cluster
