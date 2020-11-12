@@ -2,6 +2,7 @@ export KAFKA_PVC_SIZE ?= 5Gi
 
 export STRIMZI_OPERATOR_NAMESPACE ?= kafka-operator
 export KAFKA_CLUSTER_NAMESPACE ?= kafka-cluster
+export KAFKA_CLUSTER_NAME?= my-cluster
 
 export PER_CLUSTER_PROMETHEUS_NAMESPACE ?= managed-services-monitoring-prometheus
 export PER_CLUSTER_GRAFANA_NAMESPACE ?= managed-services-monitoring-grafana
@@ -24,6 +25,10 @@ export OBSERVATORIUM_NAMESPACE ?= observatorium
 export OBSERVATORIUM_APPS_URL ?= apps.example.io
 
 export CLUSTER_ID ?= $(shell oc get clusterversion -o jsonpath='{.items[].spec.clusterID}{"\n"}')
+
+# kafka listener vars
+export KAFKA_CLUSTER_DOMAIN_NAME ?= $(oc get --namespace openshift-ingress-operator ingresscontrollers/default --output jsonpath='{.status.domain}{"\n"}')
+export KAFKA_UUID ?= $(uuidgen)
 
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
