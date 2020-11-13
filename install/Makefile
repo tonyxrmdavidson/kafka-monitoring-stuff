@@ -28,7 +28,7 @@ export CLUSTER_ID ?= $(shell oc get clusterversion -o jsonpath='{.items[].spec.c
 
 # kafka listener vars
 export KAFKA_CLUSTER_DOMAIN_NAME ?= $(shell oc get --namespace openshift-ingress-operator ingresscontrollers/default --output jsonpath='{.status.domain}{"\n"}')
-export KAFKA_UUID ?= $(shell uuidgen)
+export KAFKA_UUID ?= $(shell uuidgen | tr '[:upper:]' '[:lower:]')
 
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
