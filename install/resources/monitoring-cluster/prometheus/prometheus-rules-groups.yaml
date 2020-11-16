@@ -1,9 +1,9 @@
 groups:
 - name: kafka-api-slo
   rules:
-  - alert: ErrorBudgetBurn_ProduceRequests
+  - alert: ErrorBudgetBurn_ProduceRequests_5mS1hL
     annotations:
-      message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
+      message: 'High error budget burn for failed produce requests during 5m short window, 1h long window. (current value: {{ $value }})'
     expr: |
       sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate5m) > (14.40 * (1-0.90000))
       and
@@ -11,9 +11,9 @@ groups:
     for: 2m
     labels:
       severity: critical
-  - alert: ErrorBudgetBurn_ProduceRequests
+  - alert: ErrorBudgetBurn_ProduceRequests_30mS6hL
     annotations:
-      message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
+      message: 'High error budget burn for failed produce requests during 30m short window, 6h long window. (current value: {{ $value }})'
     expr: |
       sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate30m) > (6.00 * (1-0.90000))
       and
@@ -21,9 +21,9 @@ groups:
     for: 15m
     labels:
       severity: critical
-  - alert: ErrorBudgetBurn_ProduceRequests
+  - alert: ErrorBudgetBurn_ProduceRequests_2hS1dL
     annotations:
-      message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
+      message: 'High error budget burn for failed produce requests during 2h short window, 1d long window. (current value: {{ $value }})'
     expr: |
       sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate2h) > (3.00 * (1-0.90000))
       and
@@ -31,9 +31,9 @@ groups:
     for: 1h
     labels:
       severity: warning
-  - alert: ErrorBudgetBurn_ProduceRequests
+  - alert: ErrorBudgetBurn_ProduceRequests_6hS3dL
     annotations:
-      message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
+      message: 'High error budget burn for failed produce requests during 6h short window, 3d long window. (current value: {{ $value }})'
     expr: |
       sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate6h) > (1.00 * (1-0.90000))
       and

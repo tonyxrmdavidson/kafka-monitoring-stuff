@@ -11,22 +11,49 @@ evaluation_interval: 1m
 # group_eval_order:
 #   [ - <group_name> ]
 
-# All the tests are listed here.
 tests:
-    # Test 1
+    # 90% SLO, burn rate of just over 1.
+    # This means just over 10% of requests are errors over 6h i.e.
+    # - 61 failed requests per 600 total every minute for 6h
+    # - 0 failed requests thereafter
     - interval: 1m
       input_series:
           - series: 'kafka_server_brokertopicmetrics_failed_produce_requests_total'
-            values: '0+50x400'
+            values: '0+61x360'
           - series: 'kafka_server_brokertopicmetrics_total_produce_requests_total'
-            values: '0+60x400'
+            values: '0+600x360 216000+600x360'
       alert_rule_test:
-          # Unit test 1.
-          - eval_time: 30m
-            alertname: ErrorBudgetBurn_ProduceRequests
+          # Warning should fire after 6h short window.
+          - eval_time: 6h
+            alertname: ErrorBudgetBurn_ProduceRequests_6hS3dL
             exp_alerts:
-                # Alert 1.
                 - exp_labels:
-                      severity: critical
+                      severity: warning
                   exp_annotations:
-                      message: "High error budget burn for Failed Produce Requests (current value: 1)"
+                      message: "High error budget burn for failed produce requests during 6h short window, 3d long window. (current value: 0.10166666666666668)"
+          # No alerts after 6h with 0 failed requests
+          - eval_time: 12h
+            alertname: ErrorBudgetBurn_ProduceRequests_6hS3dL
+    # 90% SLO, burn rate of just over 3.
+    # This means just over 30% of requests are errors over 3h i.e.
+    # - 181 failed requests per 600 total every minute for 3h
+    # - 0 failed requests thereafter
+    - interval: 1m
+      input_series:
+          - series: 'kafka_server_brokertopicmetrics_failed_produce_requests_total'
+            values: '0+181x120'
+          - series: 'kafka_server_brokertopicmetrics_total_produce_requests_total'
+            values: '0+600x120 72000+600x120'
+      alert_rule_test:
+          # Warning should fire after 2h short window.
+          - eval_time: 2h
+            alertname: ErrorBudgetBurn_ProduceRequests_2hS1dL
+            exp_alerts:
+                - exp_labels:
+                      severity: warning
+                  exp_annotations:
+                      message: "High error budget burn for failed produce requests during 2h short window, 1d long window. (current value: 0.3016666666666667)"
+          # No alerts after 2h with 0 failed requests
+          - eval_time: 4h
+            alertname: ErrorBudgetBurn_ProduceRequests_2hS1dL
+
