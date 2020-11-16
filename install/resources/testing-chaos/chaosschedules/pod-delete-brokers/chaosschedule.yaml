@@ -5,10 +5,7 @@ metadata:
   namespace: litmus
 spec:
   schedule:
-    repeat:
-      properties:
-         #format should be like "10m" or "2h" accordingly for minutes or hours
-        minChaosInterval: "<chaos-schedule-interval>"  
+    now: true 
   engineTemplateSpec:
     engineState: active
     appinfo:

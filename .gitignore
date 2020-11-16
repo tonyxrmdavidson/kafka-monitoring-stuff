@@ -1,3 +1,4 @@
 .idea
+.vscode
 install/build
 .DS_Store
