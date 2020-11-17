@@ -166,7 +166,7 @@ spec:
           "tableColumn": "{}",
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\"} [1m]))",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",instance=~\"$pods\",cluster_id=~\"$cluster_id\"} [1m]))",
               "legendFormat": "",
               "refId": "A"
             }
@@ -379,7 +379,7 @@ spec:
           "pluginVersion": "7.1.1",
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\"}  [1m])) by (instance)",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",instance=~\"$pods\",cluster_id=~\"$cluster_id\"}  [1m])) by (instance)",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
@@ -462,7 +462,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\"}  [1m])) by (instance)",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",instance=~\"$pods\",cluster_id=~\"$cluster_id\"}  [1m])) by (instance)",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
@@ -581,7 +581,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\"} [1m])) by (instance)",
+              "expr": "sum(rate({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",instance=~\"$pods\",cluster_id=~\"$cluster_id\"} [1m])) by (instance)",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
@@ -700,7 +700,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\" ,app_kubernetes_io_name=\"kafka\"} |~ \"WARN | Warning\"  [1m]))  by (namespace)",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",instance=~\"$pods\",cluster_id=~\"$cluster_id\" ,container_name=\"kafka\"} |~ \"WARN | Warning\"  [1m]))  by (namespace)",
               "legendFormat": "",
               "refId": "A"
             }
@@ -807,7 +807,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\" ,app_kubernetes_io_name=\"kafka\"} |= \"ERROR\"  [1m])) by (namespace)",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",instance=~\"$pods\",cluster_id=~\"$cluster_id\" ,container_name=\"kafka\"} |= \"ERROR\"  [1m])) by (namespace)",
               "legendFormat": "{{namespace}}",
               "refId": "A"
             }
@@ -920,7 +920,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\" ,app_kubernetes_io_name=\"kafka\"}  |~ \"WARN | Warning\"  [1m])) by (namespace)",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",instance=~\"$pods\",cluster_id=~\"$cluster_id\" ,container_name=\"kafka\"}  |~ \"WARN | Warning\"  [1m])) by (namespace)",
               "legendFormat": "{{namespace}}",
               "refId": "A"
             }
@@ -1027,7 +1027,7 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\" ,app_kubernetes_io_name=\"kafka\"}  |~ \"ERROR\"  [1m])) by (tenant)",
+              "expr": "sum(count_over_time({strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",instance=~\"$pods\",cluster_id=~\"$cluster_id\" ,container_name=\"kafka\"}  |~ \"ERROR\"  [1m])) by (tenant)",
               "legendFormat": "{{tenant}}",
               "refId": "A"
             }
@@ -1097,7 +1097,7 @@ spec:
           },
           "targets": [
             {
-              "expr": "{strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",statefulset_kubernetes_io_pod_name=~\"$pods\",cluster_id=~\"$cluster_id\"}|~ \"$search\" ",
+              "expr": "{strimzi_io_kind=~\"$kind\",namespace=~\"$namespace\",container_name=~\"$container_name\",instance=~\"$pods\",cluster_id=~\"$cluster_id\"}|~ \"$search\" ",
               "legendFormat": "",
               "refId": "A"
             }
@@ -1327,14 +1327,14 @@ spec:
               ]
             },
             "datasource": "Observatorium-Logs",
-            "definition": "label_values({container_name=~\"$container_name\"},statefulset_kubernetes_io_pod_name) ",
+            "definition": "label_values({container_name=~\"$container_name\"},instance) ",
             "hide": 0,
             "includeAll": false,
             "label": null,
             "multi": true,
             "name": "pods",
             "options": [],
-            "query": "label_values({container_name=~\"$container_name\"},statefulset_kubernetes_io_pod_name) ",
+            "query": "label_values({container_name=~\"$container_name\"},instance) ",
             "refresh": 1,
             "regex": "",
             "skipUrlSync": false,
