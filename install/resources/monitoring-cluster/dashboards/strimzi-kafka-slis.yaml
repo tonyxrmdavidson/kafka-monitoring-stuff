@@ -76,49 +76,31 @@ spec:
       "links": [],
       "panels": [
         {
-          "content": "\n# Availability (7 days)\n\n- Kafka Availability\n  - Based on at least 1 kafka borker pod being in a ready state\n- Zookeeper Availability\n  - Based on at least 1 zookeeper pod being in a ready state\n\n\n\n",
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": true,
+          "colors": [
+            "#d44a3a",
+            "rgba(237, 129, 40, 0.89)",
+            "#299c46"
+          ],
           "datasource": "${DS_PROMETHEUS}",
+          "description": "kafka producer request budget error",
+          "format": "percentunit",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "gridPos": {
-            "h": 10,
-            "w": 4,
+            "h": 5,
+            "w": 6,
             "x": 0,
-            "y": 0
+            "y": 5
           },
-          "id": 53,
-          "mode": "markdown",
-          "options": {},
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "",
-          "transparent": true,
-          "type": "text"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "${DS_PROMETHEUS}",
-          "decimals": 3,
-          "format": "percentunit",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 3,
-            "x": 4,
-            "y": 0
-          },
-          "id": 35,
+          "id": 5,
           "interval": null,
           "links": [],
           "mappingType": 1,
@@ -136,6 +118,7 @@ spec:
           "nullPointMode": "connected",
           "nullText": null,
           "options": {},
+          "pluginVersion": "6.5.1",
           "postfix": "",
           "postfixFontSize": "50%",
           "prefix": "",
@@ -158,18 +141,17 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "avg_over_time((absent(kube_namespace_status_phase{namespace=\"$kubernetes_namespace\"}) or max by(namespace) (kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"}) or (0 * max by(namespace) (sum_over_time(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"}[7d]))))[7d:1m])",
-              "format": "time_series",
+              "expr": "1 -\nsum(increase(kafka_server_brokertopicmetrics_failed_produce_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n/\nsum(increase(kafka_server_brokertopicmetrics_total_produce_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n",
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "thresholds": "",
+          "thresholds": "0.99,0.995",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Kafka Availability",
+          "title": "Producer Availability (28d)",
           "type": "singlestat",
-          "valueFontSize": "80%",
+          "valueFontSize": "120%",
           "valueMaps": [
             {
               "op": "=",
@@ -182,20 +164,21 @@ spec:
         {
           "aliasColors": {},
           "bars": false,
+          "cacheTimeout": null,
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_PROMETHEUS}",
-          "fill": 1,
+          "description": "kafka producer request budget error",
+          "fill": 10,
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 17,
-            "x": 7,
-            "y": 0
+            "w": 18,
+            "x": 6,
+            "y": 5
           },
           "hiddenSeries": false,
-          "id": 44,
-          "interval": "",
+          "id": 6,
           "legend": {
             "avg": false,
             "current": false,
@@ -206,12 +189,14 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 1,
+          "linewidth": 0,
+          "links": [],
           "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
           "percentage": false,
+          "pluginVersion": "6.5.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -221,17 +206,18 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
-              "format": "time_series",
-              "legendFormat": "Number of pods ready",
+              "expr": "(\n  (\n    1 -\n    sum(increase(kafka_server_brokertopicmetrics_failed_produce_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n    /\n    sum(increase(kafka_server_brokertopicmetrics_total_produce_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n  ) - 0.99\n)\n/ \n(1 - 0.99)",
+              "instant": false,
+              "intervalFactor": 10, 
+              "legendFormat": "errorbudget",
               "refId": "A"
             }
           ],
           "thresholds": [],
-          "timeFrom": "7d",
+          "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Kafka pods ready",
+          "title": "Producer Error Budget (28d)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -247,12 +233,12 @@ spec:
           },
           "yaxes": [
             {
-              "decimals": 0,
-              "format": "short",
+              "decimals": null,
+              "format": "percentunit",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": "0",
+              "min": null,
               "show": true
             },
             {
@@ -261,7 +247,7 @@ spec:
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -272,100 +258,14 @@ spec:
         {
           "cacheTimeout": null,
           "colorBackground": false,
-          "colorValue": false,
+          "colorValue": true,
           "colors": [
-            "#299c46",
+            "#d44a3a",
             "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
+            "#299c46"
           ],
           "datasource": "${DS_PROMETHEUS}",
-          "format": "none",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 3,
-            "x": 4,
-            "y": 3
-          },
-          "id": 33,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "options": {},
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false,
-            "ymax": null,
-            "ymin": null
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*kafka-[0-9]+.*\"})",
-              "format": "time_series",
-              "instant": true,
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "thresholds": "",
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Kafka pods ready",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "${DS_PROMETHEUS}",
-          "decimals": 3,
+          "description": "kafka fetch request budget error",
           "format": "percentunit",
           "gauge": {
             "maxValue": 100,
@@ -375,12 +275,12 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 3,
-            "w": 3,
-            "x": 4,
-            "y": 5
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 10
           },
-          "id": 51,
+          "id": 7,
           "interval": null,
           "links": [],
           "mappingType": 1,
@@ -398,6 +298,7 @@ spec:
           "nullPointMode": "connected",
           "nullText": null,
           "options": {},
+          "pluginVersion": "6.5.1",
           "postfix": "",
           "postfixFontSize": "50%",
           "prefix": "",
@@ -420,18 +321,17 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "avg_over_time((absent(kube_namespace_status_phase{namespace=\"$kubernetes_namespace\"}) or max by(namespace) (kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"}) or (0 * max by(namespace) (sum_over_time(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"}[7d]))))[7d:1m])",
-              "format": "time_series",
+              "expr": "1 -\nsum(increase(kafka_server_brokertopicmetrics_failed_fetch_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n/\nsum(increase(kafka_server_brokertopicmetrics_total_fetch_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n",
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "thresholds": "",
+          "thresholds": "0.99,0.995",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Zookeeper Availability",
+          "title": "Fetch Availability (28d)",
           "type": "singlestat",
-          "valueFontSize": "80%",
+          "valueFontSize": "120%",
           "valueMaps": [
             {
               "op": "=",
@@ -444,20 +344,21 @@ spec:
         {
           "aliasColors": {},
           "bars": false,
+          "cacheTimeout": null,
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_PROMETHEUS}",
-          "fill": 1,
+          "description": "kafka producer fetch budget error",
+          "fill": 10,
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 17,
-            "x": 7,
-            "y": 5
+            "w": 18,
+            "x": 6,
+            "y": 10
           },
           "hiddenSeries": false,
-          "id": 45,
-          "interval": "",
+          "id": 8,
           "legend": {
             "avg": false,
             "current": false,
@@ -468,12 +369,14 @@ spec:
             "values": false
           },
           "lines": true,
-          "linewidth": 1,
+          "linewidth": 0,
+          "links": [],
           "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
           "percentage": false,
+          "pluginVersion": "6.5.1",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -483,17 +386,18 @@ spec:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
-              "format": "time_series",
-              "legendFormat": "Number of pods ready",
+              "expr": "(\n  (\n    1 -\n    sum(increase(kafka_server_brokertopicmetrics_failed_fetch_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n    /\n    sum(increase(kafka_server_brokertopicmetrics_total_fetch_requests_total{namespace=\"$kubernetes_namespace\"}[28d]))\n  ) - 0.99\n)\n/ \n(1 - 0.99)",
+              "instant": false,
+              "intervalFactor": 10, 
+              "legendFormat": "errorbudget",
               "refId": "A"
             }
           ],
           "thresholds": [],
-          "timeFrom": "7d",
+          "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Zookeeper pods ready",
+          "title": "Fetch Error Budget (28d)",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -509,12 +413,12 @@ spec:
           },
           "yaxes": [
             {
-              "decimals": 0,
-              "format": "short",
+              "decimals": null,
+              "format": "percentunit",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": "0",
+              "min": null,
               "show": true
             },
             {
@@ -523,7 +427,7 @@ spec:
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -534,14 +438,15 @@ spec:
         {
           "cacheTimeout": null,
           "colorBackground": false,
-          "colorValue": false,
+          "colorValue": true,
           "colors": [
-            "#299c46",
+            "#d44a3a",
             "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
+            "#299c46"
           ],
           "datasource": "${DS_PROMETHEUS}",
-          "format": "none",
+          "description": "kafka connection budget error",
+          "format": "percentunit",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -550,12 +455,12 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 2,
-            "w": 3,
-            "x": 4,
-            "y": 8
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 15
           },
-          "id": 50,
+          "id": 9,
           "interval": null,
           "links": [],
           "mappingType": 1,
@@ -573,6 +478,7 @@ spec:
           "nullPointMode": "connected",
           "nullText": null,
           "options": {},
+          "pluginVersion": "6.5.1",
           "postfix": "",
           "postfixFontSize": "50%",
           "prefix": "",
@@ -595,19 +501,17 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(kube_pod_status_ready{namespace=\"$kubernetes_namespace\", condition=\"true\", pod=~\".*zookeeper-[0-9]+.*\"})",
-              "format": "time_series",
-              "instant": true,
+              "expr": "1 -\nsum(increase(haproxy_server_connection_errors_total{namespace=\"$kubernetes_namespace\", condition=\"true\", route=~\".+-kafka-([0-9]+|bootstrap)$\"}[28d]))\n/\nsum(increase(haproxy_server_connections_total{namespace=\"$kubernetes_namespace\", condition=\"true\", route=~\".+-kafka-([0-9]+|bootstrap)$\"}[28d]))\n",
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "thresholds": "",
+          "thresholds": "0.99,0.995",
           "timeFrom": null,
           "timeShift": null,
-          "title": "Zookeeper pods ready",
+          "title": "Connection Availability (28d)",
           "type": "singlestat",
-          "valueFontSize": "80%",
+          "valueFontSize": "120%",
           "valueMaps": [
             {
               "op": "=",
@@ -616,6 +520,100 @@ spec:
             }
           ],
           "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "kafka connection budget error",
+          "fill": 10,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 5,
+            "w": 18,
+            "x": 6,
+            "y": 15
+          },
+          "hiddenSeries": false,
+          "id": 10,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 0,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pluginVersion": "6.5.1",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "(\n  (\n    1 -\n    sum(increase(haproxy_server_connection_errors_total{namespace=\"$kubernetes_namespace\", condition=\"true\", route=~\".+-kafka-([0-9]+|bootstrap)$\"}[28d]))\n    /\n    sum(increase(haproxy_server_connections_total{namespace=\"$kubernetes_namespace\", condition=\"true\", route=~\".+-kafka-([0-9]+|bootstrap)$\"}[28d]))\n  ) - 0.99\n)\n/ \n(1 - 0.99)",
+              "instant": false,
+              "intervalFactor": 10, 
+              "legendFormat": "errorbudget",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Connection Error Budget (28d)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": null,
+              "format": "percentunit",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "cacheTimeout": null,
@@ -640,7 +638,7 @@ spec:
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 10
+            "y": 20
           },
           "id": 37,
           "interval": null,
@@ -717,7 +715,7 @@ spec:
             "h": 5,
             "w": 18,
             "x": 6,
-            "y": 10
+            "y": 20
           },
           "hiddenSeries": false,
           "id": 46,
@@ -817,7 +815,7 @@ spec:
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 15
+            "y": 25
           },
           "id": 39,
           "interval": null,
@@ -892,7 +890,7 @@ spec:
             "h": 5,
             "w": 18,
             "x": 6,
-            "y": 15
+            "y": 25
           },
           "hiddenSeries": false,
           "id": 47,
@@ -990,7 +988,7 @@ spec:
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 20
+            "y": 30
           },
           "id": 43,
           "interval": null,
@@ -1065,7 +1063,7 @@ spec:
             "h": 5,
             "w": 18,
             "x": 6,
-            "y": 20
+            "y": 30
           },
           "hiddenSeries": false,
           "id": 48,
@@ -1163,7 +1161,7 @@ spec:
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 25
+            "y": 35
           },
           "id": 41,
           "interval": null,
@@ -1238,7 +1236,7 @@ spec:
             "h": 5,
             "w": 18,
             "x": 6,
-            "y": 25
+            "y": 35
           },
           "hiddenSeries": false,
           "id": 49,
@@ -1337,7 +1335,7 @@ spec:
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 30
+            "y": 40
           },
           "id": 4,
           "interval": null,
@@ -1412,7 +1410,7 @@ spec:
             "h": 5,
             "w": 18,
             "x": 6,
-            "y": 30
+            "y": 40
           },
           "hiddenSeries": false,
           "id": 28,
@@ -1451,525 +1449,6 @@ spec:
           "timeRegions": [],
           "timeShift": null,
           "title": "Quality - Partitions Online",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Define the latency for main protocol requests sent by producer and consumer, even if they are heavily influenced by how the clients are configured (i.e. producer “acks”).",
-          "format": "ms",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 6,
-            "x": 0,
-            "y": 35
-          },
-          "id": 24,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "options": {},
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false,
-            "ymax": null,
-            "ymin": null
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"Produce\", namespace=\"$kubernetes_namespace\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": "",
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Latency - 95% of producer requests < x ms",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "cacheTimeout": null,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Define the latency for main protocol requests sent by producer and consumer, even if they are heavily influenced by how the clients are configured (i.e. producer “acks”).",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 5,
-            "w": 18,
-            "x": 6,
-            "y": 35
-          },
-          "hiddenSeries": false,
-          "id": 29,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"Produce\", namespace=\"$kubernetes_namespace\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Latency - 95% of producer requests < x ms",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Define the latency for main protocol requests sent by producer and consumer, even if they are heavily influenced by how the clients are configured (i.e. producer “acks”).",
-          "format": "ms",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 6,
-            "x": 0,
-            "y": 40
-          },
-          "id": 25,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "options": {},
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false,
-            "ymax": null,
-            "ymin": null
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchConsumer\", namespace=\"$kubernetes_namespace\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": "",
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Latency - 95% of fetch consumer requests < x ms",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "cacheTimeout": null,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Define the latency for main protocol requests sent by producer and consumer, even if they are heavily influenced by how the clients are configured (i.e. producer “acks”).",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 5,
-            "w": 18,
-            "x": 6,
-            "y": 40
-          },
-          "hiddenSeries": false,
-          "id": 30,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchConsumer\", namespace=\"$kubernetes_namespace\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Latency - 95% of fetch consumer requests < x ms",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Define the latency for main protocol requests sent by producer and consumer, even if they are heavily influenced by how the clients are configured (i.e. producer “acks”).",
-          "format": "ms",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 6,
-            "x": 0,
-            "y": 45
-          },
-          "id": 26,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "options": {},
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false,
-            "ymax": null,
-            "ymin": null
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchFollower\", namespace=\"$kubernetes_namespace\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": "",
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Latency - 95% of fetch follower requests < x ms",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "cacheTimeout": null,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Define the latency for main protocol requests sent by producer and consumer, even if they are heavily influenced by how the clients are configured (i.e. producer “acks”).",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 5,
-            "w": 18,
-            "x": 6,
-            "y": 45
-          },
-          "hiddenSeries": false,
-          "id": 31,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "max(kafka_network_requestmetrics_total_time_ms{quantile=\"0.95\", request=\"FetchFollower\", namespace=\"$kubernetes_namespace\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Latency - 95% of fetch follower requests < x ms",
           "tooltip": {
             "shared": true,
             "sort": 0,
