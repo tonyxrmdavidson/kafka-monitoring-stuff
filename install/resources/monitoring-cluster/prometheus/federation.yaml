@@ -26,6 +26,8 @@
       - '{__name__="container_last_seen"}'
       - '{__name__=~":node_memory_.*"}'
       - '{__name__=~"csv_.*"}'
+      - '{__name__=~"node_.*"}'
+      - '{__name__=~"container_network.*"}'
   scheme: https
   tls_config:
     insecure_skip_verify: true
