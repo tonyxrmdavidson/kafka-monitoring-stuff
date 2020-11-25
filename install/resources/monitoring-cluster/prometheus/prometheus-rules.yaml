@@ -13,9 +13,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate5m{}) > (14.40 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate5m{}) > (14.40 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate1h{}) > (14.40 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate1h{}) > (14.40 * (1-0.99000))
       for: 2m
       labels:
         name: FailedProduceRequestsPerSec
@@ -24,9 +24,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate30m{}) > (6.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate30m{}) > (6.00 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate6h{}) > (6.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate6h{}) > (6.00 * (1-0.99000))
       for: 15m
       labels:
         name: FailedProduceRequestsPerSec
@@ -35,9 +35,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate2h{}) > (3.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate2h{}) > (3.00 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate1d{}) > (3.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate1d{}) > (3.00 * (1-0.99000))
       for: 1h
       labels:
         name: FailedProduceRequestsPerSec
@@ -46,9 +46,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Produce Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate6h{}) > (1.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate6h{}) > (1.00 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate3d{}) > (1.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_produce_requests_total:burnrate3d{}) > (1.00 * (1-0.99000))
       for: 3h
       labels:
         name: FailedProduceRequestsPerSec
@@ -106,9 +106,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Fetch Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate5m{}) > (14.40 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate5m{}) > (14.40 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate1h{}) > (14.40 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate1h{}) > (14.40 * (1-0.99000))
       for: 2m
       labels:
         name: FailedFetchRequestsPerSec
@@ -117,9 +117,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Fetch Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate30m{}) > (6.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate30m{}) > (6.00 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate6h{}) > (6.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate6h{}) > (6.00 * (1-0.99000))
       for: 15m
       labels:
         name: FailedFetchRequestsPerSec
@@ -128,9 +128,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Fetch Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate2h{}) > (3.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate2h{}) > (3.00 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate1d{}) > (3.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate1d{}) > (3.00 * (1-0.99000))
       for: 1h
       labels:
         name: FailedFetchRequestsPerSec
@@ -139,9 +139,9 @@ spec:
       annotations:
         message: 'High error budget burn for Failed Fetch Requests (current value: {{ $value }})'
       expr: |
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate6h{}) > (1.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate6h{}) > (1.00 * (1-0.99000))
         and
-        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate3d{}) > (1.00 * (1-0.90000))
+        sum(kafka_server_brokertopicmetrics_failed_fetch_requests_total:burnrate3d{}) > (1.00 * (1-0.99000))
       for: 3h
       labels:
         name: FailedFetchRequestsPerSec
@@ -199,9 +199,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate5m) > (14.40 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate5m) > (14.40 * (1-0.99000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate1h) > (14.40 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate1h) > (14.40 * (1-0.99000))
       for: 2m
       labels:
         name: FailedConnectionsPerSec
@@ -210,9 +210,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate30m) > (6.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate30m) > (6.00 * (1-0.99000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate6h) > (6.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate6h) > (6.00 * (1-0.99000))
       for: 15m
       labels:
         name: FailedConnectionsPerSec
@@ -221,9 +221,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate2h) > (3.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate2h) > (3.00 * (1-0.99000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate1d) > (3.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate1d) > (3.00 * (1-0.99000))
       for: 1h
       labels:
         name: FailedConnectionsPerSec
@@ -232,9 +232,9 @@ spec:
       annotations:
         message: 'High error budget burn for haproxy connection errors (current value: {{ $value }})'
       expr: |
-        sum(haproxy_server_connection_errors_total:burnrate6h) > (1.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate6h) > (1.00 * (1-0.99000))
         and
-        sum(haproxy_server_connection_errors_total:burnrate3d) > (1.00 * (1-0.90000))
+        sum(haproxy_server_connection_errors_total:burnrate3d) > (1.00 * (1-0.99000))
       for: 3h
       labels:
         name: FailedConnectionsPerSec
