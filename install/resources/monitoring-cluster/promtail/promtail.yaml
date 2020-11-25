@@ -115,6 +115,13 @@ spec:
       labels:
         app: <name>
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/infra
+                    operator: DoesNotExist
       serviceAccountName: <name>
       volumes:
         - name: config
