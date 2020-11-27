@@ -133,7 +133,7 @@ spec:
             type: Directory
       containers:
         - name: loki
-          image: 'docker.io/grafana/promtail:latest'
+          image: 'quay.io/integreatly/promtail:latest'
           securityContext:
             privileged: true
           env:
