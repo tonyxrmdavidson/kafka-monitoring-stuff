@@ -78,7 +78,7 @@ spec:
         insecureSkipVerify: true
       writeRelabelConfigs:
         - action: keep
-          regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total)
+          regex: (kafka_controller.*$|console_url$|csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|strimzi_.*$|subscription_sync_total|node.*$|kube.*$|container.*$)
           sourceLabels:
             - __name__
   ruleSelector: { }
