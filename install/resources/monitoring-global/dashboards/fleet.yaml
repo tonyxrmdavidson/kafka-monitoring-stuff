@@ -32,7 +32,7 @@ spec:
       "links": [],
       "panels": [
         {
-          "collapsed": true,
+          "collapsed": false,
           "datasource": null,
           "gridPos": {
             "h": 1,
@@ -41,718 +41,409 @@ spec:
             "y": 0
           },
           "id": 2,
-          "panels": [
-            {
-              "cacheTimeout": null,
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "color": {
-                    "mode": "thresholds"
-                  },
-                  "custom": {},
-                  "mappings": [
-                    {
-                      "id": 0,
-                      "op": "=",
-                      "text": "N/A",
-                      "type": 1,
-                      "value": "null"
-                    }
-                  ],
-                  "max": 100,
-                  "min": 0,
-                  "nullValueMode": "connected",
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "#d44a3a",
-                        "value": null
-                      },
-                      {
-                        "color": "rgba(237, 129, 40, 0.89)",
-                        "value": 90
-                      },
-                      {
-                        "color": "#299c46",
-                        "value": 95
-                      }
-                    ]
-                  },
-                  "unit": "percent"
-                },
-                "overrides": []
-              },
-              "gridPos": {
-                "h": 7,
-                "w": 5,
-                "x": 0,
-                "y": 1
-              },
-              "id": 4,
-              "links": [],
-              "options": {
-                "orientation": "horizontal",
-                "reduceOptions": {
-                  "calcs": [
-                    "mean"
-                  ],
-                  "fields": "",
-                  "values": false
-                },
-                "showThresholdLabels": false,
-                "showThresholdMarkers": true
-              },
-              "pluginVersion": "7.1.1",
-              "targets": [
-                {
-                  "expr": "(100 / (sum(strimzi_reconciliations_total{kind=~\"^Kafka$\"}) - sum(strimzi_reconciliations_locked_total{kind=~\"^Kafka$\"}))) * sum(strimzi_reconciliations_successful_total{kind=~\"^Kafka$\"})",
-                  "hide": false,
-                  "instant": true,
-                  "refId": "A"
-                }
-              ],
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Provisioning Success",
-              "type": "gauge"
-            },
-            {
-              "aliasColors": {},
-              "breakPoint": "50%",
-              "cacheTimeout": null,
-              "combine": {
-                "label": "Others",
-                "threshold": 0
-              },
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "fontSize": "80%",
-              "format": "none",
-              "gridPos": {
-                "h": 7,
-                "w": 9,
-                "x": 5,
-                "y": 1
-              },
-              "id": 6,
-              "interval": null,
-              "legend": {
-                "show": true,
-                "values": true
-              },
-              "legendType": "Under graph",
-              "links": [],
-              "maxDataPoints": 1,
-              "nullPointMode": "connected",
-              "pieType": "pie",
-              "strokeWidth": 1,
-              "targets": [
-                {
-                  "expr": "count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (installed)",
-                  "instant": true,
-                  "legendFormat": "{{installed}}",
-                  "refId": "A"
-                }
-              ],
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Strimzi Operator Versions",
-              "type": "grafana-piechart-panel",
-              "valueName": "current"
-            },
-            {
-              "aliasColors": {},
-              "breakPoint": "50%",
-              "cacheTimeout": null,
-              "combine": {
-                "label": "Others",
-                "threshold": 0
-              },
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "fontSize": "80%",
-              "format": "none",
-              "gridPos": {
-                "h": 7,
-                "w": 9,
-                "x": 14,
-                "y": 1
-              },
-              "id": 12,
-              "interval": null,
-              "legend": {
-                "show": true,
-                "values": true
-              },
-              "legendType": "Under graph",
-              "links": [],
-              "maxDataPoints": 1,
-              "nullPointMode": "connected",
-              "pieType": "pie",
-              "strokeWidth": 1,
-              "targets": [
-                {
-                  "expr": "count((topk(1, subscription_sync_total{installed=~\"^strimzi.*$\"} > 0))) by (version) * on (instance) group_left(version) count(cluster_version{type=\"completed\"}) by (version)",
-                  "instant": true,
-                  "legendFormat": "{{version}}",
-                  "refId": "A"
-                }
-              ],
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Strimzi OpenShift Cluster Versions",
-              "type": "grafana-piechart-panel",
-              "valueName": "current"
-            },
-            {
-              "cacheTimeout": null,
-              "colorBackground": false,
-              "colorValue": false,
-              "colors": [
-                "#299c46",
-                "rgba(237, 129, 40, 0.89)",
-                "#d44a3a"
-              ],
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "format": "none",
-              "gauge": {
-                "maxValue": 100,
-                "minValue": 0,
-                "show": false,
-                "thresholdLabels": false,
-                "thresholdMarkers": true
-              },
-              "gridPos": {
-                "h": 6,
-                "w": 8,
-                "x": 0,
-                "y": 8
-              },
-              "id": 18,
-              "interval": null,
-              "links": [],
-              "mappingType": 1,
-              "mappingTypes": [
-                {
-                  "name": "value to text",
-                  "value": 1
-                },
-                {
-                  "name": "range to text",
-                  "value": 2
-                }
-              ],
-              "maxDataPoints": 100,
-              "nullPointMode": "connected",
-              "nullText": null,
-              "postfix": "",
-              "postfixFontSize": "50%",
-              "prefix": "",
-              "prefixFontSize": "50%",
-              "rangeMaps": [
-                {
-                  "from": "null",
-                  "text": "N/A",
-                  "to": "null"
-                }
-              ],
-              "sparkline": {
-                "fillColor": "rgba(31, 118, 189, 0.18)",
-                "full": false,
-                "lineColor": "rgb(31, 120, 193)",
-                "show": false,
-                "ymax": null,
-                "ymin": null
-              },
-              "tableColumn": "",
-              "targets": [
-                {
-                  "expr": "sum(strimzi_resources{kind=~\"Kafka\"})",
-                  "refId": "A"
-                }
-              ],
-              "thresholds": "",
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Total # of Kafka Installations",
-              "type": "singlestat",
-              "valueFontSize": "80%",
-              "valueMaps": [
-                {
-                  "op": "=",
-                  "text": "N/A",
-                  "value": "null"
-                }
-              ],
-              "valueName": "current"
-            },
-            {
-              "aliasColors": {},
-              "breakPoint": "50%",
-              "cacheTimeout": null,
-              "combine": {
-                "label": "Others",
-                "threshold": 0
-              },
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "fontSize": "80%",
-              "format": "short",
-              "gridPos": {
-                "h": 6,
-                "w": 7,
-                "x": 8,
-                "y": 8
-              },
-              "id": 22,
-              "interval": null,
-              "legend": {
-                "show": true,
-                "values": true
-              },
-              "legendType": "Under graph",
-              "links": [],
-              "maxDataPoints": 1,
-              "nullPointMode": "connected",
-              "pieType": "pie",
-              "strokeWidth": 1,
-              "targets": [
-                {
-                  "expr": "sum(strimzi_resources > 0) by (kind)",
-                  "format": "time_series",
-                  "instant": true,
-                  "legendFormat": "{{kind}}",
-                  "refId": "A"
-                }
-              ],
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Total # of Kafka CRs by type",
-              "type": "grafana-piechart-panel",
-              "valueName": "total"
-            },
-            {
-              "cacheTimeout": null,
-              "colorBackground": false,
-              "colorValue": false,
-              "colors": [
-                "#299c46",
-                "rgba(237, 129, 40, 0.89)",
-                "#d44a3a"
-              ],
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "format": "none",
-              "gauge": {
-                "maxValue": 100,
-                "minValue": 0,
-                "show": false,
-                "thresholdLabels": false,
-                "thresholdMarkers": true
-              },
-              "gridPos": {
-                "h": 6,
-                "w": 8,
-                "x": 15,
-                "y": 8
-              },
-              "id": 20,
-              "interval": null,
-              "links": [],
-              "mappingType": 1,
-              "mappingTypes": [
-                {
-                  "name": "value to text",
-                  "value": 1
-                },
-                {
-                  "name": "range to text",
-                  "value": 2
-                }
-              ],
-              "maxDataPoints": 100,
-              "nullPointMode": "connected",
-              "nullText": null,
-              "postfix": "",
-              "postfixFontSize": "50%",
-              "prefix": "",
-              "prefixFontSize": "50%",
-              "rangeMaps": [
-                {
-                  "from": "null",
-                  "text": "N/A",
-                  "to": "null"
-                }
-              ],
-              "sparkline": {
-                "fillColor": "rgba(31, 118, 189, 0.18)",
-                "full": false,
-                "lineColor": "rgb(31, 120, 193)",
-                "show": false,
-                "ymax": null,
-                "ymin": null
-              },
-              "tableColumn": "",
-              "targets": [
-                {
-                  "expr": "count(sum(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (instance))",
-                  "refId": "A"
-                }
-              ],
-              "thresholds": "",
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Total # of Kafka OpenShift Clusters",
-              "type": "singlestat",
-              "valueFontSize": "80%",
-              "valueMaps": [
-                {
-                  "op": "=",
-                  "text": "N/A",
-                  "value": "null"
-                }
-              ],
-              "valueName": "current"
-            }
-          ],
+          "panels": [],
           "title": "Day 0 - Pre Install / Install",
           "type": "row"
         },
         {
-          "collapsed": true,
+          "cacheTimeout": null,
           "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {},
+              "mappings": [
+                {
+                  "id": 0,
+                  "op": "=",
+                  "text": "N/A",
+                  "type": 1,
+                  "value": "null"
+                }
+              ],
+              "max": 100,
+              "min": 0,
+              "nullValueMode": "connected",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#d44a3a",
+                    "value": null
+                  },
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 90
+                  },
+                  {
+                    "color": "#299c46",
+                    "value": 95
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
           "gridPos": {
-            "h": 1,
-            "w": 24,
+            "h": 7,
+            "w": 5,
             "x": 0,
             "y": 1
           },
-          "id": 8,
-          "panels": [
+          "id": 4,
+          "links": [],
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.1.1",
+          "targets": [
             {
-              "columns": [],
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "fontSize": "100%",
-              "gridPos": {
-                "h": 8,
-                "w": 23,
-                "x": 0,
-                "y": 2
-              },
-              "id": 10,
-              "pageSize": null,
-              "showHeader": true,
-              "sort": {
-                "col": 0,
-                "desc": true
-              },
-              "styles": [
-                {
-                  "alias": "Time",
-                  "align": "auto",
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "pattern": "Time",
-                  "type": "hidden"
-                },
-                {
-                  "alias": "",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "mappingType": 1,
-                  "pattern": "",
-                  "thresholds": [],
-                  "type": "number",
-                  "unit": "short"
-                },
-                {
-                  "alias": "",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "decimals": 2,
-                  "pattern": "Value",
-                  "thresholds": [],
-                  "type": "hidden",
-                  "unit": "short"
-                },
-                {
-                  "alias": "URL",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "link": true,
-                  "linkTargetBlank": true,
-                  "linkUrl": "${__cell:raw}",
-                  "mappingType": 1,
-                  "pattern": "url",
-                  "thresholds": [],
-                  "type": "string",
-                  "unit": "short"
-                },
-                {
-                  "alias": "Version",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "mappingType": 1,
-                  "pattern": "installed",
-                  "thresholds": [],
-                  "type": "number",
-                  "unit": "short"
-                }
-              ],
-              "targets": [
-                {
-                  "expr": "count((topk(1, subscription_sync_total{installed=~\"^strimzi.*$\"} > 0) by (cluster_id, url)) * on (cluster_id) group_left (url) (topk(1, console_url{url!=\"\"}) by (cluster_id))) by (installed, url)",
-                  "format": "table",
-                  "instant": true,
-                  "refId": "A"
-                }
-              ],
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Clusters with Strimzi installed",
-              "transform": "table",
-              "type": "table-old"
+              "expr": "(100 / (sum(strimzi_reconciliations_total{kind=~\"^Kafka$\"}) - sum(strimzi_reconciliations_locked_total{kind=~\"^Kafka$\"}))) * sum(strimzi_reconciliations_successful_total{kind=~\"^Kafka$\"})",
+              "hide": false,
+              "instant": true,
+              "refId": "A"
             }
           ],
-          "title": "Day 1 - Post Install",
-          "type": "row"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Provisioning Success",
+          "type": "gauge"
         },
         {
-          "collapsed": true,
-          "datasource": null,
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 2
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
           },
-          "id": 14,
-          "panels": [
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "80%",
+          "format": "none",
+          "gridPos": {
+            "h": 7,
+            "w": 9,
+            "x": 5,
+            "y": 1
+          },
+          "id": 6,
+          "interval": null,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "Under graph",
+          "links": [],
+          "maxDataPoints": 1,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
             {
-              "columns": [],
-              "datasource": null,
-              "fieldConfig": {
-                "defaults": {
-                  "custom": {}
-                },
-                "overrides": []
-              },
-              "fontSize": "100%",
-              "gridPos": {
-                "h": 8,
-                "w": 23,
-                "x": 0,
-                "y": 3
-              },
-              "id": 16,
-              "pageSize": null,
-              "showHeader": true,
-              "sort": {
-                "col": 0,
-                "desc": true
-              },
-              "styles": [
-                {
-                  "alias": "Time",
-                  "align": "auto",
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "pattern": "Time",
-                  "type": "hidden"
-                },
-                {
-                  "alias": "Alert",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "mappingType": 1,
-                  "pattern": "alertname",
-                  "thresholds": [],
-                  "type": "number",
-                  "unit": "short"
-                },
-                {
-                  "alias": "Namespace",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "link": false,
-                  "linkTargetBlank": true,
-                  "linkUrl": " ${__cell:raw}",
-                  "mappingType": 1,
-                  "pattern": "namespace",
-                  "thresholds": [],
-                  "type": "number",
-                  "unit": "short"
-                },
-                {
-                  "alias": "",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "mappingType": 1,
-                  "pattern": "Value",
-                  "thresholds": [],
-                  "type": "hidden",
-                  "unit": "short"
-                },
-                {
-                  "alias": "Severity",
-                  "align": "auto",
-                  "colorMode": "value",
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "mappingType": 1,
-                  "pattern": "severity",
-                  "preserveFormat": false,
-                  "sanitize": false,
-                  "thresholds": [
-                    ""
-                  ],
-                  "type": "string",
-                  "unit": "short",
-                  "valueMaps": [
-                    {
-                      "text": "WARNING",
-                      "value": "warning"
-                    },
-                    {
-                      "text": "CRITICAL",
-                      "value": "critical"
-                    }
-                  ]
-                },
-                {
-                  "alias": "Cluster",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                  "decimals": 2,
-                  "mappingType": 1,
-                  "pattern": "cluster_id",
-                  "thresholds": [],
-                  "type": "number",
-                  "unit": "short"
-                },
-                {
-                  "alias": "",
-                  "align": "auto",
-                  "colorMode": null,
-                  "colors": [
-                    "rgba(245, 54, 54, 0.9)",
-                    "rgba(237, 129, 40, 0.89)",
-                    "rgba(50, 172, 45, 0.97)"
-                  ],
-                  "decimals": 2,
-                  "pattern": "/.*/",
-                  "thresholds": [],
-                  "type": "number",
-                  "unit": "short"
-                }
-              ],
-              "targets": [
-                {
-                  "expr": "count(ALERTS{namespace!=\"\"}) by (alertname, severity, namespace, cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
-                  "format": "table",
-                  "instant": true,
-                  "refId": "A"
-                }
-              ],
-              "timeFrom": null,
-              "timeShift": null,
-              "title": "Active alerts on Strimzi clusters",
-              "transform": "table",
-              "type": "table-old"
+              "expr": "count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (installed)",
+              "instant": true,
+              "legendFormat": "{{installed}}",
+              "refId": "A"
             }
           ],
-          "title": "Day 2 - Lifecycle",
-          "type": "row"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Strimzi Operator Versions",
+          "type": "grafana-piechart-panel",
+          "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "80%",
+          "format": "none",
+          "gridPos": {
+            "h": 7,
+            "w": 9,
+            "x": 14,
+            "y": 1
+          },
+          "id": 12,
+          "interval": null,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "Under graph",
+          "links": [],
+          "maxDataPoints": 1,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "expr": "count((topk(1, subscription_sync_total{installed=~\"^strimzi.*$\"} > 0))) by (version) * on (instance) group_left(version) count(cluster_version{type=\"completed\"}) by (version)",
+              "instant": true,
+              "legendFormat": "{{version}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Strimzi OpenShift Cluster Versions",
+          "type": "grafana-piechart-panel",
+          "valueName": "current"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 0,
+            "y": 8
+          },
+          "id": 18,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false,
+            "ymax": null,
+            "ymin": null
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(strimzi_resources{kind=~\"Kafka\"})",
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total # of Kafka Installations",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 6,
+            "w": 7,
+            "x": 8,
+            "y": 8
+          },
+          "id": 22,
+          "interval": null,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "Under graph",
+          "links": [],
+          "maxDataPoints": 1,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "expr": "sum(strimzi_resources > 0) by (kind)",
+              "format": "time_series",
+              "instant": true,
+              "legendFormat": "{{kind}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total # of Kafka CRs by type",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "format": "none",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 15,
+            "y": 8
+          },
+          "id": 20,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false,
+            "ymax": null,
+            "ymin": null
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "count(sum(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (instance))",
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total # of Kafka OpenShift Clusters",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
         },
         {
           "collapsed": false,
@@ -761,7 +452,313 @@ spec:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 3
+            "y": 14
+          },
+          "id": 8,
+          "panels": [],
+          "title": "Day 1 - Post Install",
+          "type": "row"
+        },
+        {
+          "columns": [],
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 8,
+            "w": 23,
+            "x": 0,
+            "y": 15
+          },
+          "id": 10,
+          "pageSize": null,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "hidden"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "Value",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "URL",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkUrl": "${__cell:raw}",
+              "mappingType": 1,
+              "pattern": "url",
+              "thresholds": [],
+              "type": "string",
+              "unit": "short"
+            },
+            {
+              "alias": "Version",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "installed",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "expr": "count((topk(1, subscription_sync_total{installed=~\"^strimzi.*$\"} > 0) by (cluster_id, url)) * on (cluster_id) group_left (url) (topk(1, console_url{url!=\"\"}) by (cluster_id))) by (installed, url)",
+              "format": "table",
+              "instant": true,
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Clusters with Strimzi installed",
+          "transform": "table",
+          "type": "table-old"
+        },
+        {
+          "collapsed": false,
+          "datasource": null,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 23
+          },
+          "id": 14,
+          "panels": [],
+          "title": "Day 2 - Lifecycle",
+          "type": "row"
+        },
+        {
+          "columns": [],
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 8,
+            "w": 23,
+            "x": 0,
+            "y": 24
+          },
+          "id": 16,
+          "pageSize": null,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "hidden"
+            },
+            {
+              "alias": "Alert",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "alertname",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "alias": "Namespace",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": false,
+              "linkTargetBlank": true,
+              "linkUrl": " ${__cell:raw}",
+              "mappingType": 1,
+              "pattern": "namespace",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "Value",
+              "thresholds": [],
+              "type": "hidden",
+              "unit": "short"
+            },
+            {
+              "alias": "Severity",
+              "align": "auto",
+              "colorMode": "value",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "severity",
+              "preserveFormat": false,
+              "sanitize": false,
+              "thresholds": [
+                ""
+              ],
+              "type": "string",
+              "unit": "short",
+              "valueMaps": [
+                {
+                  "text": "WARNING",
+                  "value": "warning"
+                },
+                {
+                  "text": "CRITICAL",
+                  "value": "critical"
+                }
+              ]
+            },
+            {
+              "alias": "Cluster",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "cluster_id",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "alias": "",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "expr": "count(ALERTS{namespace!=\"\"}) by (alertname, severity, namespace, cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
+              "format": "table",
+              "instant": true,
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Active alerts on Strimzi clusters",
+          "transform": "table",
+          "type": "table-old"
+        },
+        {
+          "collapsed": false,
+          "datasource": null,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 32
           },
           "id": 24,
           "panels": [],
@@ -906,7 +903,7 @@ spec:
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 33
           },
           "id": 26,
           "options": {
@@ -1029,5 +1026,5 @@ spec:
       "timezone": "",
       "title": "Strimzi / Kafka Fleet Panel",
       "uid": "ef3544c1bccba28cf487872590667c8d4321c6d8",
-      "version": 10
+      "version": 11
     }
