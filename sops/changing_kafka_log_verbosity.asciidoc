@@ -1,0 +1,105 @@
+﻿// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= SOP document outlining steps to change log verbosity for kafka components
+
+toc::[]
+
+== Description
+
+The purpose of this SOP is to describe the different logging levels for kafka brokers and zookeeper pods which will be helpful to troubleshoot the issues by dynamically changing logging levels without restarting the kafka broker pods at kafka cluster level
+
+I am not sure sre can get to repective tenant cluster level to view logs to troubleshoot when issue pop up. Tenants kafka cluster logs and metrics will be on boraded to observatorium instance.
+logs can be viewed from loki labels section by providing respective jobs. will add steps once this functionality is completely done.   
+
+At present this doc contains what configuration is reponsible for logging and logging levels and how to change logging levels dynamically at kafka cluster level.
+== Prerequisites
+
+> As logs will be accessed from observatorium instance using loki from the dashborad. 
+  Access to the Kafka Observatorium tenant is required
+== Execute/Resolution
+
+> Step1: 
+
+Kafka CR has the logging levels configured in config map “kafka-logging”
+
+```sh
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: kafka-logging
+  data:
+    log4j.properties: 
+      log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+      log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+      log4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} %p %m (%c)
+      [%t]%n
+      kafka.root.logger.level=INFO
+      log4j.rootLogger=${kafka.root.logger.level}, CONSOLE
+      log4j.logger.org.I0Itec.zkclient.ZkClient=WARN
+      log4j.logger.org.apache.zookeeper=WARN
+      log4j.logger.kafka=INFO
+      log4j.logger.org.apache.kafka=INFO
+      log4j.logger.kafka.request.logger=WARN, CONSOLE
+      log4j.logger.kafka.network.Processor=OFF
+      log4j.logger.kafka.server.KafkaApis=OFF
+      log4j.logger.kafka.network.RequestChannel$=WARN
+      log4j.logger.kafka.controller=TRACE
+      log4j.logger.kafka.log.LogCleaner=INFO
+      log4j.logger.state.change.logger=TRACE
+      log4j.logger.kafka.authorizer.logger=INFO
+```
+> Step2:
+```sh
+   kafka cluster has 3 config maps for logging,Kafka and zookeeper configurations     
+   Ex:oc get cm
+   NAME                          DATA   AGE
+   kafka-logging                 1      16m
+   my-cluster-kafka-config       6      14m
+   my-cluster-zookeeper-config   3      14m
+```
+  logging configuration can be found in `kafka-logging` 
+  kafka configuration can be found in `my-cluster-kafka-config`
+  Zookeeper configuration can be found in `my-cluster-zookeeper-config`
+  Kafka logging level can be changed dynamically by editing logging-properties from ‘kafka-logging’ cm refer step 1
+    
+
+Zookeeper does not allow to change logging levels dynamically. Default logging level is set to WARN
+
+== Validate
+
+>Step 3: Set logging level to DEBUG and check if logs are coming in DEBUG mode or not
+
+== Troubleshooting
+
+>Step 4: It is good to check the logs for ERRORS strating from 2hr before the incident to see the sequence of events leading to the issue.
+         It is always best practise to verify broker configs,producer configs,consumer configs to understand about the kafka cluster
+         and these can be found at the start of the log.
+         Sample KCS articles to refer:
+```sh
+Unable to send and consume messages from Kafka topics after a scale down: https://access.redhat.com/solutions/3968831
+Kafka crashing repeatedly due to SIGTERM signal: https://access.redhat.com/solutions/4156931
+AMQ Streams doesn't refresh DNS addresses: https://access.redhat.com/solutions/4434401
+No address found for bootstrap Route: https://access.redhat.com/solutions/4548121
+AMQ Streams crashes when deleting log: https://access.redhat.com/solutions/4765301
+
+```
+         
+         
+
+
+This is official red hat documentation regarding  kafka logging
+
+    • 3.10. External logging  
+    • B.46. ExternalLogging schema reference
+    • B.57. ZookeeperClusterSpec schema reference
+
