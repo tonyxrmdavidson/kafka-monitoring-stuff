@@ -33,6 +33,8 @@ image::images/not_authorized.png[]
 
 It means your user does not have the rts.yml role applied in app-interface, in which case you must open an MR against https://gitlab.cee.redhat.com/service/app-interface to add the rts.yml role to your user as here https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/teams/managed-services/users/stobin.yml#L13
 
+If you can see the secrets at this URL https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ but cannot access it from the parent `managed-services` entry it means your user has the `rts` role but not the `dev` role.
+
 == Execute/Resolution
 
 === Retrieving Secrets
