@@ -1,0 +1,34 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Infra Node Pod Rebalancing
+
+toc::[]
+
+== Description
+
+The purpose of this SOP is to describe the process of rebalancing the infra node pods which is required after OSD installation.
+
+If this is not done, problems with the infra nodes have been seen when many managed Kafka Instances are running on the cluster.
+
+== Prerequistes
+
+1. The target OSD cluster exists.
+
+== Execute/Resolution/Validate
+
+1. Follow instructions found out https://github.com/openshift/ops-sop/blob/master/v4/howto/infra-pod-rebalance.md
+
+
+== Troubleshooting
+
+None.
