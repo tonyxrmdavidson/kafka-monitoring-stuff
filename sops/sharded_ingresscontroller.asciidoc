@@ -40,7 +40,9 @@ oc process -f yamls/mk-ingresscontroller.yaml DOMAIN=${domain} REPLICAS=3 | oc a
 
 1. Run the following command and ensure that the ingresscontroller is reported as existing.
 
-```oc get ingresscontroller -n openshift-ingress-operator mk-ingresscontroller```
+```
+oc get ingresscontroller -n openshift-ingress-operator mk-ingresscontroller
+```
 
 == Troubleshooting
 
