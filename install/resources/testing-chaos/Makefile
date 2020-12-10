@@ -19,6 +19,8 @@ POD_DELETE_DURATION ?= 60
 POD_DELETE_INTERVAL ?= 10
 POD_DELETE_FORCE ?= false
 
+AZ_DOWN_DRY_RUN ?= false
+
 .PHONY: create/operator/litmus
 create/operator/litmus:
 	@echo "create operator: litmus"
@@ -37,6 +39,7 @@ create/chaosexperiments:
 	@echo "create chaosexperiment resources"
 	@kubectl apply -f ./chaosexperiments/chaosexperiments-generic.yaml
 	@kubectl apply -f ./chaosexperiments/chaosexperiments-kafka.yaml
+	@kubectl apply -f ./chaosexperiments/chaosexperiments-az-down.yaml
 
 .PHONY: create/strimzi-traffic-generator
 create/strimzi-traffic-generator:
@@ -91,6 +94,28 @@ create/chaosengine/pod-delete:
     sed -e 's|<chaos-duration>|$(POD_DELETE_DURATION)|g' | \
     sed -e 's|<chaos-interval>|$(POD_DELETE_INTERVAL)|g' | \
     sed -e 's|<force-delete>|$(POD_DELETE_FORCE)|g' | \
+    cat | oc apply -f -
+
+.PHONY: create/chaosengine/az-down
+create/chaosengine/az-down: 
+	@echo "create az-down chaosengine"
+	@cp ./utils/aws_secret_template.yaml ./utils/aws_secret.yaml
+	@sed -i 's/<aws-iam-key>/$(AWS_IAM_KEY)/' ./utils/aws_secret.yaml
+	@sed -i 's/<aws-iam-secret>/$(AWS_IAM_SECRET)/' ./utils/aws_secret.yaml
+	@oc create secret generic cloud-config --from-file=./utils/aws_secret.yaml -n $(LITMUS_NS)
+
+	@cat ./chaosengines/az-down/chaosengine.yaml | \
+    sed -e 's|<namespace>|$(KAFKA_CLUSTER_NAMESPACE)|g' | \
+    sed -e 's|<pod-label>|$(BROKER_POD_LABEL)|g' | \
+    sed -e 's|<deployment-type>|$(BROKER_DEPLOYMENT_TYPE)|g' | \
+    sed -e 's|<cleanup>|$(POD_DELETE_CLEANUP)|g' | \
+    sed -e 's|<chaos-duration>|$(POD_DELETE_DURATION)|g' | \
+    sed -e 's|<chaos-interval>|$(POD_DELETE_INTERVAL)|g' | \
+    sed -e 's|<aws-region>|$(AZ_DOWN_REGION)|g' | \
+    sed -e 's|<aws-iam-key-id>|$(AZ_DOWN_IAM_KEY)|g' | \
+    sed -e 's|<aws-iam-secret>|$(AZ_DOWN_IAM_SECRET)|g' | \
+    sed -e 's|<cluster-identifier>|$(AZ_DOWN_CLUSTER_IDENTIFIER)|g' | \
+    sed -e 's|<dry-run>|$(AZ_DOWN_DRY_RUN)|g' | \
     cat | oc apply -f -
 
 .PHONY: test/critical-alerts
