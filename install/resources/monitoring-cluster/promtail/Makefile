@@ -7,7 +7,6 @@ create/promtail:
 	@cat ./promtail.yaml | sed -e 's/<namespace>/$(PER_CLUSTER_GRAFANA_NAMESPACE)/g' | \
 		sed -e 's/<name>/$(PER_CLUSTER_PROMTAIL)/g' | \
 		sed -e 's/<namespaces>/$(LOG_SCRAPE_NAMESPACES)/g' | \
-        sed -e 's/<cluster__id>/$(CLUSTER_ID)/g' | \
         sed -e 's/<loki>/$(LOKI_PUSH_URL)/g' | \
 		cat | oc apply -f -
 
