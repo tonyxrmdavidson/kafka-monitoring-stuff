@@ -1,0 +1,52 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Custom Strorage Class for Managed Kafka
+
+toc::[]
+
+== Description
+
+The purpose of this SOP is config an alternative `storageclass` for Managed Kafka that disables encryption.  This works around a AWS bug affecting
+the provisioning of encrypted volumes.  
+
+This SOP must be executed before the Managed Kafka is put into service.
+
+There is a defect fix pending from AWS to resolve the underlying issue.
+
+== Prerequisites
+
+1. The target OSD cluster exists.
+1. Cluster credentials are held that allow the following operation:
+   `oc auth can-i create storageclass`
+
+== Execute/Resolution
+
+1. Git clone this repo and `cd sops`
+1. Login to the target cluster
+1. Execute the following:
+
+```
+oc apply -f ./yamls/mk-storageclass.yaml
+```
+
+== Validate
+
+1. Run the following command and ensure that the storageclass is reported as existing.
+
+```
+oc get storageclass mk-storageclass
+```
+
+== Troubleshooting
+
+None
