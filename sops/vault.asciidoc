@@ -1,0 +1,86 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Some SOP/Alert Name
+
+toc::[]
+
+== Description
+
+The purpose of this SOP is to describe the process of using vault.devshift.net to access secrets
+
+== Prerequisites
+
+* Access to vault.devshift.net
+
+=== Testing Access
+
+Navigate to 
+https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ in a browser and ensure you can see a list of secrets. This document describes how to create a github token to authenticate https://gitlab.cee.redhat.com/service/dev-guidelines/-/blob/master/vault.md.
+
+If you get a Not Authorized message like this
+
+image::images/not_authorized.png[]
+
+It means your user does not have the rts.yml role applied in app-interface, in which case you must open an MR against https://gitlab.cee.redhat.com/service/app-interface to add the rts.yml role to your user as here https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/teams/managed-services/users/stobin.yml#L13
+
+If you can see the secrets at this URL https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ but cannot access it from the parent `managed-services` entry it means your user has the `rts` role but not the `dev` role.
+
+== Execute/Resolution
+
+=== Retrieving Secrets
+
+When you open https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ in a browser you will see a number of secret entries.
+
+. Click the entry for the secret you need to retrieve.
+. Find the Key which corresponds to the secret you need to retrieve.
+.. Click the copy to clipboard button on the left to copy the value to clipboard.
+OR
+.. Click the Eye button to reveal the value.
+
+image::images/vault_buttons.png[]
+
+=== Adding Secrets
+
+Navigate to https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ in a browser.
+
+. Click on `Create Secret` in the top right.
+. Enter the desired path for the secret.
+. Enter a `key` value, while  this should not be viewable outside the rts team try to not include any sensitive information in key names.
+. Enter the corresponding value in the `value` field.
+. Click `Add` to create more line items.
+. CLick `Save` when finished.
+
+=== Deleting Secrets
+
+Navigate to https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ in a browser.
+
+. Click on the three dots menu on the right of the secret you wish to delete.
+. Click Delete.
+. Click Delete.
+
+== Editing Secrets
+
+Navigate to https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ in the browser.
+
+. Click on the secret you wish to edit.
+. Click `Edit secret` in the top right.
+. Make any edits required.
+. Click `Save`.
+
+== Validate
+
+The vault at https://vault.devshift.net/ui/vault/secrets/managed-services/list/rts/ should be viewable and secrets therein should be accessible.
+
+== Troubleshooting
+
+- https://gitlab.cee.redhat.com/service/dev-guidelines/-/blob/master/vault.md
