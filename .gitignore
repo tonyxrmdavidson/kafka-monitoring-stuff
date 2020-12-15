@@ -2,3 +2,4 @@
 .vscode
 install/build
 .DS_Store
+install/resources/testing-chaos/utils/aws_secret.yaml

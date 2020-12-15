@@ -1,0 +1,43 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: az-down-chaos
+spec:
+  appinfo:
+    appns: '<namespace>'
+    applabel: '<pod-label>'
+    appkind: '<deployment-type>'
+  # It can be true/false
+  annotationCheck: 'false'
+  # It can be active/stop
+  engineState: 'active'
+  #ex. values: ns1:name=percona,ns2:run=nginx
+  auxiliaryAppInfo: ''
+  chaosServiceAccount: az-down-sa
+  monitoring: false
+  # It can be delete/retain
+  jobCleanUpPolicy: '<cleanup>'
+  experiments:
+    - name: az-down
+      spec:
+        components:
+          env:
+            # set chaos duration (in sec) as desired
+            - name: TOTAL_CHAOS_DURATION
+              value: '<chaos-duration>'
+
+            # set chaos interval (in sec) as desired
+            - name: CHAOS_INTERVAL
+              value: '<chaos-interval>'
+
+            # set aws region where az is located
+            - name: AWS_REGION
+              value: '<aws-region>'
+
+            # only az's with instance names containing this substring will be targetable
+            - name: CLUSTER_IDENTIFIER
+              value: '<cluster-identifier>'
+
+            # only az's with instance names containing this substring will be targetable
+            - name: DRY_RUN
+              value: '<dry-run>'
