@@ -1,0 +1,84 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Some SOP/Alert Name
+
+toc::[]
+
+== Description
+
+OCP does not provide a way to handle hardware issues faced by the AWS EC2 instances running the masters yet. The master nodes are not handled by any Autoscaling group compared to the worker nodes as well. With these circumstances if a master node EC2 instance faces any hardware level troubles, a start-stop cycle enables the instance to run a fresh hardware. This method is suggested and highly recommended by AWS. This SOP exists to be ready with steps for performing the start-stop cycle on the master node EC2 instances.
+
+== Prerequisites
+
+* Access to AWS Console
+
+=== Ensure node is not currently in a rolling reboot
+
+. Login to the cluster
+. List master nodes.
++
+```sh
+oc get nodes | grep master
+```
+
+. Check the machineconfiguration.openshift.io/state annotation of the master node to be stopped-started.
++
+```sh
+oc get nodes -l node-role.kubernetes.io/master= -o template --template='{{range .items}}{{"===> node:> "}}{{.metadata.name}}{{"\n"}}{{range $k, $v := .metadata.annotations}}{{println $k ":" $v}}{{end}}{{"\n"}}{{end}}'
+```
+
+  * If the result is machineconfiguration.openshift.io/state : Done then proceed further.
+  * If the result is machineconfiguration.openshift.io/state : Working then allow MCO to finish it's rolling reboot on the node. If it's stuck or is taking too long, investigate further through MachineConfigDaemon pod logs.
++
+NOTE: Intention here is to gather as much information possible through MCO to prevent cluster downtime and quorum loss as well as to make sure MCO is not working on the node intended for a stop-start cycle.
+
+=== Confirm master node instance
+
+. List the master machines
+
++
+```sh
+oc get machines  --all-namespaces | grep master
+```
+
+. Get the provider ID
+
++
+```sh
+oc get machine <MACHINE_NAME> -n openshift-machine-api -o yaml | grep providerID
+```
+
+== Execute/Resolution
+
+. Login to AWS Console.
+. Navigate to EC2 in the correct region.
+. Select a master instance
+. Select "Tags" to verify the cluster name. Look for tag "kubernetes.io/cluster/": "owned"
+. Stop the master instance
+. Start the master instance
+. Wait for the instance to reach a running state
+
+== Validate
+
+. Verify the instance is in an up and running state
+. Verify that EC2 instance status checks are initialized & completed successfully.
+. Verify that the master node is Ready again
+
++
+```sh
+oc get nodes | grep master
+```
+
+== Troubleshooting
+
+None
