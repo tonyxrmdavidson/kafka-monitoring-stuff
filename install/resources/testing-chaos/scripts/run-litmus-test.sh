@@ -1,8 +1,12 @@
 #!/bin/bash
 
+H0ME_DIRECTORY=$(pwd)
+echo "You are in directory $(pwd)"
 echo "Logging into openshift cluster"
 oc login --server=$OSD_CLUSTER_API --token=$OSD_API_TOKEN --insecure-skip-tls-verify
-cd ~/kafka-monitoring-stuff/install
+cd $H0ME_DIRECTORY/install
+echo "You are in directory $(pwd)"
+
 echo "You are in directory $(pwd)"
 make all
 sleep 10
@@ -64,7 +68,7 @@ for (( i=0; i<$kafka_cluster_retry_count; i++ )) do
     sleep 5
 done
 
-cd ~/kafka-monitoring-stuff/install/resources/testing-chaos/
+cd $H0ME_DIRECTORY/install/resources/testing-chaos/
 echo "You are in directory $(pwd)"
 echo "Installing litmus operator"
 make create/operator/litmus 
@@ -110,4 +114,4 @@ for (( i=0; i<$litmus_retry_count; i++ )) do
     sleep 5
 done
 
-make create/chaosschedule/$LITMUS_TEST
+make create/$LITMUS_TEST
