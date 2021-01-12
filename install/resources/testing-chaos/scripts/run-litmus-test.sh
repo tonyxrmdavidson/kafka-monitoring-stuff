@@ -3,11 +3,12 @@
 H0ME_DIRECTORY=$(pwd)
 echo "You are in directory $(pwd)"
 echo "Logging into openshift cluster"
+
 oc login --server=$OSD_CLUSTER_API --token=$OSD_API_TOKEN --insecure-skip-tls-verify
+
 cd $H0ME_DIRECTORY/install
 echo "You are in directory $(pwd)"
 
-echo "You are in directory $(pwd)"
 make all
 sleep 10
 
