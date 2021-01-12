@@ -34,9 +34,9 @@ KAFKA_LABEL_SELECTOR="my-cluster-kafka"
 EXPORTER_LABEL_SELECTOR="my-cluster-kafka-exporter"
 ZOOKEEPER_LABEL_SELECTOR="my-cluster-zookeeper"
 kafka_cluster_retry_count=150   # 12 mins 30 seconds
-kafka_cluster_min_pods=1
+kafka_cluster_min_pods=3
 kafka_exporter_min_pods=1
-kafka_zookeeper_min_pods=1
+kafka_zookeeper_min_pods=3
 
 for (( i=0; i<$kafka_cluster_retry_count; i++ )) do
     KAFKA_CLUSTER_KAFKA_PODS_RUNNING_COUNT=`oc get pods -n $KAFKA_CLUSTER_NAMESPACE --field-selector=status.phase=Running --selector=strimzi.io/name=$KAFKA_LABEL_SELECTOR | grep -c Running` 
