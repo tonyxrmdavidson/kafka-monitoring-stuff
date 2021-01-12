@@ -1,0 +1,79 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Missing Kafka Metrics
+
+toc::[]
+
+== Description
+
+The purpose of this SOP is to describe the process of resolving/debugging kafka metrics issues.
+
+This SOP may be followed if metrics are missing from observatorium.
+
+== Prerequisites
+
+* Access to the data plane cluster ( credentials can be found in vault.devshift.net )
+* Access to observatorium ( credentials can be found in vault.devshift.net ) 
+
+== Execute/Resolution
+
+=== Verify metrics are not being scraped
+
+1. Get prometheus route 
+
+    oc get routes kafka-prometheus -n managed-application-services-observability
+
+1. Open prometheus route in browser.
+1. Click `Status` and in dropdown menu `Targets`.
+1. Check red targets which mean the scrape has failed.
+1. Take note of the `Endpoint` address that has failed to scrape.
+
+=== Verify scrape failure
+
+1. Get the prometheus pod name 
+
+    oc get pods -n managed-application-services-observability
+
+1. rsh to the oauth-proxy pod 
+
+    oc rsh -n managed-application-services-observability -c oauth-proxy <POD-NAME>
+
+1. `curl <ENDPOINT-ADDRESS>`
+1. If the curl times out restart the operator pod
+
+=== Restart operator pod
+
+1. Get the deployment name 
+    
+    oc get deployments -n redhat-managed-kafka-operator
+
+1. Scale the deployment to 0 
+
+    oc scale <OPERATOR-DEPLOYMENT> --replicas=0 -n redhat-managed-kafka-operator
+
+1. Scale the deployment to 1 
+    
+    oc scale <OPERATOR-DEPLOYMENT> --replicas=1 -n redhat-managed-kafka-operator
+
+1. Wait for the pod to come back to running state 
+    
+    watch oc get pods -n redhat-managed-kafka-operator
+
+
+== Validate
+
+1. Open prometheus route in browser.
+1. Click `Status` and in dropdown menu `Targets`.
+1. Verify the target is now green 
+1. Open thanos route for observatorium
+1. Verify metrics are being correctly reported
