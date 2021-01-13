@@ -28,7 +28,7 @@ spec:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "id": 2,
+      "id": 8,
       "links": [],
       "panels": [
         {
@@ -46,16 +46,30 @@ spec:
           "type": "row"
         },
         {
-          "columns": [],
-          "datasource": null,
+          "datasource": "Observatorium-Metrics",
           "description": "List of all currently firing Kafka alerts across all Kafka clusters.",
           "fieldConfig": {
             "defaults": {
-              "custom": {}
+              "custom": {
+                "align": null
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
             },
             "overrides": []
           },
-          "fontSize": "100%",
           "gridPos": {
             "h": 6,
             "w": 23,
@@ -63,163 +77,69 @@ spec:
             "y": 1
           },
           "id": 16,
-          "pageSize": null,
-          "showHeader": true,
-          "sort": {
-            "col": 0,
-            "desc": true
+          "options": {
+            "showHeader": true
           },
-          "styles": [
-            {
-              "alias": "Time",
-              "align": "auto",
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "pattern": "Time",
-              "type": "hidden"
-            },
-            {
-              "alias": "Alert",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "alertname",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "namespace",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "link": true,
-              "linkTargetBlank": true,
-              "linkUrl": "./d/c37212696a6c9b90acae3af21966521e06169e1c/strimzi-kafka-fleet-panel-compute-resources-namespace?&var-namespace=${__value.raw}",
-              "mappingType": 1,
-              "pattern": "namespace",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "Value",
-              "thresholds": [],
-              "type": "hidden",
-              "unit": "short"
-            },
-            {
-              "alias": "Severity",
-              "align": "auto",
-              "colorMode": "value",
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "severity",
-              "preserveFormat": false,
-              "sanitize": false,
-              "thresholds": [
-                ""
-              ],
-              "type": "string",
-              "unit": "short",
-              "valueMaps": [
-                {
-                  "text": "WARNING",
-                  "value": "warning"
-                },
-                {
-                  "text": "CRITICAL",
-                  "value": "critical"
-                }
-              ]
-            },
-            {
-              "alias": "Cluster",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "cluster_id",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 2,
-              "pattern": "/.*/",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            }
-          ],
+          "pluginVersion": "7.1.1",
           "targets": [
             {
-              "expr": "count(ALERTS{namespace=\"^Kafka.*\"}) by (alertname, severity, namespace, cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
+              "expr": "count(ALERTS{prometheus=\"managed-application-services-observability/kafka-prometheus\"}) by (alertname, severity, namespace, cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
               "format": "table",
               "instant": true,
+              "interval": "",
+              "legendFormat": "",
               "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "Active Kafka Cluster Alerts",
-          "transform": "table",
-          "type": "table-old"
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "indexByName": {},
+                "renameByName": {
+                  "Value": "Count",
+                  "alertname": "Alert",
+                  "cluster_id": "Cluster ID",
+                  "namespace": "Namespace",
+                  "severity": "Severity"
+                }
+              }
+            }
+          ],
+          "type": "table"
         },
         {
-          "columns": [],
-          "datasource": null,
+          "datasource": "Observatorium-Metrics",
           "description": "List of all currently firing Openshift alerts across all Openshift clusters.",
           "fieldConfig": {
             "defaults": {
-              "custom": {}
+              "custom": {
+                "align": null,
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
             },
             "overrides": []
           },
-          "fontSize": "100%",
           "gridPos": {
             "h": 7,
             "w": 11,
@@ -227,150 +147,23 @@ spec:
             "y": 7
           },
           "id": 17,
-          "pageSize": null,
-          "showHeader": true,
-          "sort": {
-            "col": 2,
-            "desc": false
+          "options": {
+            "showHeader": true
           },
-          "styles": [
-            {
-              "alias": "Time",
-              "align": "auto",
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "pattern": "Time",
-              "type": "hidden"
-            },
-            {
-              "alias": "Alert",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "alertname",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "namespace",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "link": false,
-              "linkTargetBlank": true,
-              "linkUrl": "",
-              "mappingType": 1,
-              "pattern": "namespace",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "Value",
-              "thresholds": [],
-              "type": "hidden",
-              "unit": "short"
-            },
-            {
-              "alias": "Severity",
-              "align": "auto",
-              "colorMode": "value",
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "severity",
-              "preserveFormat": false,
-              "sanitize": false,
-              "thresholds": [
-                ""
-              ],
-              "type": "string",
-              "unit": "short",
-              "valueMaps": [
-                {
-                  "text": "WARNING",
-                  "value": "warning"
-                },
-                {
-                  "text": "CRITICAL",
-                  "value": "critical"
-                }
-              ]
-            },
-            {
-              "alias": "Cluster",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "cluster_id",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 2,
-              "pattern": "/.*/",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            }
-          ],
+          "pluginVersion": "7.1.1",
           "targets": [
             {
-              "expr": "count(ALERTS{namespace!=\"^Kafka.*\"}) by (alertname, severity, namespace, cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
+              "expr": "count(ALERTS{prometheus=\"openshift-monitoring/k8s\"}) by (alertname, severity, namespace, cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
               "format": "table",
               "instant": true,
+              "interval": "",
+              "legendFormat": "",
               "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "Active Openshift Cluster Alerts",
-          "transform": "table",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -384,17 +177,31 @@ spec:
                   ]
                 }
               }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "indexByName": {},
+                "renameByName": {
+                  "Value": "Count",
+                  "alertname": "Alert ",
+                  "severity": "Severity"
+                }
+              }
             }
           ],
-          "type": "table-old"
+          "type": "table"
         },
         {
-          "datasource": "Thanos",
+          "datasource": "Observatorium-Metrics",
           "description": "Summary of CPU, Memory, Disk and Network usage for each Kafka cluster.",
           "fieldConfig": {
             "defaults": {
               "custom": {
-                "align": null
+                "align": "left"
               },
               "links": [],
               "mappings": [],
@@ -424,7 +231,7 @@ spec:
                   },
                   {
                     "id": "custom.width",
-                    "value": 119
+                    "value": 112
                   }
                 ]
               },
@@ -456,7 +263,7 @@ spec:
                   },
                   {
                     "id": "custom.width",
-                    "value": 152
+                    "value": 114
                   }
                 ]
               },
@@ -472,7 +279,7 @@ spec:
                   },
                   {
                     "id": "custom.width",
-                    "value": 173
+                    "value": 137
                   }
                 ]
               },
@@ -488,7 +295,7 @@ spec:
                   },
                   {
                     "id": "custom.width",
-                    "value": 204
+                    "value": 163
                   }
                 ]
               },
@@ -512,7 +319,7 @@ spec:
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 146
+                    "value": 241
                   }
                 ]
               },
@@ -547,15 +354,15 @@ spec:
             "showHeader": true,
             "sortBy": [
               {
-                "desc": true,
-                "displayName": "Netowrk Received Bytes"
+                "desc": false,
+                "displayName": "Available Disk Space"
               }
             ]
           },
           "pluginVersion": "7.1.1",
           "targets": [
             {
-              "expr": "sum(kube_pod_info{namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace,cluster_id)",
+              "expr": "sum(kube_pod_info{namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\",namespace !~ \".*minio.*\"}) by (namespace,cluster_id)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -564,7 +371,7 @@ spec:
               "refId": "A"
             },
             {
-              "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container!=\"\",namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace)",
+              "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container!=\"\",namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\", namespace !~ \".*minio.*\"}) by (namespace)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -573,7 +380,7 @@ spec:
               "refId": "B"
             },
             {
-              "expr": "sum(container_memory_working_set_bytes{container != \"\", namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace)",
+              "expr": "sum(container_memory_working_set_bytes{container != \"\", namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\",namespace !~ \".*minio.*\"}) by (namespace)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -582,7 +389,7 @@ spec:
               "refId": "C"
             },
             {
-              "expr": "sum((sum(kubelet_volume_stats_available_bytes{ job=\"kubelet\", namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace) / sum(kubelet_volume_stats_capacity_bytes{ job=\"kubelet\", namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace) * 100)) by (namespace) ",
+              "expr": "sum((sum(kubelet_volume_stats_available_bytes{ job=\"kubelet\", namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\",namespace !~ \".*minio.*\"}) by (namespace) / sum(kubelet_volume_stats_capacity_bytes{ job=\"kubelet\", namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\",namespace !~ \".*minio.*\"}) by (namespace) * 100)) by (namespace) ",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -591,7 +398,7 @@ spec:
               "refId": "D"
             },
             {
-              "expr": "sum(container_network_transmit_bytes_total{ container!= \"\",namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace)",
+              "expr": "sum(container_network_transmit_bytes_total{ container!= \"\",namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\",namespace !~ \".*minio.*\"}) by (namespace)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -600,7 +407,7 @@ spec:
               "refId": "E"
             },
             {
-              "expr": "sum(container_network_receive_bytes_total{ container!= \"\",namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\"}) by (namespace)",
+              "expr": "sum(container_network_receive_bytes_total{ container!= \"\",namespace !~\"openshift.*\", namespace !~\".*monitor.*\", namespace !~\".*operator.*\",namespace !~\".*obser.*\",namespace !~ \".*logging.*\",namespace !~ \".*minio.*\"}) by (namespace)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -663,7 +470,7 @@ spec:
             "rgba(237, 129, 40, 0.89)",
             "#299c46"
           ],
-          "datasource": null,
+          "datasource": "Observatorium-Metrics",
           "description": "Total number of Kafka Clusters that are provisioned/requested.",
           "fieldConfig": {
             "defaults": {
@@ -680,13 +487,13 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 4,
+            "h": 7,
             "w": 4,
             "x": 0,
             "y": 15
           },
           "id": 18,
-          "interval": null,
+          "interval": "",
           "links": [],
           "mappingType": 1,
           "mappingTypes": [
@@ -725,14 +532,13 @@ spec:
           "targets": [
             {
               "expr": "sum(strimzi_resources{kind=~\"Kafka\"})",
-              "format": "time_series",
-              "hide": false,
-              "intervalFactor": 1,
+              "instant": true,
+              "interval": "",
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "thresholds": "0,2",
+          "thresholds": "0,1",
           "title": "Total  Kafka Clusters (Requested)",
           "type": "singlestat",
           "valueFontSize": "200%",
@@ -754,7 +560,7 @@ spec:
             "rgba(237, 129, 40, 0.89)",
             "#d44a3a"
           ],
-          "datasource": null,
+          "datasource": "Observatorium-Metrics",
           "description": "Total number of Kakfa clusters that are not in ready state.",
           "fieldConfig": {
             "defaults": {
@@ -771,7 +577,7 @@ spec:
             "thresholdMarkers": true
           },
           "gridPos": {
-            "h": 4,
+            "h": 7,
             "w": 5,
             "x": 4,
             "y": 15
@@ -816,11 +622,8 @@ spec:
           "targets": [
             {
               "expr": " sum(strimzi_resources{kind=~\"Kafka\"}) - sum(strimzi_resource_state{kind=~\"Kafka\"})",
-              "format": "time_series",
-              "hide": false,
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
             }
@@ -840,7 +643,7 @@ spec:
         },
         {
           "cacheTimeout": null,
-          "datasource": "Thanos",
+          "datasource": "Observatorium-Metrics",
           "description": "Strimzi operator versions",
           "fieldConfig": {
             "defaults": {
@@ -890,7 +693,7 @@ spec:
             ]
           },
           "gridPos": {
-            "h": 4,
+            "h": 7,
             "w": 7,
             "x": 9,
             "y": 15
@@ -908,12 +711,9 @@ spec:
           "targets": [
             {
               "expr": "count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (installed)",
-              "format": "time_series",
-              "hide": false,
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{installed}}",
+              "legendFormat": "",
               "refId": "A"
             }
           ],
@@ -941,7 +741,7 @@ spec:
         },
         {
           "cacheTimeout": null,
-          "datasource": null,
+          "datasource": "Observatorium-Metrics",
           "description": "Total number of Openshift clusters running the Strimzi operator.",
           "fieldConfig": {
             "defaults": {
@@ -979,7 +779,7 @@ spec:
             ]
           },
           "gridPos": {
-            "h": 4,
+            "h": 7,
             "w": 7,
             "x": 16,
             "y": 15
@@ -989,6 +789,7 @@ spec:
           "links": [],
           "maxDataPoints": 100,
           "options": {
+            "frameIndex": 0,
             "showHeader": true,
             "sortBy": []
           },
@@ -997,22 +798,16 @@ spec:
           "repeatDirection": "h",
           "targets": [
             {
-              "expr": "count((topk(1, subscription_sync_total{installed=~\"^strimzi.*$\"} > 0))) by (version) * on (instance) group_left(version) count(cluster_version{type=\"completed\"}) by (version)",
-              "format": "time_series",
-              "hide": false,
+              "expr": "count(cluster_version{type=\"completed\"}) by (version,cluster_id) * on (cluster_id) group_left () count(subscription_sync_total{installed=~\"^strimzi.*$\"}) by (cluster_id)",
+              "format": "table",
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
             }
           ],
           "title": "Total Openshift Clusters",
           "transformations": [
-            {
-              "id": "labelsToFields",
-              "options": {}
-            },
             {
               "id": "organize",
               "options": {
@@ -1030,7 +825,7 @@ spec:
           "type": "table"
         }
       ],
-      "refresh": false,
+      "refresh": "30s",
       "schemaVersion": 26,
       "style": "dark",
       "tags": [],
@@ -1038,12 +833,11 @@ spec:
         "list": []
       },
       "time": {
-        "from": "2021-01-11T08:29:43.000Z",
-        "to": "2021-01-11T20:29:43.000Z"
+        "from": "now-6h",
+        "to": "now"
       },
       "timepicker": {
         "refresh_intervals": [
-          "5s",
           "10s",
           "30s",
           "1m",
@@ -1057,6 +851,6 @@ spec:
       },
       "timezone": "",
       "title": "Strimzi / Kafka Fleet Panel",
-      "uid": "ef3544c1bccba28cf487872590667c8d4321c6d8",
-      "version": 1
+      "uid": "ef3544c1bccba28cf487872590667c8d4321c6d9",
+      "version": 15
     }
