@@ -92,7 +92,6 @@ if [ $INSTALL_LITMUS = true ]; then
   for (( i=0; i<$litmus_retry_count; i++ )) do
       CHAOS_OPERATOR_POD_RUNNING_COUNT=`oc get pods -n $LITMUS_NAMESPACE --field-selector=status.phase=Running --selector=name=$CHAOS_OPERATOR_LABEL_SELECTOR | grep -c Running` 
       if [[ $CHAOS_OPERATOR_POD_RUNNING_COUNT -ge $litmus_operator_min_pods ]]; then
-      # if [[ $CHAOS_OPERATOR_POD_RUNNING_COUNT -ge $itmus_operator_min_pods ]]; then
         echo "Litmus operator pod(s) Running"
         break
       elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
