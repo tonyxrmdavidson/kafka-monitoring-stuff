@@ -1,6 +1,7 @@
 #!/bin/bash
 
 H0ME_DIRECTORY=$(pwd)
+
 echo "You are in directory $(pwd)"
 echo "Logging into openshift cluster"
 
