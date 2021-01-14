@@ -1,10 +1,11 @@
 #!/bin/bash
 
+[ -z "$OSD_CLUSTER_API" ] || [ -z "$OSD_API_TOKEN" ] && echo 'The OSD_CLUSTER_API or OSD_API_TOKEN parameter(s) are not set in the "managed-kafka-litmus-test-run" pipeline ' && exit 1 
+
 REPO_DIRECTORY=$(pwd)
+echo You are in the root directory of $(basename "$PWD")
 
-echo "You are in directory $(pwd)"
 echo "Logging into openshift cluster"
-
 oc login --server=$OSD_CLUSTER_API --token=$OSD_API_TOKEN --insecure-skip-tls-verify
 
 KAFKA_OPERATOR_NAMESPACE="kafka-operator"
