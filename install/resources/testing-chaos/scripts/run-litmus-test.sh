@@ -13,7 +13,7 @@ KAFKA_INSTALLED=`oc get ns | grep -c $KAFKA_OPERATOR_NAMESPACE`
 if [ $KAFKA_INSTALLED = 0 ]; then
   cd $REPO_DIRECTORY/install
   echo "You are in directory $(pwd)"
-  echo "line 15 reached"
+ 
   make all
   sleep 10
 
@@ -77,7 +77,7 @@ fi
 if [ $INSTALL_LITMUS = true ]; then
   cd $REPO_DIRECTORY/install/resources/testing-chaos/
   echo "You are in directory $(pwd)"
-  echo "line 79 reached"
+
   make create/operator/litmus 
 
   LITMUS_NAMESPACE="litmus"
