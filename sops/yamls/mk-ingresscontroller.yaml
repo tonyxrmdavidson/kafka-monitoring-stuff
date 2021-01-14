@@ -13,6 +13,10 @@ objects:
       matchLabels:
         ingressType: sharded
     replicas: ${{REPLICAS}}
+    nodePlacement:
+      nodeSelector:
+        matchLabels:
+          node-role.kubernetes.io/worker: ""
 parameters:
 - description: Domain
   name: DOMAIN
