@@ -1,6 +1,6 @@
 #!/bin/bash
 
-H0ME_DIRECTORY=$(pwd)
+REPO_DIRECTORY=$(pwd)
 
 echo "You are in directory $(pwd)"
 echo "Logging into openshift cluster"
@@ -11,7 +11,7 @@ KAFKA_OPERATOR_NAMESPACE="kafka-operator"
 KAFKA_INSTALLED=`oc get ns | grep -c $KAFKA_OPERATOR_NAMESPACE`
 
 if [ $KAFKA_INSTALLED = 0 ]; then
-  cd $H0ME_DIRECTORY/install
+  cd $REPO_DIRECTORY/install
   echo "You are in directory $(pwd)"
   echo "line 15 reached"
   make all
@@ -75,7 +75,7 @@ if [ $KAFKA_INSTALLED = 0 ]; then
 fi
 
 if [ $INSTALL_LITMUS = true ]; then
-  cd $H0ME_DIRECTORY/install/resources/testing-chaos/
+  cd $REPO_DIRECTORY/install/resources/testing-chaos/
   echo "You are in directory $(pwd)"
   echo "line 79 reached"
   make create/operator/litmus 
