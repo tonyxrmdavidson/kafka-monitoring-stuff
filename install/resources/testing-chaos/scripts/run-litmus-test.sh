@@ -113,7 +113,7 @@ if [ $INSTALL_LITMUS = true ]; then
         echo "Litmus chaos-scheduler pod(s) are Running"
         break
       elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
-        echo "Litmus chaos-scheduler pod(s) have failed to to reach a running status after 6 mins"
+        echo "Litmus chaos-scheduler pod(s) have failed to reach a running status after 6 mins"
         exit 1
       fi
       echo "Litmus chaos-scheduler pod(s) are not ready, trying again in 5 seconds"
