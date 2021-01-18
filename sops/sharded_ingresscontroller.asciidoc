@@ -16,6 +16,8 @@ toc::[]
 
 == Description
 
+*The manual steps in this SOP are now automated in the service-api*
+
 The purpose of this SOP is config an `ingresscontroller` for Managed Kafka.  This is done to direct Kafka traffic onto dedicated Ingress instances that
 run on on the worker nodes.  This avoids overwhelming the default ingress instances which run on the infra nodes with high volumes of Kafka traffic.
 

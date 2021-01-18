@@ -16,6 +16,8 @@ toc::[]
 
 == Description
 
+*The manual steps in this SOP are now automated in the service-api*
+
 The purpose of this SOP is config an alternative `storageclass` for Managed Kafka that disables encryption.  This works around a AWS bug affecting
 the provisioning of encrypted volumes.  
 
