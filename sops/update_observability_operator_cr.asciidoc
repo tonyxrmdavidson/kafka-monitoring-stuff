@@ -1,0 +1,107 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Manually updating the Observability Operator CR on an OSD cluster
+
+toc::[]
+
+== Description
+
+The purpose of this SOP is to update an existing observability operator installation (OLM Bundles, observability CR etc) on a data plane OSD cluster since the Managed Services API does not reconcile changes for existing installations.  
+This makes sure that the operator configurations are up to date for its end to end functionality. 
+In the future, this step will likely be done automatic (see https://issues.redhat.com/browse/MGDSTRM-882), but that depends on how the observability operator will be installed. 
+
+== Prerequisites
+
+1. The target OSD cluster exists. The `ID` of the target cluster can be obtained from the output of `ocm list clusters` command. 
+2. The Observability operator has been installed on the target cluster via the syncset approach. The id of the syncset could be `ext-managed-application-services-observability` (Prior to Jan, 2021) or `ext-managedservice-cluster-mgr` (as of Jan, 2021) depending on when the cluster was terraformed.
+The commands in this SOP assumes that the id is `ext-managed-application-services-observability`.
+3. The https://github.com/openshift-online/ocm-cli[`ocm`] CLI.
+4. Cluster credentials are held that allow execution of `ocm` commands.
+The individual running this SOP would also need permissions to see the OSD clusters created in the organisation used by the Managed Services API.
+5. The https://stedolan.github.io/jq/[`jq`] CLI
+
+== Execute/Resolution
+
+1. Login to the `ocm` CLI against the target environment (`stage` or `prod`)
+2. Execute the following to retrieve the content of the existing operator CR:
+
+```
+syncsetId=ext-managed-application-services-observability
+clusterId=target-cluster-id
+ocm get /api/clusters_mgmt/v1/clusters/$clusterId/external_configuration/syncsets/$syncsetId > cr.json
+```
+
+4. Upon inspection of the content, you will see an `Observability` resource, with contents like the one below
+```
+{
+    "kind": "Observability",
+    "spec": {
+    "grafana": {
+        "managed": false
+    },
+    "observatorium": {
+        "tenant": "tenant-value",
+        "gateway": "https://example.io",
+        "authType": "dex",
+        "dexConfig": {
+        "url": "http://example.com",
+        "credentialSecretName": "example-secret",
+        "credentialSecretNamespace": "namespace"
+     }
+    },
+    "canaryPodSelector": {
+        "matchLabels": {
+        "managed-kafka-canary": "true"
+        }
+    },
+    "kafkaNamespaceSelector": {
+        "matchLabels": {
+        "mas-managed": "true"
+        }
+    }
+    },
+    "metadata": {
+    "name": "observability-stack",
+    "namespace": "managed-application-services-observability",
+    "creationTimestamp": null
+    },
+    "apiVersion": "observability.redhat.com/v1"
+}
+```
+
+You can change the Observability kind resource to update the value of the existing contents or add new fields. 
+The content of the CR has to match the https://github.com/bf2fc6cc711aee1a0c2a/observability-operator/blob/c6e8d9be4de1bec6d597ef7abfe8131d05bd5b36/config/crd/bases/observability.redhat.com_observabilities.yaml[Observability operator CRD]
+Once the modifications of the CR are done, save the file and execute the following command to update the syncset.
+
+NOTE: The fields and values to be modified should be communicated from the person or team requesting this SOP to be followed.
+
+```
+jq 'del(.id)' cr.json | ocm patch /api/clusters_mgmt/v1/clusters/$clusterId/external_configuration/syncsets/$syncsetId --body=cr.json
+```
+
+== Validate
+
+1. Run the following command and ensure that the syncset has been updated.
+
+```
+ocm get /api/clusters_mgmt/v1/clusters/$clusterId>/external_configuration/syncsets/$syncsetId
+```
+
+2. Login in to the target OSD cluster and verify that the `managed-application-services-observability` is there and the observability operator CR has been updated.
+```
+oc get Observability -n managed-application-services-observability -o json | jq '.items|.[0].spec'
+```   
+
+== Troubleshooting
+
+None
