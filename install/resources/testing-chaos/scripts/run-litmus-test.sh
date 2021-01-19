@@ -87,7 +87,7 @@ if [ $INSTALL_LITMUS = true ]; then
   litmus_retry_count=72   # 6 mins 0 seconds
   litmus_operator_min_pods=1
   litmus_chaos_scheduler_min_pods=1
-  litmus_experiment_min_pods=1
+  litmus_deployed_experiment_definitions_min=1
 
   echo "checking litmus-operator pod status"
 
@@ -128,7 +128,7 @@ echo "deploying chaos-experiments"
   echo "checking chaos experiments have been deployed"
   for (( i=0; i<$litmus_retry_count; i++ )) do
       CHAOS_EXPERIMENT_POD_COUNT=`oc get chaosexperiments -n $LITMUS_NAMESPACE | grep -c -` 
-      if [[ $CHAOS_EXPERIMENT_POD_COUNT -ge $litmus_experiment_min_pods ]]; then
+      if [[ $CHAOS_EXPERIMENT_POD_COUNT -ge $litmus_deployed_experiment_definitions_min ]]; then
         echo "Litmus experiments deployed"
         break
       elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
