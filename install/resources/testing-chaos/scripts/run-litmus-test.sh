@@ -15,7 +15,7 @@ if [ $KAFKA_INSTALLED = 0 ]; then
   cd $REPO_DIRECTORY/install
   echo "You are in directory $(pwd)"
  
-  make all
+  make all >$REPO_DIRECTORY/install/resources/testing-chaos/litmus-results/kafka_make_all_stdout_stderr.txt 2>&1
   sleep 10
 
   echo "Checking kafka-operator pod status"
@@ -79,7 +79,7 @@ if [ $INSTALL_LITMUS = true ]; then
   cd $REPO_DIRECTORY/install/resources/testing-chaos/
   echo "You are in directory $(pwd)"
 
-  make create/operator/litmus 
+  make create/operator/litmus >$REPO_DIRECTORY/install/resources/testing-chaos/litmus-results/litmus_make_operator_stdout_stderr.txt 2>&1
 
   LITMUS_NAMESPACE="litmus"
   CHAOS_SCHEDULER_LABEL_SELECTOR="chaos-scheduler"
@@ -106,7 +106,7 @@ if [ $INSTALL_LITMUS = true ]; then
   done
 
   echo "installing the chaos-scheduler operator"
-  make create/operator/chaosscheduler
+  make create/operator/chaosscheduler >$REPO_DIRECTORY/install/resources/testing-chaos/litmus-results/litmus_make_chaosscheduler_operator_stdout_stderr.txt 2>&1
 
   echo "checking chaos-scheduler pod status"
   for (( i=0; i<$litmus_retry_count; i++ )) do
@@ -123,7 +123,7 @@ if [ $INSTALL_LITMUS = true ]; then
   done
 
 echo "deploying chaos-experiments"
-  make create/chaosexperiments
+  make create/chaosexperiments >$REPO_DIRECTORY/install/resources/testing-chaos/litmus-results/litmus_make_chaos_experiments_stdout_stderr.txt
 
   echo "checking chaos experiments have been deployed"
   for (( i=0; i<$litmus_retry_count; i++ )) do
