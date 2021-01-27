@@ -68,11 +68,18 @@ oc get machine <MACHINE_NAME> -n openshift-machine-api -o yaml | grep providerID
 . Start the master instance
 . Wait for the instance to reach a running state
 
+*Alternative execution using aws cli*
+
+```sh
+aws ec2 reboot-instances --instance-ids <instance_id>
+```
+
 == Validate
 
 . Verify the instance is in an up and running state
 . Verify that EC2 instance status checks are initialized & completed successfully.
 . Verify that the master node is Ready again
+. Verify no alerts are firing
 
 +
 ```sh
