@@ -19,20 +19,21 @@ toc::[]
 This SOP outlines the process of rolling out a new Observability Operator image version to the OSD data plane staging cluster. As of writing, the staging image uses the tag `latest`.
 
 == Prerequisites
-1. The target OSD staging cluster exists. The `ID` of the target cluster can be obtained from the output of the following command:
-+
-[source,sh]
-----
-ocm list clusters
-----
-2. Admin access to the cluster. The credentials can be retrieved using the following command:
-+
-[source,sh]
-----
-ocm get /api/clusters_mgmt/v1/clusters/<cluster_id>/credentials
-----
+1. The https://github.com/openshift-online/ocm-cli[`ocm`] CLI
+2. The https://stedolan.github.io/jq/[`jq`] CLI
 
 == Execute/Resolution
+=== Identifying the staging cluster
+1. Staging clusters have the `ms-` name prefix and are created via a specific service account id: (`1jYaWfk74hKf0owBKg9mxXLRN19`)
++
+As it's possible for multiple clusters to have the `ms-` name prefix, identifying the `ID` of the staging cluster requires matching a cluster that has the correct name prefix with the correct specific service account. The below command outputs the credentials for the staging cluster:
++
+[source,sh]
+----
+staging_cluster_id=$(for i in `ocm list clusters | grep -i ms- | awk '{print $1}'`; do ocm get `ocm get cluster $i | jq -r '.subscription.href'` | jq -r 'select(.creator.id=="1jYaWfk74hKf0owBKg9mxXLRN19")' | jq -r .cluster_id; done;) && ocm get /api/clusters_mgmt/v1/clusters/$staging_cluster_id/credentials
+----
+
+=== Deploying a new image version
 1. Build a new version of the Observability Operator image using the make target:
 +
 [source,sh]
@@ -58,7 +59,7 @@ make docker/push
 +
 [source,sh]
 ----
-oc rollout restart deployment -n <namespace> && oc rollout restart statefulset -n <namespace>
+oc rollout restart deployment -n managed-application-services-observability && oc rollout restart statefulset -n managed-application-services-observability
 ----
 
 == Validate
@@ -66,9 +67,11 @@ oc rollout restart deployment -n <namespace> && oc rollout restart statefulset -
 +
 [source,sh]
 ----
-oc get pods -n <namespace>
+oc get pods -n managed-application-services-observability
 ----
-2. Some resources do not get updated when a new image is deployed. If the new image contains changes to any of the following resources, the resource must be updated manually in the cluster:
+2. Some resources do not get updated when a new image is deployed. If the new image contains changes to any of the resources listed below, the resource must be updated manually in the cluster.
++
+*Note*: This step is not required if the following JIRA to automate this step has been completed: https://issues.redhat.com/browse/MGDSTRM-1539[MGDSTRM-1539]
 
  Secrets
   - alertmanager-proxy
