@@ -70,10 +70,19 @@ oc get machine <MACHINE_NAME> -n openshift-machine-api -o yaml | grep providerID
 
 *Alternative execution using aws cli*
 
+To use the aws cli you need to configure it with the secret access key and access key id, generally these should be available in vault. This command will ask you to input the secret access key and access key id.
+
 ```sh
-aws ec2 reboot-instances --instance-ids <instance_id>
+aws configure
+```
+To stop start the master instance you can then run these commands.
+```sh
+aws ec2 stop-instances --instance-ids <instance_id>
 ```
 
+```sh
+aws ec2 start-instances --instance-ids <instance-id>
+```
 == Validate
 
 . Verify the instance is in an up and running state
