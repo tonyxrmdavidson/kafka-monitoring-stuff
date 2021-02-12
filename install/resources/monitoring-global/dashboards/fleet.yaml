@@ -621,7 +621,7 @@ spec:
           "tableColumn": "",
           "targets": [
             {
-              "expr": " count(strimzi_resource_state{kind=~\"Kafka\"} == 0)",
+              "expr": " count(strimzi_resource_state{kind=~\"Kafka\"} == 0) OR on() vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
