@@ -1,0 +1,86 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Updating the Observability Operator Image in Staging
+
+toc::[]
+
+== Description
+
+This SOP outlines the process of rolling out a new Observability Operator image version to the OSD data plane staging cluster. As of writing, the staging image uses the tag `latest`.
+
+== Prerequisites
+1. The https://github.com/openshift-online/ocm-cli[`ocm`] CLI
+2. The https://stedolan.github.io/jq/[`jq`] CLI
+
+== Execute/Resolution
+=== Identifying the staging cluster
+1. Staging clusters have the `ms-` name prefix and are created via a specific service account id: (`1jYaWfk74hKf0owBKg9mxXLRN19`)
++
+As it's possible for multiple clusters to have the `ms-` name prefix, identifying the `ID` of the staging cluster requires matching a cluster that has the correct name prefix with the correct specific service account. The below command outputs the credentials for the staging cluster:
++
+[source,sh]
+----
+staging_cluster_id=$(for i in `ocm list clusters | grep -i ms- | awk '{print $1}'`; do ocm get `ocm get cluster $i | jq -r '.subscription.href'` | jq -r 'select(.creator.id=="1jYaWfk74hKf0owBKg9mxXLRN19")' | jq -r .cluster_id; done;) && ocm get /api/clusters_mgmt/v1/clusters/$staging_cluster_id/credentials
+----
+
+=== Deploying a new image version
+1. Build a new version of the Observability Operator image using the make target:
++
+[source,sh]
+----
+make docker-build
+----
+2. By default, the image will be built using the `latest` tag. Verify that the image has the correct tag:
++
+[source,sh]
+----
+docker images
+
+REPOSITORY                                   TAG
+quay.io/integreatly/observability-operator   latest
+----
+3. Push the newly created image to the quay.io `integreatly/observability-operator` repository:
++
+[source,sh]
+----
+make docker/push
+----
+4. For the new image version to be pulled, the pods must be restarted. This can be achieved by restarting each of the deployments and statefulsets within the specified namespace:
++
+[source,sh]
+----
+oc rollout restart deployment -n managed-application-services-observability && oc rollout restart statefulset -n managed-application-services-observability
+----
+
+== Validate
+1. Check the status of each pod to ensure that all pods are running, and none are stuck in a pending/terminating or error state:
++
+[source,sh]
+----
+oc get pods -n managed-application-services-observability
+----
+2. Some resources do not get updated when a new image is deployed. If the new image contains changes to any of the resources listed below, the resource must be updated manually in the cluster.
++
+*Note*: This step is not required if the following JIRA to automate this step has been completed: https://issues.redhat.com/browse/MGDSTRM-1539[MGDSTRM-1539]
+
+ Secrets
+  - alertmanager-proxy
+  - alertmanager-<alertmanager-name>
+  - grafana-k8s-proxy
+  - prometheus-proxy
+
+ ConfigMap
+  - promtaila-config
+
+== Troubleshooting
+None.
