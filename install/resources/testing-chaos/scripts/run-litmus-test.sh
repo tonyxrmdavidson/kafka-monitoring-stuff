@@ -88,6 +88,7 @@ if [ $INSTALL_LITMUS = true ]; then
   litmus_operator_min_pods=1
   litmus_chaos_scheduler_min_pods=1
   litmus_deployed_experiment_definitions_min=1
+  litmus_pod_delete_count_min=2
 
   echo "checking litmus-operator pod status"
 
@@ -140,4 +141,36 @@ echo "deploying chaos-experiments"
   done
 
   make create/$LITMUS_TEST
+    
+  echo "checking all the pod-delete litmus pods are terminated"
+
+    # Checking at least 2 pod-delete-* pods are deployed
+    for (( i=0; i<$litmus_retry_count; i++ )) do
+        LITMUS_POD_DELETE_RUNNING_COUNT=`oc get pods -n $LITMUS_NAMESPACE --field-selector=status.phase=Running | grep -c pod-delete` 
+        if [[ $LITMUS_POD_DELETE_RUNNING_COUNT -ge $litmus_pod_delete_count_min ]]; then
+          echo "Litmus pod-delete-* pods are running"
+          break
+        elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
+          echo "No litmus pod-delete-* pods has been created after 6 mins"
+          echo $(oc get pods -n litmus)
+          exit 1
+        fi
+        echo "Litmus pod-delete-* pods are not deployed yet, trying again in 5 seconds..."
+        sleep 5
+    done
+
+    # Checking all pod-delete-* pods finished
+    for (( i=0; i<$litmus_retry_count; i++ )) do
+        LITMUS_POD_DELETE_COUNT=`oc get pods -n $LITMUS_NAMESPACE | grep -c pod-delete` 
+        if [[ $LITMUS_POD_DELETE_COUNT -eq '0' ]]; then
+          echo "All pod-delete-* pods are finished"
+          break
+        elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
+          echo "Some pod-delete-* pods are not yet deleted after 6 min"
+          echo $(oc get pods -n litmus)
+          exit 1
+        fi
+        echo "Some Litmus pod-delete-* pods are not finished yet, trying again in 5 seconds..."
+        sleep 5
+    done
 fi
