@@ -63,7 +63,7 @@ oc exec -it ${KAFKA_CLUSTER}-kafka-0 -- env - bin/kafka-console-producer.sh --br
 +
 [source,sh]
 ----
-oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-topics.sh --describe --topic my-topic --bootstrap-server localhost:9092
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-topics.sh --describe --topic ${TOPIC_NAME} --bootstrap-server localhost:9092
 ----
 6. Change a single byte in the binary log file for the partition obtained from the previous command, which should be run on one of the broker pods. You may have to change the `kafka-log0` section of the command to `kafka-log1` if you are using broker one etc.
 +
@@ -76,7 +76,7 @@ cd /var/lib/kafka/data-0/kafka-log0/my-topic
 +
 [source,sh]
 ----
-oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-console-consumer.sh --topic my-topic --from-beginning --bootstrap-server localhost:9092
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-console-consumer.sh --topic ${TOPIC_NAME} --from-beginning --bootstrap-server localhost:9092
 ----
 9. Attempting to read from the topic should result in the below exception:
 +
@@ -115,15 +115,15 @@ oc exec -it ${KAFKA_CLUSTER}-kafka-0 -- env - bin/kafka-console-producer.sh --br
 +
 [source,sh]
 ----
-oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-console-consumer.sh --topic my-topic --offset 1 --partition 0  --bootstrap-server localhost:9092
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-console-consumer.sh --topic ${TOPIC_NAME} --offset 1 --partition 0  --bootstrap-server localhost:9092
 ----
 12. Test the above using a consumer group if required. Once a consumer group has been created, the commands below will reset the offset for the consumer group and not just a single consumer. More information on this can be found https://kafka.apache.org/documentation/#basic_ops_consumer_group[here]
 +
 [source,sh]
 ----
 // Shifts the offset by 1
-./kafka-consumer-groups.sh --reset-offsets --shift-by 1 --bootstrap-server localhost:9092 --group my-group --topic my-topic --execute
+./kafka-consumer-groups.sh --reset-offsets --shift-by 1 --bootstrap-server localhost:9092 --group my-group --topic ${TOPIC_NAME} --execute
 
 //  Shifts the offset to a specified value
-./kafka-consumer-groups.sh --reset-offsets --to-offset 1 --bootstrap-server localhost:9092 --group my-group --topic my-topic --execute
+./kafka-consumer-groups.sh --reset-offsets --to-offset 1 --bootstrap-server localhost:9092 --group my-group --topic ${TOPIC_NAME} --execute
 ----
