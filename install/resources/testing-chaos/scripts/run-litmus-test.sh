@@ -88,6 +88,7 @@ if [ $INSTALL_LITMUS = true ]; then
   litmus_operator_min_pods=1
   litmus_chaos_scheduler_min_pods=1
   litmus_deployed_experiment_definitions_min=1
+  litmus_chaos_pod_count_min=1
 
   echo "checking litmus-operator pod status"
 
@@ -140,4 +141,41 @@ echo "deploying chaos-experiments"
   done
 
   make create/$LITMUS_TEST
+    
+  CHAOS_YAML_DIR=$(echo $LITMUS_TEST | awk -F'/' '{print $1}')
+  CHAOS_TEST=$(echo $LITMUS_TEST | awk -F'/' '{print $2}')
+  echo "Chaos yaml dir: $CHAOS_YAML_DIR"
+  echo "Chaos test: $CHAOS_TEST"
+  POD_NAME=$(grep -A1 'metadata:' ${CHAOS_YAML_DIR}s/$CHAOS_TEST/$CHAOS_YAML_DIR.yaml | awk '{print $2}' | tail -n 1)
+  echo "Broker's pod name to run the experiment: $POD_NAME"
+
+    # Checking at least 1 pod is deployed
+    for (( i=0; i<$litmus_retry_count; i++ )) do
+        LITMUS_POD_DELETE_RUNNING_COUNT=`oc get pods -n $LITMUS_NAMESPACE --field-selector=status.phase=Running | grep -c $POD_NAME` 
+        if [[ $LITMUS_POD_DELETE_RUNNING_COUNT -ge $litmus_pod_delete_count_min ]]; then
+          echo "Litmus $POD_NAME pod is running"
+          break
+        elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
+          echo "No chaos $POD_NAME pods has been created after 6 mins"
+          echo $(oc get pods -n litmus)
+          exit 1
+        fi
+        echo "No litmus $POD_NAME pod is deployed yet, trying again in 5 seconds..."
+        sleep 5
+    done
+
+    # Checking all chaos pods finished
+    for (( i=0; i<$litmus_retry_count; i++ )) do
+        LITMUS_POD_DELETE_COUNT=`oc get pods -n $LITMUS_NAMESPACE | grep -c $POD_NAME` 
+        if [[ $LITMUS_POD_DELETE_COUNT -eq '0' ]]; then
+          echo "All $POD_NAME pods are finished"
+          break
+        elif [[ $((litmus_retry_count-1)) -eq $i ]]; then
+          echo "Some $POD_NAME pods are not deleted after 6 min"
+          echo $(oc get pods -n litmus)
+          exit 1
+        fi
+        echo "Some Litmus $POD_NAME pods are not finished yet, trying again in 5 seconds..."
+        sleep 5
+    done
 fi
