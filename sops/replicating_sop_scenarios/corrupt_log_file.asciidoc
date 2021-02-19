@@ -1,0 +1,129 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Replicating a Corrupt Log File
+
+toc::[]
+
+== Description
+
+The following steps will replicate a scenario where a consumer cannot read records due to corrupted log file.
+
+JIRA for which these steps where required: https://github.com/RHCloudServices/kafka-monitoring-stuff#4-install-in-cluster-strimzi--kafka-components-only-no-monitoring[MGDSTRM-1203]
+
+SOP for which these steps are linked: https://github.com/RHCloudServices/kafka-monitoring-stuff/blob/master/sops/skipping_kafka_record.asciidoc[skipping_kafka_record]
+
+== Prerequisites
+1. Admin access to an OSD cluster
+2. Kafka installed on the cluster. Steps to install Kafka can be found https://github.com/RHCloudServices/kafka-monitoring-stuff#4-install-in-cluster-strimzi--kafka-components-only-no-monitoring[here]
+
+== Execution
+1. Export the required environmental variables:
++
+[source,sh]
+----
+# Kafka cluster name
+export KAFKA_CLUSTER=my-cluster
+# Kafka topic name
+export TOPIC_NAME=my-topic
+# consumer group name
+export CONSUMER_GROUP_NAME=my-group
+# Kafka user name
+export KAFKAUSER_NAME=my-user
+# Kafka broker ID
+export BROKER_ID=0
+# Zookeeper ID
+export ZOOKEEPER_ID=0
+# namespace name (i.e. project name)
+export NAMESPACE=my-project
+----
+2. Ensure you are on the correct project: `oc project kafka-cluster`
+3. Create a topic with two partitions:
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --replication-factor 2 --partitions 2 --topic ${TOPIC_NAME}
+----
+4. Produce a single message using the command below (substituting out the pod name `${KAFKA_CLUSTER}-kafka-0` pod name if required). The command line will prompt you to input a message.
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -- env - bin/kafka-console-producer.sh --broker-list localhost:9092 --topic ${TOPIC_NAME}
+----
+5. Modify the log file on the leader on one of the partitions. The below command will list the leader of each partition:
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-topics.sh --describe --topic my-topic --bootstrap-server localhost:9092
+----
+6. Change a single byte in the binary log file for the partition obtained from the previous command, which should be run on one of the broker pods. You may have to change the `kafka-log0` section of the command to `kafka-log1` if you are using broker one etc.
++
+[source,sh]
+----
+cd /var/lib/kafka/data-0/kafka-log0/my-topic
+----
+7. Restart the broker pods (deleting the pods will suffice)
+8. When the new pods are up and running, attempt to read the log file:
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-console-consumer.sh --topic my-topic --from-beginning --bootstrap-server localhost:9092
+----
+9. Attempting to read from the topic should result in the below exception:
++
+[source,sh]
+----
+ERROR Error processing message, terminating consumer process:  (kafka.tools.ConsoleConsumer$)
+org.apache.kafka.common.KafkaException: Received exception when fetching the next record from my-topic-0.
+     If needed, please seek past the record to continue consumption.
+	at org.apache.kafka.clients.consumer.internals.Fetcher$CompletedFetch.fetchRecords(Fetcher.java:1611)
+	at org.apache.kafka.clients.consumer.internals.Fetcher$CompletedFetch.access$1700(Fetcher.java:1432)
+	at org.apache.kafka.clients.consumer.internals.Fetcher.fetchRecords(Fetcher.java:684)
+	at org.apache.kafka.clients.consumer.internals.Fetcher.fetchedRecords(Fetcher.java:635)
+	at org.apache.kafka.clients.consumer.KafkaConsumer.pollForFetches(KafkaConsumer.java:1308)
+	at org.apache.kafka.clients.consumer.KafkaConsumer.poll(KafkaConsumer.java:1237)
+	at org.apache.kafka.clients.consumer.KafkaConsumer.poll(KafkaConsumer.java:1210)
+	at kafka.tools.ConsoleConsumer$ConsumerWrapper.receive(ConsoleConsumer.scala:438)
+	at kafka.tools.ConsoleConsumer$.process(ConsoleConsumer.scala:104)
+	at kafka.tools.ConsoleConsumer$.run(ConsoleConsumer.scala:78)
+	at kafka.tools.ConsoleConsumer$.main(ConsoleConsumer.scala:55)
+	at kafka.tools.ConsoleConsumer.main(ConsoleConsumer.scala)
+Caused by: org.apache.kafka.common.KafkaException: Record batch for partition my-topic-0 at offset 0 is invalid,
+    cause: Record is corrupt (stored crc = 2896708440, computed crc = 4017006457)
+	at org.apache.kafka.clients.consumer.internals.Fetcher$CompletedFetch.maybeEnsureValid(Fetcher.java:1490)
+	at org.apache.kafka.clients.consumer.internals.Fetcher$CompletedFetch.nextFetchedRecord(Fetcher.java:1534)
+	at org.apache.kafka.clients.consumer.internals.Fetcher$CompletedFetch.fetchRecords(Fetcher.java:1591)
+	... 11 more
+Processed a total of 0 messages
+----
+10. Create a new second message when prompted using command below:
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -- env - bin/kafka-console-producer.sh --broker-list localhost:9092 --topic ${TOPIC_NAME}
+----
+11. Attempt to read the second message. This should work as it effectively skips over reading the first corrupt message by setting the offset value to `1`:
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env bin/./kafka-console-consumer.sh --topic my-topic --offset 1 --partition 0  --bootstrap-server localhost:9092
+----
+12. Test the above using a consumer group if required. Once a consumer group has been created, the commands below will reset the offset for the consumer group and not just a single consumer. More information on this can be found https://kafka.apache.org/documentation/#basic_ops_consumer_group[here]
++
+[source,sh]
+----
+// Shifts the offset by 1
+./kafka-consumer-groups.sh --reset-offsets --shift-by 1 --bootstrap-server localhost:9092 --group my-group --topic my-topic --execute
+
+//  Shifts the offset to a specified value
+./kafka-consumer-groups.sh --reset-offsets --to-offset 1 --bootstrap-server localhost:9092 --group my-group --topic my-topic --execute
+----
