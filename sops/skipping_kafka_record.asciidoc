@@ -1,0 +1,130 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Skipping a Corrupt Kafka Record
+
+toc::[]
+
+== Description
+
+This SOP outlines the process of manually skipping a Kafka record.
+
+The first we're likely to know about a corrupted record is when a service user brings it to our attention. This is because the exception indicating a corrupted record will only surface in the logs of the client-side application consuming the record.
+
+== Prerequisites
+1. Admin access to the cluster via `oc`
+2. The topic name, partition name, and offset value of the offending record.
++
+This information can be obtained from the exception on the client consumer logs if the consumer is external to the cluster. An example of the exception which contains this information:
++
+[source,sh]
+----
+ERROR Error processing message, terminating consumer process:  (kafka.tools.ConsoleConsumer$)
+org.apache.kafka.common.KafkaException: Received exception when fetching the next record from my-example-topic-0.
+If needed, please seek past the record to continue consumption.
+
+Caused by: org.apache.kafka.common.KafkaException: Record batch for partition my-example-topic-0 at offset 10
+is invalid, cause: Record is corrupt (stored crc = 25433845, computed crc = 2612366230)
+----
++
+Using the above exception as an example, the following values must be extracted into environment variables (EV) for use in the resolution steps:
++
+----
+topic_name=my-example-topic
+offset_value=10
+partition_value=0
+----
++
+3. For a record to be skipped, the consumer must be part of a consumer group.
++
+The group name is required to be stored in an EV for use in the resolution steps. The below command will list all consumer groups and associated topics:
++
+----
+oc exec -it $pod_name -c kafka -- env - bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --all-groups
+
+GROUP      TOPIC      PARTITION   CURRENT-OFFSET   LOG-END-OFFSET   LAG
+my-group   my-topic   0           0                9                9
+
+// Create an EV containing the group name for the given topic
+group_name=mygroup
+----
+4. Another environment variable that is required for use in the resolution steps is the name of one of the Kafka broker pods:
++
+----
+oc get pods -n <kakfa_cluster_namespace>
+
+NAME                                         READY   STATUS    RESTARTS   AGE
+my-cluster-kafka-0                           1/1     Running   0          3h48m
+my-cluster-kafka-exporter-679559fd4c-c292s   1/1     Running   0          3h56m
+my-cluster-zookeeper-0                       1/1     Running   0          3h58m
+
+// Create an EV containing the pod name
+pod_name=my-cluster-kafka-0
+----
+
+== Execute/Resolution
+1. All the below commands can be run locally via a terminal. Ensure that you are on the namespace containing the kafka-cluster:
++
+----
+oc project <kafka_cluster_namespace>
+----
+2. Verify the existence of the problem. This will allow us to validate the fix once the SOP's steps have been completed. Running the command below should result in an exception:
++
+----
+oc exec -it $pod_name -c kafka -- env bin/./kafka-console-consumer.sh --topic $topic_name --offset $offset_value --max-messages 1 --partition $partition_value --bootstrap-server localhost:9092
+----
++
+3. Skipping a record requires using the `kafka-consumer-groups.sh` script, which is available on each of the Kafka pods. The script can be used to reset the consumer group offset to a specified offset or timestamp. Usage documentation can be found https://kafka.apache.org/documentation/#basic_ops_consumer_group[here].
+
+4. There are a number of command line options that can be passed to the script for skipping records, which are noted below. The various options must be assessed depending on how many records need to be skipped. E.g., a single or multiple record/s may need to be skipped depending on how many are in a corrupt state.
++
+The following flags can be passed to the `--reset-offsets` option:
++
+----
+--shift-by <positive_or_negative_integer>
+--to-current
+--to-latest
+--to-offset <offset_integer>
+--to-datetime <datetime_string>
+--by-duration <duration_string>
+----
++
+There are also a number of execution options:
++
+----
+- (default): to display which offsets to reset.
+- execute: to execute --reset-offsets process.
+- export: to export the results to a CSV format.
+----
++
+*Important*: The following command contains the `--execute` option. The option should be removed if you want to only display the offsets to reset and not actually execute the command.
++
+Resetting an offset to a specified offset can be achieved using the `--to-offset` option. As the exception displayed record `10` as being in a corrupt state, the following command sets the offset to '11`, skipping the corrupted record:
++
+----
+oc exec -it $pod_name -c kafka -- env bin/ ./kafka-consumer-groups.sh --reset-offsets --to-offset 11 --bootstrap-server localhost:9092 --group <group_name> --topic $topic_name --execute
+----
+
+== Validate
+
+1. Validation requires ensuring a consumer can read from the topic, starting from the new offset value.
++
+As the corrupted record/s have been skipped, specifying the `<new_offset_value>` in the below command. The command also uses the `--max-messages 1` parameter, which specifies the number of messages to read (in this case, `1`)
++
+Run the below command to verify that records can be consumed from the new offset without error:
++
+----
+oc exec -it $pod_name -c kafka -- env bin/./kafka-console-consumer.sh --topic $topic_name --offset <new_offset_value> --max-messages 1 --partition $partition_value --bootstrap-server localhost:9092
+----
+
+== Troubleshooting
+None.
