@@ -1,0 +1,88 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= SOP document for under replicated partitions
+
+toc::[]
+
+== Description
+
+This SOP is used to describe the steps required to resolve an under replicated partition.
+
+== Prerequisites
+
+* Access to the data plane cluster (credentials can be found in https://vault.devshift.net/[vault.devshift.net])
+* Access to Observatorium (credentials can be found in https://vault.devshift.net/[vault.devshift.net])
+* The cluster name value must be extracted into an environment variable for use in the resolution steps:
++
+[source,sh]
+----
+// Kafka cluster name.
+KAFKA_CLUSTER=my-kafka-cluster
+----
+
+== Causes of an under replicated partition
+* One or more of the replicas are not available due to one or more of the Kafka brokers being down or unavailable
+* The follower has not fetched from the leader for an extended period (the is controlled by the controlled by config `replica.socket.timeout.ms`)
+* `replica.lag.time.max.ms`: This parameter defines the maximum time interval within which every follower must request the leader for its log. It is not just the time passed since the last fetch request from the replica, but also the time since the replica last caught up
+* Replicas that are still fetching messages from the leaders but did not catch up to the latest messages within `replica.lag.time.max.ms` will be considered out of sync
+* A follower replica might be lagging behind the leader for several reasons:
+- `Slow Replica`: A replica can be unable to cope up with the speed at which a leader is getting new messages — the rate at which the leader is getting messages is more than the rate at which the replica is copying messages causing an I/O bottleneck
+- `Stuck Replica`: If a replica has stopped requesting messages from the leader (e.g. a dead replica), or the replica is blocked due to GC (Garbage collection)
+- `Bootstrapping replica`: When the user increases the replication factor of the topic, the new follower replicas are out-of-sync until they are fully caught up to the leader’s log
+- Replica’s lag is measured either in terms of when the replica has not attempted to fetch new data from the leader (`replica.lag.time.max.ms`). It is used to detect halted or dead replicas.
+
+== Execute/Resolution
+1. Open the Grafana route in the browser and check the Under Replicated Partitions metric count on the Strimzi Kafka Dashboard.
+2. If the metric count is positive, then partitions are under-replicated. You can check for under-replicated partitions using the command below:
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-replicated-partitions
+
+// Example output
+Topic: testTopic	Partition: 0	Leader: 1	Replicas: 1,0,2	Isr: 1,0
+Topic: testTopic	Partition: 1	Leader: 0	Replicas: 0,2,1	Isr: 0,1
+Topic: testTopic	Partition: 2	Leader: 1	Replicas: 2,1,0	Isr: 1,0
+----
++
+3. If the Isr from the above command is not equal to the number of replicas (e.g. if Replicas = 3 and Isr = 2), restart the broker:
+4. If there is any fault/errors with the Zookeeper leader, restarting the Zookeeper leader will fix this issue:
+[source,sh]
+----
+Know the Zookeeper pod status (leader or follower)
+
+oc exec -it ${KAFKA_CLUSTER}-zookeeper-0 -- env - bash -c "echo stat | nc localhost 12181"
+
+Restart the zookeper leader
+----
+
+== Causes of an unavailable partition leader
+During topic creation time, the leader election algorithm of Kafka will take care of distributing the partition leader evenly, but over a period of time,  certain events like broker shutdowns, crashes or brokers are not able to register a heartbeat, leadership can get changed, and one of the follower replicas will become the leader. This results in skewed leadership when the broker that was preferred for this partition comes back, and leaders are not equally distributed.
+
+== Steps to check topics unavailable partition leader
+* The following command can be used to check for an unavailable partition leader:
+[source,sh]
+----
+ oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --unavailable-partitions
+----
+* Do a rolling restart, or if a few brokers are holding the leaders of other brokers restart them if there is no customer impact, and then verify that the leadership is balanced
+* The following tools can be used to reassign a leader:
+- https://cwiki.apache.org/confluence/display/KAFKA/Replication+tools#Replicationtools-4.ReassignPartitionsTool[PreferredReplicaLeaderElectionTool]
+- https://strimzi.io/blog/2020/06/15/cruise-control[Cruise Control]
+
+== Validate
+- Check for under replicated partitions:
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-replicated-partitions
+----
+- Open the Grafana route in a browser and check the Under Replicated Partitions metric count on the `Strimzi Kafka` dashboard
