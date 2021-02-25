@@ -147,13 +147,30 @@ install/observability:
 	@ sed -i 's/<ACCESS_TOKEN>/$(ACCESS_TOKEN)/' ./$(BUILD_DIR)/observability-operator/configmap.yaml
 	@ sed -i 's,<OBSERVABILITY_RESOURCES_GH>,$(OBSERVABILITY_RESOURCES_GH),' ./$(BUILD_DIR)/observability-operator/configmap.yaml
 
-	@ -oc new-project $(OBSERVABILITY_NAMESPACE)
-	@oc apply -f ./resources/observability-operator/catalogue-source.yaml
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/namespace.yaml ./$(BUILD_DIR)/observability-operator/
+	@ sed -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/namespace.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/catalogue-source.yaml ./$(BUILD_DIR)/observability-operator/
+	@ sed -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/catalogue-source.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/subscription.yaml ./$(BUILD_DIR)/observability-operator/
+	@ sed -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/subscription.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/operatorgroup.yaml ./$(BUILD_DIR)/observability-operator/
+	@ sed -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/operatorgroup.yaml
+
+	@oc apply -f ./${BUILD_DIR}/observability-operator/namespace.yaml
 	@oc apply -f ./${BUILD_DIR}/observability-operator/configmap.yaml
 	@oc apply -f ./${BUILD_DIR}/observability-operator/secrets.yaml
+	@oc apply -f ./${BUILD_DIR}/observability-operator/operatorgroup.yaml	
+	@oc apply -f ./${BUILD_DIR}/observability-operator/catalogue-source.yaml
+	@oc apply -f ./${BUILD_DIR}/observability-operator/subscription.yaml
+
+	@ rm- rf ${BUILD_DIR}
 
 .PHONY: uninstall/observability
 uninstall/observability:
+	@oc delete observability observability-stack -n $(OBSERVABILITY_NAMESPACE)
 	@oc delete project $(OBSERVABILITY_NAMESPACE)
 
 all: install/strimzi/operator install/kafka/cr install/monitoring/global install/observability

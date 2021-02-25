@@ -9,3 +9,4 @@ data:
   access_token: '<ACCESS_TOKEN>'
   channel: development
   repository: '<OBSERVABILITY_RESOURCES_GH>'
+  

@@ -39,15 +39,15 @@ The Observability Operator install requires some variables to be set
 |DEX_SECRET | Secret for accessing dex|
 |DEX_USERNAME | Username for accessing dex |
 
+The Observability stack requires a Personal Access Token to read externalized configuration from within the bf2 organization. For development cycles, you will need to generate a personal token for your own GitHub user (with bf2 access) and place the value in the ConfigMap.
+To generate a new token:
+* Follow the steps found [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), making sure to check ONLY the repo box at the top of the scopes/permissions list (which will check the 3 subcategory boxes beneath it).
+* Copy the value of your Personal Access Token to a secure private location. Once you leave the page, you cannot access the value again & you will be forced to reset the token to receive a new value should you lose the original.
+* Take care not to push your PAT to any repository as if you do, GitHub will automatically revoke your token as soon as you push and you'll need to follow this process again to generate a new token.
+
 If you want to point to a local or non-default observatorium instance, edit the URL in your fork of the [resource file](https://github.com/bf2fc6cc711aee1a0c2a/observability-resources-mk/blob/main/development/index.json) and use the OBSERVABILITY_RESOURCES_GH variable to instatiate the operator with that config.
 
-Once the make recipe has completed the observability operator catalogue and config is deployed in the *kafka-observability* namespace. 
-
-* Click on `Operatorhub` in this namespace under the `Operators` tab in the left nav bar.
-* Click the entry under `Provider Type` for `observability-operator-manifests`
-* Click on `observability-operator`
-* Click `install`
-
+Once the make recipe has completed the observability operator and config is deployed in the *kafka-observability* namespace. 
 
 ### 1) Install *everything*
 
