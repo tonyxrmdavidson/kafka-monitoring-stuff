@@ -108,7 +108,7 @@ This option is useful if you already have a cluster with the strimzi operator ru
 
 The following things will be installed:
 
-* observabiliy operator
+* observability operator
 
 
 ```sh
