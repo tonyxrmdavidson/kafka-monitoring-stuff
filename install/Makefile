@@ -15,6 +15,17 @@ export GLOBAL_THANOS_QUERIER ?= kafka-thanos-querier
 export GLOBAL_GRAFANA ?= kafka-grafana-global
 export GLOBAL_LOKI ?= kafka-loki-global
 
+export OBSERVABILITY_NAMESPACE ?=kafka-observability
+export OBSERVABILITY_RESOURCES_GH ?=https://api.github.com/repos/bf2fc6cc711aee1a0c2a/observability-resources-mk/contents
+export ACCESS_TOKEN ?=anaccesstoken
+export DEX_PASSWORD ?=dex-password
+export DEX_SECRET ?=dex-secret
+export DEX_USERNAME ?=dex-username
+
+DEX_P_B := $(shell echo ${DEX_PASSWORD} | base64)
+DEX_S_B := $(shell echo ${DEX_SECRET} | base64)
+DEX_U_B := $(shell echo ${DEX_USERNAME} | base64)
+
 export LOGS_MAX_AGE ?= 1d
 export LOGS_STORAGE ?= 60G
 
@@ -32,6 +43,15 @@ export KAFKA_UUID ?= $(shell uuidgen | tr '[:upper:]' '[:lower:]')
 
 RESOURCE_FILES_DIR ?= ./resources
 BUILD_DIR := build
+
+OSTYPE := $(shell uname -s)
+
+ifeq ($(OSTYPE), Linux)
+	SED := sed
+endif
+ifeq ($(OSTYPE), Darwin)
+	SED := gsed
+endif
 
 .PHONY: install/monitoring/cluster
 install/monitoring/cluster:
@@ -123,7 +143,46 @@ test/chaos:
 setup/observatorium:
 	make -C resources/observatorium setup
 
-all: install/strimzi/operator install/kafka/cr install/monitoring/global install/monitoring/cluster
+.PHONY: install/observability
+install/observability:
+	@ mkdir -p ./$(BUILD_DIR)/observability-operator
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/secrets.yaml ./$(BUILD_DIR)/observability-operator/
+	@ $(SED) -i 's/<DEX_PASSWORD>/$(DEX_P_B)/' ./$(BUILD_DIR)/observability-operator/secrets.yaml
+	@ $(SED) -i 's/<DEX_SECRET>/$(DEX_S_B)/' ./$(BUILD_DIR)/observability-operator/secrets.yaml
+	@ $(SED) -i 's/<DEX_USERNAME>/$(DEX_U_B)/' ./$(BUILD_DIR)/observability-operator/secrets.yaml	
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/configmap.yaml ./$(BUILD_DIR)/observability-operator/
+	@ $(SED) -i 's/<ACCESS_TOKEN>/$(ACCESS_TOKEN)/' ./$(BUILD_DIR)/observability-operator/configmap.yaml
+	@ $(SED) -i 's,<OBSERVABILITY_RESOURCES_GH>,$(OBSERVABILITY_RESOURCES_GH),' ./$(BUILD_DIR)/observability-operator/configmap.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/namespace.yaml ./$(BUILD_DIR)/observability-operator/
+	@ $(SED) -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/namespace.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/catalogue-source.yaml ./$(BUILD_DIR)/observability-operator/
+	@ $(SED) -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/catalogue-source.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/subscription.yaml ./$(BUILD_DIR)/observability-operator/
+	@ $(SED) -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/subscription.yaml
+
+	@ cp $(RESOURCE_FILES_DIR)/observability-operator/operatorgroup.yaml ./$(BUILD_DIR)/observability-operator/
+	@ $(SED) -i 's/<NAMESPACE>/$(OBSERVABILITY_NAMESPACE)/' ./$(BUILD_DIR)/observability-operator/operatorgroup.yaml
+
+	@oc apply -f ./${BUILD_DIR}/observability-operator/namespace.yaml
+	@oc apply -f ./${BUILD_DIR}/observability-operator/configmap.yaml
+	@oc apply -f ./${BUILD_DIR}/observability-operator/secrets.yaml
+	@oc apply -f ./${BUILD_DIR}/observability-operator/operatorgroup.yaml	
+	@oc apply -f ./${BUILD_DIR}/observability-operator/catalogue-source.yaml
+	@oc apply -f ./${BUILD_DIR}/observability-operator/subscription.yaml
+
+	@ rm- rf ${BUILD_DIR}
+
+.PHONY: uninstall/observability
+uninstall/observability:
+	@oc delete observability observability-stack -n $(OBSERVABILITY_NAMESPACE)
+	@oc delete project $(OBSERVABILITY_NAMESPACE)
+
+all: install/strimzi/operator install/kafka/cr install/monitoring/global install/observability
 	@echo "done installing kafka monitoring demo"
 
 clean: uninstall/kafka/cr uninstall/strimzi/operator uninstall/monitoring/global uninstall/monitoring/cluster

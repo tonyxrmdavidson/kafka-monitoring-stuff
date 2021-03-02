@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: observability-operator-manifests
+  namespace: <NAMESPACE>
+spec:
+  sourceType: grpc
+  image: quay.io/integreatly/observability-operator-index:v2.0.0

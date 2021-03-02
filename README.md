@@ -27,6 +27,28 @@ The options are available as separate `make` targets from the `install` folder.
 cd install
 ```
 
+### Installing observability operator
+
+The Observability Operator install requires some variables to be set
+
+|Variable | Use|
+|------------|-------|
+|OBSERVABILITY_RESOURCES_GH | Github URL for observability resources. Defaults to [observability-resources-mk](https://api.github.com/repos/bf2fc6cc711aee1a0c2a/observability-resources-mk/contents)|
+|ACCESS_TOKEN | Github access token to pull observability resources |
+|DEX_PASSWORD | Password for accessing dex|
+|DEX_SECRET | Secret for accessing dex|
+|DEX_USERNAME | Username for accessing dex |
+
+The Observability stack requires a Personal Access Token to read externalized configuration from within the bf2 organization. For development cycles, you will need to generate a personal token for your own GitHub user (with bf2 access) and place the value in the ConfigMap.
+To generate a new token:
+* Follow the steps found [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), making sure to check ONLY the repo box at the top of the scopes/permissions list (which will check the 3 subcategory boxes beneath it).
+* Copy the value of your Personal Access Token to a secure private location. Once you leave the page, you cannot access the value again & you will be forced to reset the token to receive a new value should you lose the original.
+* Take care not to push your PAT to any repository as if you do, GitHub will automatically revoke your token as soon as you push and you'll need to follow this process again to generate a new token.
+
+If you want to point to a local or non-default observatorium instance, edit the URL in your fork of the [resource file](https://github.com/bf2fc6cc711aee1a0c2a/observability-resources-mk/blob/main/development/index.json) and use the OBSERVABILITY_RESOURCES_GH variable to instatiate the operator with that config.
+
+Once the make recipe has completed the observability operator and config is deployed in the *kafka-observability* namespace. 
+
 ### 1) Install *everything*
 
 **Caution:** You probably don't want to do this. Consider installing just the in-cluster components or just the global components in a single cluster.
@@ -34,7 +56,7 @@ cd install
 The following things will be installed:
 
 * global monitoring components for centralised metrics
-* cluster-wide monitoring components, configured to send metrics centrally
+* observability operator
 * strimzi operator
 * strimzi monitoring components to hook into cluster-wide monitoring components
 * a kafka cluster
@@ -57,14 +79,14 @@ make install/monitoring/global
 
 The following things will be installed:
 
-* cluster-wide monitoring components, configured to send metrics centrally
+* observability operator catalogue source
 * strimzi operator
 * strimzi monitoring components to hook into cluster-wide monitoring components
 * a kafka cluster
 
 ```sh
 make install/strimzi/operator
-make install/monitoring/cluster
+make install/observability
 make install/kafka/cr
 ```
 
@@ -86,19 +108,14 @@ This option is useful if you already have a cluster with the strimzi operator ru
 
 The following things will be installed:
 
-* cluster-wide monitoring components, configured to send metrics centrally
-* strimzi monitoring components to hook into cluster-wide monitoring components
+* observabiliy operator
 
 
 ```sh
-make install/monitoring/cluster
+make install/observability
 ```
 
-To specify which namespace strimzi & kafka are in, run the cmd with the following vars:
-
-```sh
-STRIMZI_OPERATOR_NAMESPACE=my-strimzi-ns KAFKA_CLUSTER_NAMESPACE=my-kafka-ns make install/monitoring/cluster
-```
+Once the makefile has completed install the observability-operator from Operatorhub.
 
 ### 6) Install *Observatorium*
 
@@ -167,6 +184,7 @@ The following namespaces are created:
 * *managed-services-monitoring-global*: contains the global monitoring stack including Grafana, Thanos Receiver and Thanos Querier
 * *managed-services-monitoring-prometheus*: contains the on cluster Prometheus that scrapes Kafka metrics
 * *managed-services-monitoring-grafana*: contains the on cluster Grafana instance
+* *kafka-observability* contains the observability operator catalogue source
 
 ## Notes
 

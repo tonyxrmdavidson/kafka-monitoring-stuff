@@ -1,0 +1,12 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kafka-observability-configuration
+  namespace: kafka-observability
+  labels:
+    configures: observability-operator
+data:
+  access_token: '<ACCESS_TOKEN>'
+  channel: development
+  repository: '<OBSERVABILITY_RESOURCES_GH>'
+  
