@@ -175,7 +175,7 @@ install/observability:
 	@oc apply -f ./${BUILD_DIR}/observability-operator/catalogue-source.yaml
 	@oc apply -f ./${BUILD_DIR}/observability-operator/subscription.yaml
 
-	@ rm- rf ${BUILD_DIR}
+	@ rm -rf ${BUILD_DIR}
 
 .PHONY: uninstall/observability
 uninstall/observability:
