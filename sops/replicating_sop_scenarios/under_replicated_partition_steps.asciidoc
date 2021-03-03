@@ -1,0 +1,78 @@
+// begin header
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:numbered:
+:toc: macro
+:toc-title: pass:[<b>Table of Contents</b>]
+// end header
+= Replicating a under replicated partition
+
+toc::[]
+
+== Description
+
+The following steps will replicate under_replicated_partition 
+
+JIRA for which these steps where required: https://issues.redhat.com/browse/MGDSTRM-1060[MGDSTRM-1060]
+
+SOP for which these steps are linked: https://github.com/RHCloudServices/kafka-monitoring-stuff/blob/master/sops/partition_under_replicated.asciidoc[under-replicated-partition]
+
+== Prerequisites
+
+* Admin access to an OSD cluster
+* Kafka installed on the cluster. Steps to install Kafka can be found https://github.com/RHCloudServices/kafka-monitoring-stuff#5-install-in-cluster-monitoring-components-only[here]
+* Access to the data plane cluster ( credentials can be found in vault.devshift.net )
+* Access to observatorium ( credentials can be found in vault.devshift.net )
++
+[source,sh]
+----
+KAFKA_CLUSTER=my-kafka-cluster
+TOPIC_NAME=my-example-topic
+----
+
+== Execution
+== Steps to simulate an under-replicated partition by manually terminating a Kafka broker pod
+1. Log in to the OSD Kafka cluster and create a topic with 3 partitions, and 3 replicas
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --replication-factor 3 --partitions 3 --topic ${TOPIC_NAME}
+----
+
+2. produce messages to kafka topic  
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- bin/kafka-producer-perf-test.sh --producer-props bootstrap.servers=localhost:9092 --record-size=100 --throughput 1 --num-records 10 --topic ${TOPIC_NAME}
+----
+
+3. Check under-replicated partitions
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-replicated-partitions
+----
+ 
+4. continue to force kafka broker pod termination   
++
+[source,sh]
+----
+watch -n 1 oc delete pod ${KAFKA_CLUSTER}-kafka-2 --grace-period=0 --force  
+---- 
+
+5. Check under-replicated partitions
++
+[source,sh]
+----
+oc exec -it ${KAFKA_CLUSTER}-kafka-0 -c kafka -- env - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --under-replicated-partitions 
+
+// Example output
+Topic: testTopic	Partition: 0	Leader: 1	Replicas: 1,0,2	Isr: 1,0
+Topic: testTopic	Partition: 1	Leader: 0	Replicas: 0,2,1	Isr: 0,1
+Topic: testTopic	Partition: 2	Leader: 1	Replicas: 2,1,0	Isr: 1,0
+----  
