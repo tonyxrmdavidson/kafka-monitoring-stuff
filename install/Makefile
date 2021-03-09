@@ -185,5 +185,5 @@ uninstall/observability:
 all: install/strimzi/operator install/kafka/cr install/monitoring/global install/observability
 	@echo "done installing kafka monitoring demo"
 
-clean: uninstall/kafka/cr uninstall/strimzi/operator uninstall/monitoring/global uninstall/monitoring/cluster
+clean: uninstall/kafka/cr uninstall/strimzi/operator uninstall/monitoring/global uninstall/monitoring/cluster uninstall/observability
 	@echo "done uninstalling kafka monitoring demo"
